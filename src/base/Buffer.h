@@ -28,7 +28,7 @@ private:
 	GLenum m_target;
 };
 
-template <class T>
+template<class T>
 Buffer<T>::Buffer(BUFFER_TYPE _type, const std::vector<T> &_data)
 {
     glGenBuffers(1, &m_id);
@@ -40,7 +40,7 @@ Buffer<T>::Buffer(BUFFER_TYPE _type, const std::vector<T> &_data)
     this->setData(_data);
 }
 
-template <class T>
+template<class T>
 Buffer<T>::~Buffer()
 {
     assert(m_id != -1);
@@ -48,13 +48,13 @@ Buffer<T>::~Buffer()
     glDeleteBuffers(1, &m_id);
 }
 
-template <class T>
+template<class T>
 void Buffer<T>::setData(const std::vector<T>& _data)
 {
     glBufferData(m_target, _data.size() * sizeof(T), _data.data(), GL_STATIC_DRAW);
 }
 
-template <class T>
+template<class T>
 GLenum Buffer<T>::transformBufferTypeToTarget(BUFFER_TYPE _type)
 {
     switch (_type)

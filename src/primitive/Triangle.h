@@ -19,20 +19,23 @@
 
 
 class Triangle: public IPrimitive {
+    struct Vertex {
+        Pos pos;
+        Color color;
+    };
 public:
     Triangle();
     void paint() override;
 
 private:
     std::shared_ptr<VertexArray> m_vao;
-    std::shared_ptr<Buffer<float>> m_vbo;
+    std::shared_ptr<Buffer<Vertex>> m_vbo;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 
-    std::vector<float> m_vertices = {
-        // 位置              // 颜色
-        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,   // 左下
-        0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶部
+    std::vector<Vertex> m_vertices = {
+        Vertex{ Pos{0.5f, -0.5f, 0.0f}, Color{1.0f, 0.0f, 0.0f} },
+        Vertex{ Pos{-0.5f, -0.5f, 0.0f}, Color{0.0f, 1.0f, 0.0f} },
+        Vertex{ Pos{0.0f,  0.5f, 0.0f}, Color{0.0f, 0.0f, 1.0f} },
     };
     const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/triangle/vertex.glsl";
     const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/triangle/fragment.glsl";

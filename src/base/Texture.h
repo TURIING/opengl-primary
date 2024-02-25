@@ -37,8 +37,7 @@ public:
 
     unsigned int getID() { return m_id; }
 
-    void activate(unsigned int _unit) {
-        LOG_ASSERT(m_id != -1);
+    static void activate(unsigned int _unit) {
         glActiveTexture(_unit);
     }
 private:

@@ -11,15 +11,15 @@
 Cube::Cube() {
     m_vao = std::make_shared<VertexArray>();
 
-    m_vbo = std::make_shared<Buffer<float>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
+    m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
 
     m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
 
     m_texture = std::make_shared<Texture>(TEXTURE_FILE, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
     m_shaderProgram->setInt("texture1", 0);
 
-    m_vao->setAttribute(m_shaderProgram->getAttrLocation("aPos"), 3, 5, 0);
-    m_vao->setAttribute(m_shaderProgram->getAttrLocation("aTexCoord"), 2, 5, 3);
+    m_vao->setAttribute<Vertex, Pos>(m_shaderProgram->getAttrLocation("aPos"), offsetof(Vertex, pos));
+    m_vao->setAttribute<Vertex, Color>(m_shaderProgram->getAttrLocation("aTexCoord"), offsetof(Vertex, tex));
 
     this->enableDeepTest();
 }

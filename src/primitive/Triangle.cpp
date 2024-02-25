@@ -11,12 +11,12 @@
 Triangle::Triangle() {
     m_vao = std::make_shared<VertexArray>();
 
-    m_vbo = std::make_shared<Buffer<float>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
+    m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
 
     m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
 
-    m_vao->setAttribute(m_shaderProgram->getAttrLocation("aPos"), 3, 6, 0);
-    m_vao->setAttribute(m_shaderProgram->getAttrLocation("aColor"), 3, 6, 3);
+    m_vao->setAttribute<Vertex, Pos>(m_shaderProgram->getAttrLocation("aPos"), offsetof(Vertex, pos));
+    m_vao->setAttribute<Vertex, Color>(m_shaderProgram->getAttrLocation("aColor"), offsetof(Vertex, color));
 }
 
 void Triangle::paint() {

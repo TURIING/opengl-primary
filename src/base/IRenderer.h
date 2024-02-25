@@ -51,7 +51,7 @@ public:
     int getWindowHeight() { return std::get<1>(m_windowSize); }
 private:
     bool m_enableDeepTest = false;												                    // 是否启用深度测试
-    Color m_clearColor = { 0.26f, 0.30f, 0.31f, 1.0f };					                            // 清屏颜色
+    TColor m_clearColor = { 0.26f, 0.30f, 0.31f, 1.0f };					                            // 清屏颜色
 
     std::tuple<int, int> m_windowSize;                                                              // 窗口尺寸
 

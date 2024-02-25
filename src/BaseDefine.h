@@ -13,6 +13,30 @@ constexpr char *SHADER_CODE_PATH = "../../../../src/glsl";
 constexpr char *TEXTURE_PATH = "../../../../resources/texture";
 constexpr char *MODEL_PATH = "../../../../resources/model";
 
-using Color = std::tuple<float, float, float, float>;
+// ----------------------------------------------- 类型定义 ----------------------------------------------------------
+using TColor = std::tuple<float, float, float, float>;
+
+struct Pos {
+    float x;
+    float y;
+    float z;
+};
+
+struct Color {
+    float r;
+    float g;
+    float b;
+};
+
+struct TexCoord {
+    float x;
+    float y;
+};
+
+struct Vertex {
+    Pos pos;
+    Color color;
+    TexCoord tex;
+};
 
 #endif //OPENGL_PRIMARY_BASEDEFINE_H

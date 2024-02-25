@@ -29,9 +29,3 @@ void VertexArray::unBind() const
 {
     glBindVertexArray(0);
 }
-
-void VertexArray::setAttribute(unsigned int _attrPos, int _size, int _stride, int _offset) const
-{
-    glVertexAttribPointer(_attrPos, _size, GL_FLOAT, GL_FALSE, _stride * sizeof(float), (void *)(_offset * sizeof(float)));
-    glEnableVertexAttribArray(_attrPos);
-}

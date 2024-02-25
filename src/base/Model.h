@@ -26,13 +26,13 @@ public:
      * @param _path
      * @param _loadType nullopt代表全部类型都不加载，需要加载啥类型插入啥
      */
-    Model(std::string _path, std::optional<std::vector<MaterialType>> _loadType): m_loadType(_loadType) {
+    Model(std::string _path, std::optional<std::vector<MaterialType>> _loadType, std::shared_ptr<ShaderProgram> _shaderProgram): m_loadType(_loadType), m_shaderProgram(_shaderProgram) {
         this->loadModel(_path);
     }
 
-    void paint(std::shared_ptr<ShaderProgram> _shaderProgram) {
+    void paint() {
         for(auto i = 0; i < m_meshes.size(); i++) {
-            m_meshes[i].paint(_shaderProgram);
+            m_meshes[i].paint(m_shaderProgram);
         }
     }
 
@@ -126,7 +126,7 @@ private:
         if(m_loadType.has_value() && isContainMaterialType(m_loadType.value(), MaterialType::Height) && heightMaps.size() != 0)
             textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-        return Mesh(vertices, indices, textures);
+        return Mesh(m_shaderProgram, vertices, indices, textures);
     }
 
     std::vector<MeshTexture> loadMaterialTextures(aiMaterial *_mat, aiTextureType _type, std::string _typeName) {
@@ -172,6 +172,7 @@ private:
     std::string m_directory;
     std::vector<MeshTexture> m_textures_loaded;                  // 存储所有已经加载的纹理
     std::optional<std::vector<MaterialType>> m_loadType;         // 定义加载类型
+    std::shared_ptr<ShaderProgram> m_shaderProgram;
 };
 
 #endif //LEARN_OPENGL_MODEL_H

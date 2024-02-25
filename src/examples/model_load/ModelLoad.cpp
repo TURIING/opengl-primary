@@ -14,8 +14,8 @@
  */
 ModelLoad::ModelLoad(std::string _path) {
     this->enableDeepTest();
-    m_model = std::make_shared<Model>(_path, std::vector<MaterialType>{ MaterialType::Diffuse });
     m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
+    m_model = std::make_shared<Model>(_path, std::vector<MaterialType>{ MaterialType::Diffuse }, m_shaderProgram);
 }
 
 void ModelLoad::paint() {
@@ -53,5 +53,5 @@ void ModelLoad::paint() {
     m_shaderProgram->setMat4("view", glm::value_ptr(view));
     m_shaderProgram->setMat4("projection", glm::value_ptr(projection));
 
-    m_model->paint(m_shaderProgram);
+    m_model->paint();
 }
