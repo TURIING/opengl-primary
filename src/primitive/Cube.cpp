@@ -8,13 +8,12 @@
 
 #include "Cube.h"
 
-Cube::Cube(IScene *_parent) : IPrimitive(_parent) {
+Cube::Cube(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram) : IPrimitive(_parent) {
     m_vao = std::make_shared<VertexArray>();
 
     m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
 
-    m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
-    m_shaderProgram->use();
+    m_shaderProgram = _shaderProgram ? _shaderProgram : std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
 
     m_texture = std::make_shared<Texture>(TEXTURE_FILE, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
     m_shaderProgram->setInt("texture1", 0);
@@ -38,6 +37,7 @@ void Cube::paintNormally() {
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = glm::mat4(1.0f);
 
+    model = glm::translate(model, this->getTranslatePos());
     view = camera->getViewMatrix();
     projection = glm::perspective(glm::radians(camera->getFov()), (float)getWindowWidth() / (float)getWindowHeight(), 0.1f, 100.0f);
 

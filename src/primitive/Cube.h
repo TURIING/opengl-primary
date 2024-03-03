@@ -30,7 +30,7 @@ class Cube: public IPrimitive {
         VTexCoord tex;
     };
 public:
-    explicit Cube(IScene *_parent);
+    Cube(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
     void paint() override;
 
 private:

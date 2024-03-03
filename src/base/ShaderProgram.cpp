@@ -17,6 +17,8 @@ ShaderProgram::ShaderProgram(const std::string& _vertexPath, const std::string& 
 	glAttachShader(m_id, vertexShader.getShaderId());
 	glAttachShader(m_id, fragmentShader.getShaderId());
 	glLinkProgram(m_id);
+
+    this->use();
 }
 
 ShaderProgram::~ShaderProgram()

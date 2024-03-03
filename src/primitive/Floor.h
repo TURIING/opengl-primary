@@ -27,7 +27,7 @@ class Floor: public IPrimitive{
         VTexCoord tex;
     };
 public:
-    explicit Floor(IScene *_parent);
+    Floor(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
     void paint() override;
 
 private:
