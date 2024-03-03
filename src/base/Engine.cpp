@@ -171,7 +171,7 @@ void Engine::registerEvent() {
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void Engine::setRenderer(std::shared_ptr<IRenderer> _renderer) {
+void Engine::setRenderer(std::shared_ptr<IRenderer> &&_renderer) {
     m_renderer = _renderer;
 
     m_renderer->setWindowSize(m_windowSize);

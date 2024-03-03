@@ -37,8 +37,9 @@ public:
 
     unsigned int getID() { return m_id; }
 
-    static void activate(unsigned int _unit) {
+    void activate(unsigned int _unit) {
         glActiveTexture(_unit);
+        this->bind();
     }
 private:
     void bind() {

@@ -23,13 +23,18 @@
 #include "../BaseDefine.h"
 
 class Cube: public IPrimitive {
+    // 顶点属性结构体定义
     struct Vertex {
-        Pos pos;
-        TexCoord tex;
+        VPos pos;
+        VTexCoord tex;
     };
 public:
     Cube();
     void paint() override;
+
+private:
+    void paintNormally();
+    void paintWithOutline();
 
 private:
     std::shared_ptr<VertexArray> m_vao;
@@ -42,48 +47,47 @@ private:
     const std::string TEXTURE_FILE = std::string(TEXTURE_PATH) + "/container2.png";
 
     std::vector<Vertex> m_vertices = {
-        Vertex { Pos{-0.5f, -0.5f, -0.5f}, TexCoord{0.0f, 0.0f} },
-        Vertex { Pos{0.5f, -0.5f, -0.5f}, TexCoord{1.0f, 0.0f} },
-        Vertex { Pos{0.5f,  0.5f, -0.5f}, TexCoord{1.0f, 1.0f} },
-        Vertex { Pos{0.5f,  0.5f, -0.5f}, TexCoord{1.0f, 1.0f} },
-        Vertex { Pos{-0.5f,  0.5f, -0.5f}, TexCoord{0.0f, 1.0f} },
-        Vertex { Pos{-0.5f, -0.5f, -0.5f}, TexCoord{0.0f, 0.0f} },
+        Vertex { VPos{-0.5f, -0.5f, -0.5f}, VTexCoord{0.0f, 0.0f} },
+        Vertex { VPos{0.5f, -0.5f, -0.5f},  VTexCoord{1.0f, 0.0f} },
+        Vertex { VPos{0.5f,  0.5f, -0.5f},  VTexCoord{1.0f, 1.0f} },
+        Vertex { VPos{0.5f,  0.5f, -0.5f},  VTexCoord{1.0f, 1.0f} },
+        Vertex { VPos{-0.5f,  0.5f, -0.5f}, VTexCoord{0.0f, 1.0f} },
+        Vertex { VPos{-0.5f, -0.5f, -0.5f}, VTexCoord{0.0f, 0.0f} },
 
-        Vertex { Pos{-0.5f, -0.5f,  0.5f}, TexCoord{0.0f, 0.0f} },
-        Vertex { Pos{0.5f, -0.5f,  0.5f}, TexCoord{1.0f, 0.0f} },
-        Vertex { Pos{0.5f,  0.5f,  0.5f}, TexCoord{1.0f, 1.0f} },
-        Vertex { Pos{0.5f,  0.5f,  0.5f}, TexCoord{1.0f, 1.0f} },
-        Vertex { Pos{-0.5f,  0.5f,  0.5f}, TexCoord{0.0f, 1.0f} },
-        Vertex { Pos{-0.5f, -0.5f,  0.5f}, TexCoord{0.0f, 0.0f} },
+        Vertex { VPos{-0.5f, -0.5f,  0.5f}, VTexCoord{0.0f, 0.0f} },
+        Vertex { VPos{0.5f, -0.5f,  0.5f},  VTexCoord{1.0f, 0.0f} },
+        Vertex { VPos{0.5f,  0.5f,  0.5f},  VTexCoord{1.0f, 1.0f} },
+        Vertex { VPos{0.5f,  0.5f,  0.5f},  VTexCoord{1.0f, 1.0f} },
+        Vertex { VPos{-0.5f,  0.5f,  0.5f}, VTexCoord{0.0f, 1.0f} },
+        Vertex { VPos{-0.5f, -0.5f,  0.5f}, VTexCoord{0.0f, 0.0f} },
 
-        Vertex { Pos{-0.5f,  0.5f,  0.5f}, TexCoord{1.0f, 0.0f} },
-        Vertex { Pos{-0.5f,  0.5f, -0.5f}, TexCoord{1.0f, 1.0f} },
-        Vertex { Pos{-0.5f, -0.5f, -0.5f}, TexCoord{0.0f, 1.0f} },
-        Vertex { Pos{-0.5f, -0.5f, -0.5f}, TexCoord{0.0f, 1.0f} },
-        Vertex { Pos{-0.5f, -0.5f,  0.5f}, TexCoord{0.0f, 0.0f} },
-        Vertex { Pos{-0.5f,  0.5f,  0.5f}, TexCoord{1.0f, 0.0f} },
+        Vertex { VPos{-0.5f,  0.5f,  0.5f}, VTexCoord{1.0f, 0.0f} },
+        Vertex { VPos{-0.5f,  0.5f, -0.5f}, VTexCoord{1.0f, 1.0f} },
+        Vertex { VPos{-0.5f, -0.5f, -0.5f}, VTexCoord{0.0f, 1.0f} },
+        Vertex { VPos{-0.5f, -0.5f, -0.5f}, VTexCoord{0.0f, 1.0f} },
+        Vertex { VPos{-0.5f, -0.5f,  0.5f}, VTexCoord{0.0f, 0.0f} },
+        Vertex { VPos{-0.5f,  0.5f,  0.5f}, VTexCoord{1.0f, 0.0f} },
 
-        Vertex { Pos{0.5f,  0.5f,  0.5f}, TexCoord{1.0f, 0.0f} },
-        Vertex { Pos{0.5f,  0.5f, -0.5f}, TexCoord{1.0f, 1.0f} },
-        Vertex { Pos{0.5f, -0.5f, -0.5f}, TexCoord{0.0f, 1.0f} },
-        Vertex { Pos{0.5f, -0.5f, -0.5f}, TexCoord{0.0f, 1.0f} },
-        Vertex { Pos{0.5f, -0.5f,  0.5f}, TexCoord{0.0f, 0.0f} },
-        Vertex { Pos{0.5f,  0.5f,  0.5f}, TexCoord{1.0f, 0.0f} },
+        Vertex { VPos{0.5f,  0.5f,  0.5f},  VTexCoord{1.0f, 0.0f} },
+        Vertex { VPos{0.5f,  0.5f, -0.5f},  VTexCoord{1.0f, 1.0f} },
+        Vertex { VPos{0.5f, -0.5f, -0.5f},  VTexCoord{0.0f, 1.0f} },
+        Vertex { VPos{0.5f, -0.5f, -0.5f},  VTexCoord{0.0f, 1.0f} },
+        Vertex { VPos{0.5f, -0.5f,  0.5f},  VTexCoord{0.0f, 0.0f} },
+        Vertex { VPos{0.5f,  0.5f,  0.5f},  VTexCoord{1.0f, 0.0f} },
 
-        Vertex { Pos{-0.5f, -0.5f, -0.5f}, TexCoord{ 0.0f, 1.0f} },
-        Vertex { Pos{0.5f, -0.5f,  0.5f}, TexCoord{1.0f, 0.0f} },
-        Vertex { Pos{0.5f, -0.5f, -0.5f}, TexCoord{1.0f, 1.0f} },
-        Vertex { Pos{0.5f, -0.5f,  0.5f}, TexCoord{1.0f, 0.0f} },
-        Vertex { Pos{-0.5f, -0.5f,  0.5f}, TexCoord{0.0f, 0.0f} },
-        Vertex { Pos{-0.5f, -0.5f, -0.5f}, TexCoord{0.0f, 1.0f} },
+        Vertex { VPos{-0.5f, -0.5f, -0.5f}, VTexCoord{ 0.0f, 1.0f} },
+        Vertex { VPos{0.5f, -0.5f,  -0.5f},  VTexCoord{1.0f, 1.0f} },
+        Vertex { VPos{0.5f, -0.5f, 0.5f},  VTexCoord{1.0f, 0.0f} },
+        Vertex { VPos{0.5f, -0.5f,  0.5f},  VTexCoord{1.0f, 0.0f} },
+        Vertex { VPos{-0.5f, -0.5f,  0.5f}, VTexCoord{0.0f, 0.0f} },
+        Vertex { VPos{-0.5f, -0.5f, -0.5f}, VTexCoord{0.0f, 1.0f} },
 
-
-        Vertex { Pos{-0.5f,  0.5f, -0.5f}, TexCoord{0.0f, 1.0f} },
-        Vertex { Pos{0.5f,   0.5f, -0.5f}, TexCoord{1.0f, 1.0f} },
-        Vertex { Pos{0.5f,   0.5f,  0.5f}, TexCoord{1.0f, 0.0f} },
-        Vertex { Pos{0.5f,   0.5f,  0.5f}, TexCoord{1.0f, 0.0f} },
-        Vertex { Pos{-0.5f,  0.5f,  0.5f}, TexCoord{0.0f, 0.0f} },
-        Vertex { Pos{-0.5f,  0.5f, -0.5f}, TexCoord{0.0f, 1.0f} },
+        Vertex { VPos{-0.5f,  0.5f, -0.5f}, VTexCoord{0.0f, 1.0f} },
+        Vertex { VPos{0.5f,   0.5f, -0.5f}, VTexCoord{1.0f, 1.0f} },
+        Vertex { VPos{0.5f,   0.5f,  0.5f}, VTexCoord{1.0f, 0.0f} },
+        Vertex { VPos{0.5f,   0.5f,  0.5f}, VTexCoord{1.0f, 0.0f} },
+        Vertex { VPos{-0.5f,  0.5f,  0.5f}, VTexCoord{0.0f, 0.0f} },
+        Vertex { VPos{-0.5f,  0.5f, -0.5f}, VTexCoord{0.0f, 1.0f} },
     };
 };
 

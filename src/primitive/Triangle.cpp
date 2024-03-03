@@ -15,8 +15,8 @@ Triangle::Triangle() {
 
     m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
 
-    m_vao->setAttribute<Vertex, Pos>(m_shaderProgram->getAttrLocation("aPos"), offsetof(Vertex, pos));
-    m_vao->setAttribute<Vertex, Color>(m_shaderProgram->getAttrLocation("aColor"), offsetof(Vertex, color));
+    m_vao->setAttribute<Vertex, VPos>(m_shaderProgram->getAttrLocation("aPos"), offsetof(Vertex, pos));
+    m_vao->setAttribute<Vertex, VColor>(m_shaderProgram->getAttrLocation("aColor"), offsetof(Vertex, color));
 }
 
 void Triangle::paint() {

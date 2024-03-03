@@ -20,8 +20,8 @@
 
 class Triangle: public IPrimitive {
     struct Vertex {
-        Pos pos;
-        Color color;
+        VPos pos;
+        VColor color;
     };
 public:
     Triangle();
@@ -33,9 +33,9 @@ private:
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 
     std::vector<Vertex> m_vertices = {
-        Vertex{ Pos{0.5f, -0.5f, 0.0f}, Color{1.0f, 0.0f, 0.0f} },
-        Vertex{ Pos{-0.5f, -0.5f, 0.0f}, Color{0.0f, 1.0f, 0.0f} },
-        Vertex{ Pos{0.0f,  0.5f, 0.0f}, Color{0.0f, 0.0f, 1.0f} },
+        Vertex{ VPos{0.5f, -0.5f, 0.0f}, VColor{1.0f, 0.0f, 0.0f} },
+        Vertex{ VPos{-0.5f, -0.5f, 0.0f}, VColor{0.0f, 1.0f, 0.0f} },
+        Vertex{ VPos{0.0f,  0.5f, 0.0f}, VColor{0.0f, 0.0f, 1.0f} },
     };
     const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/triangle/vertex.glsl";
     const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/triangle/fragment.glsl";

@@ -19,7 +19,7 @@ public:
 	Engine(const std::string &_title, bool _enableCamera = true, int _width = 1600, int _height = 1200);
     ~Engine();
 
-    void setRenderer(std::shared_ptr<IRenderer> _renderer);
+    void setRenderer(std::shared_ptr<IRenderer> &&_renderer);
 	void execute();
 
 private:

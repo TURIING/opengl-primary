@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv) {
     google::InitGoogleLogging(argv[0]);
-    google::SetStderrLogging(google::WARNING);
+    google::SetStderrLogging(google::INFO);
 
     Engine engine("cube", true);
     engine.setRenderer(std::make_shared<Cube>());

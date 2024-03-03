@@ -9,34 +9,40 @@
 #ifndef OPENGL_PRIMARY_BASEDEFINE_H
 #define OPENGL_PRIMARY_BASEDEFINE_H
 
+#ifdef DEBUG
 constexpr char *SHADER_CODE_PATH = "../../../../src/glsl";
 constexpr char *TEXTURE_PATH = "../../../../resources/texture";
 constexpr char *MODEL_PATH = "../../../../resources/model";
+#else
+constexpr char *SHADER_CODE_PATH = "./src/glsl";
+constexpr char *TEXTURE_PATH = "./resources/texture";
+constexpr char *MODEL_PATH = "./resources/model";
+#endif
 
 // ----------------------------------------------- 类型定义 ----------------------------------------------------------
-using TColor = std::tuple<float, float, float, float>;
+using Color = std::tuple<float, float, float, float>;
 
-struct Pos {
+struct VPos {
     float x;
     float y;
     float z;
 };
 
-struct Color {
+struct VColor {
     float r;
     float g;
     float b;
 };
 
-struct TexCoord {
+struct VTexCoord {
     float x;
     float y;
 };
 
 struct Vertex {
-    Pos pos;
-    Color color;
-    TexCoord tex;
+    VPos pos;
+    VColor color;
+    VTexCoord tex;
 };
 
 #endif //OPENGL_PRIMARY_BASEDEFINE_H
