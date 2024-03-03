@@ -9,24 +9,25 @@
 #ifndef OPENGL_PRIMARY_FLOOR_H
 #define OPENGL_PRIMARY_FLOOR_H
 
-#include "../base/IRenderer.h"
+#include "../primitive/IPrimitive.h"
 #include "../base/VertexArray.h"
 #include "../base/Buffer.h"
 #include "../base/ShaderProgram.h"
 #include "../base/Texture.h"
+#include "../base/IScene.h"
 
 #include "glog/logging.h"
 #include "imgui/imgui.h"
 #include <memory>
 
-class Floor: public IRenderer{
+class Floor: public IPrimitive{
     // 顶点属性结构体定义
     struct Vertex {
         VPos pos;
         VTexCoord tex;
     };
 public:
-    Floor();
+    explicit Floor(IScene *_parent);
     void paint() override;
 
 private:

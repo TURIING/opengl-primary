@@ -13,6 +13,7 @@
 #include "../base/VertexArray.h"
 #include "../base/Buffer.h"
 #include "../base/ShaderProgram.h"
+#include "../base/IScene.h"
 #include <memory>
 #include "../BaseDefine.h"
 #include "imgui/imgui.h"
@@ -24,7 +25,7 @@ class Triangle: public IPrimitive {
         VColor color;
     };
 public:
-    Triangle();
+    explicit Triangle(IScene *_parent);
     void paint() override;
 
 private:

@@ -8,7 +8,7 @@
 
 #include "Triangle.h"
 
-Triangle::Triangle() {
+Triangle::Triangle(IScene *_parent): IPrimitive(_parent) {
     m_vao = std::make_shared<VertexArray>();
 
     m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
@@ -20,8 +20,6 @@ Triangle::Triangle() {
 }
 
 void Triangle::paint() {
-    this->clear();
-
     m_shaderProgram->use();
 
     glDrawArrays(GL_TRIANGLES, 0, 3);

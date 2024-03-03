@@ -8,7 +8,7 @@
 
 #include "Floor.h"
 
-Floor::Floor() {
+Floor::Floor(IScene *_parent): IPrimitive(_parent) {
     m_vao = std::make_shared<VertexArray>();
     m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
 

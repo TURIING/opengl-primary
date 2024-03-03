@@ -9,14 +9,14 @@
 #ifndef OPENGL_PRIMARY_STENCILTEST_H
 #define OPENGL_PRIMARY_STENCILTEST_H
 
-#include "../../base/IScene.h"
+#include "../../base/IRenderer.h"
 #include "../../primitive/Floor.h"
 #include "../../primitive/Cube.h"
 #include "imgui/imgui.h"
 
 #include <memory>
 
-class StencilTest: public IScene{
+class StencilTest: public IRenderer{
 public:
     StencilTest();
 

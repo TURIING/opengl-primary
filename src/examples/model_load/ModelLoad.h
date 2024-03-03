@@ -9,11 +9,11 @@
 #ifndef OPENGL_PRIMARY_MODELLOAD_H
 #define OPENGL_PRIMARY_MODELLOAD_H
 
-#include "../../base/IRenderer.h"
+#include "../../base/IScene.h"
 #include "../../base/Model.h"
 #include "imgui/imgui.h"
 
-class ModelLoad: public IRenderer {
+class ModelLoad: public IScene {
 public:
     ModelLoad(std::string _path);
 

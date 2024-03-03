@@ -66,7 +66,7 @@ public:
             _shaderProgram->setInt((name + number).c_str(), i);
             glBindTexture(GL_TEXTURE_2D, m_textures[i].texture->getID());
         }
-        Texture::activate(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0);
         m_vao->bind();
 
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);

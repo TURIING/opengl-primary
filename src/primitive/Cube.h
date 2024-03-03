@@ -21,6 +21,7 @@
 #include "imgui/imgui.h"
 #include <memory>
 #include "../BaseDefine.h"
+#include "../base/IScene.h"
 
 class Cube: public IPrimitive {
     // 顶点属性结构体定义
@@ -29,7 +30,7 @@ class Cube: public IPrimitive {
         VTexCoord tex;
     };
 public:
-    Cube();
+    explicit Cube(IScene *_parent);
     void paint() override;
 
 private:
