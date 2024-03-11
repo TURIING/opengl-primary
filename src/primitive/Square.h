@@ -31,7 +31,6 @@ public:
 private:
     std::unique_ptr<VertexArray> m_vao;
     std::unique_ptr<Buffer<Vertex>> m_vbo;
-    std::shared_ptr<ShaderProgram> m_shaderProgram;
     std::unique_ptr<Texture> m_texture;
 
     const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";

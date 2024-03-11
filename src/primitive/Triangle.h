@@ -31,7 +31,6 @@ public:
 private:
     std::shared_ptr<VertexArray> m_vao;
     std::shared_ptr<Buffer<Vertex>> m_vbo;
-    std::shared_ptr<ShaderProgram> m_shaderProgram;
 
     std::vector<Vertex> m_vertices = {
         Vertex{ VPos{0.5f, -0.5f, 0.0f}, VColor{1.0f, 0.0f, 0.0f} },

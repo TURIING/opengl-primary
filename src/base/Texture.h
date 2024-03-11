@@ -18,6 +18,7 @@
 
 class Texture {
 public:
+    // 用于构造生成来自图像文件的纹理
     Texture(std::string _path, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode) {
         LOG_ASSERT(!_path.empty());
 
@@ -28,6 +29,19 @@ public:
         this->setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
 
         this->generateTexture(_path);
+    }
+
+    /**
+     * 用于构造生成frame buffer的纹理
+     * @param _scrWidth 屏幕宽度
+     * @param _scrHeight 屏幕高度
+     */
+    Texture(int _scrWidth, int _scrHeight, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode) {
+        glGenTextures(1, &m_id);
+        this->bind();
+
+        this->setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _scrWidth, _scrHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
     }
 
     ~Texture() {

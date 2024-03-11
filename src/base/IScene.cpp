@@ -8,16 +8,30 @@
 
 #include "IScene.h"
 
-void IScene::enableDeepTest() {
-    glEnable(GL_DEPTH_TEST);
-    m_enableDeepTest = true;
+// 启用深度测试
+void IScene::setDeepTest(bool _on) {
+    if(_on) {
+        glEnable(GL_DEPTH_TEST);
+        m_enableDeepTest = true;
+    }
+    else {
+        glDisable(GL_DEPTH_TEST);
+        m_enableDeepTest = false;
+    }
 }
 
 // 启用模板测试
-void IScene::enableStencilTest() {
-    glEnable(GL_STENCIL_TEST);
-    m_enableStencilTest = true;
+void IScene::setStencilTest(bool _on) {
+    if(_on) {
+        glEnable(GL_STENCIL_TEST);
+        m_enableStencilTest = true;
+    }
+    else {
+        glDisable(GL_STENCIL_TEST);
+        m_enableStencilTest = false;
+    }
 }
+
 
 void IScene::clear() {
     std::apply(glClearColor, m_clearColor);                                                // 设置清空屏幕所用的颜色
@@ -48,3 +62,6 @@ void IScene::setCamera(std::shared_ptr<Camera> &_camera) {
 
     IRenderer::setCamera(_camera);
 }
+
+
+

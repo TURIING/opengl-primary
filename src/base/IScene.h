@@ -13,8 +13,8 @@
 
 class IScene: public IRenderer{
 public:
-    void enableDeepTest();
-    void enableStencilTest();
+    void setDeepTest(bool _on = true);
+    void setStencilTest(bool _on = true);
 
     // 清屏颜色
     void clear();
@@ -22,11 +22,11 @@ public:
 
     void addRender(IRenderer *_render) { m_renderList.push_back(_render); }
 
-    void setWindowSize(std::tuple<int, int> &_windowSize) override;
-    void setCamera(std::shared_ptr<Camera> &_camera) override;
+    void setWindowSize(std::tuple<int, int> &_windowSize) final;
+    void setCamera(std::shared_ptr<Camera> &_camera) final;
 
 private:
-    std::vector<IRenderer *> m_renderList;                                                         // 场景中的物体集合
+    std::vector<IRenderer *> m_renderList;                                                          // 场景中的物体集合
     Color m_clearColor = { 0.26f, 0.30f, 0.31f, 1.0f };					                            // 清屏颜色
 
     bool m_enableDeepTest = false;												                    // 是否启用深度测试

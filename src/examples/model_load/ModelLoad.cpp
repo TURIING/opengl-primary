@@ -13,7 +13,7 @@
  * @param _path 模型文件路径
  */
 ModelLoad::ModelLoad(std::string _path) {
-    this->enableDeepTest();
+    this->setDeepTest(true);
     m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
     m_model = std::make_shared<Model>(_path, std::vector<MaterialType>{ MaterialType::Diffuse }, m_shaderProgram);
 }

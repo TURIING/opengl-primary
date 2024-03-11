@@ -30,7 +30,7 @@ public:
     int getWindowHeight() { return std::get<1>(m_windowSize); }
 
 private:
-    std::tuple<int, int> m_windowSize;                                                              // 窗口尺寸
+    std::tuple<int, int> m_windowSize = { 1600, 1200 };                                                              // 窗口尺寸
 
     std::shared_ptr<Camera> m_camera;
 };

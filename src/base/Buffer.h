@@ -23,6 +23,7 @@ public:
 private:
 	void setData(const std::vector<T>& _data);
 	static GLenum transformBufferTypeToTarget(BUFFER_TYPE _type);
+
 private:
 	unsigned int m_id = -1;
 	GLenum m_target;

@@ -10,7 +10,7 @@
 
 Blend::Blend() {
     this->setClearColor(0, 0, 0, 1);
-    this->enableDeepTest();
+    this->setDeepTest(true);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -41,7 +41,7 @@ void Blend::paint() {
     static float translateValue1[] = {-1.0f, 0.0f, -1.0f};
     ImGui::InputFloat3("translate1", translateValue1, 2);
 
-    static float translateValue2[] = {2.0f, 0.0f, 0.0f};
+    static float translateValue2[] = {2.0f, 0.0f, -1.2f};
     ImGui::InputFloat3("translate2", translateValue2, 2);
     ImGui::End();
 

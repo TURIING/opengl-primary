@@ -9,10 +9,10 @@
 #include "StencilTest.h"
 
 StencilTest::StencilTest() {
-    this->enableDeepTest();
+    this->setDeepTest(true);
     glDepthFunc(GL_LESS);
 
-    this->enableStencilTest();
+    this->setStencilTest(true);
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 

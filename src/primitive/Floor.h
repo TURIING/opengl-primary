@@ -33,7 +33,6 @@ public:
 private:
     std::shared_ptr<VertexArray> m_vao;
     std::shared_ptr<Buffer<Vertex>> m_vbo;
-    std::shared_ptr<ShaderProgram> m_shaderProgram;
     std::shared_ptr<Texture> m_texture;
 
     // shader同cube的一致
