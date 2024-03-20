@@ -11,6 +11,9 @@
 
 #include "glad/glad.h"
 #include "glog/logging.h"
+#include "Texture.h"
+#include "RenderBuffer.h"
+#include <memory>
 
 // 附件类型
 enum class FRAMEBUFFER_ATTACH_TYPE { COLOR, DEPTH, STENCIL, DEPTH_STENCIL };
@@ -29,7 +32,6 @@ public:
 
     void bind() {
         LOG_ASSERT(m_id != -1);
-
         glBindFramebuffer(GL_FRAMEBUFFER, m_id);
     }
 
@@ -38,19 +40,22 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void attachTexture2D(FRAMEBUFFER_ATTACH_TYPE _type, unsigned int _textureID) {
+    void attachTexture2D(FRAMEBUFFER_ATTACH_TYPE _type, std::shared_ptr<Texture> &_texture) {
+        LOG_ASSERT(_texture->getID() != -1);
+
         GLenum type;
         switch (_type) {
-            case FRAMEBUFFER_ATTACH_TYPE::COLOR:    type = GL_COLOR_ATTACHMENT0;        break;
-            case FRAMEBUFFER_ATTACH_TYPE::DEPTH:    type = GL_DEPTH_ATTACHMENT;         break;
-            case FRAMEBUFFER_ATTACH_TYPE::STENCIL:  type = GL_STENCIL_ATTACHMENT;       break;
-            default:                                LOG(FATAL) << "Parameter error.";
+            case FRAMEBUFFER_ATTACH_TYPE::COLOR:            type = GL_COLOR_ATTACHMENT0;            break;
+            case FRAMEBUFFER_ATTACH_TYPE::DEPTH:            type = GL_DEPTH_ATTACHMENT;             break;
+            case FRAMEBUFFER_ATTACH_TYPE::STENCIL:          type = GL_STENCIL_ATTACHMENT;           break;
+            case FRAMEBUFFER_ATTACH_TYPE::DEPTH_STENCIL:    type = GL_DEPTH_STENCIL_ATTACHMENT;     break;
+            default:                                        LOG(FATAL) << "Parameter error.";
         }
-        glFramebufferTexture2D(GL_FRAMEBUFFER, type, GL_TEXTURE_2D, _textureID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, type, GL_TEXTURE_2D, _texture->getID(), 0);
     }
 
-    void attachRenderBuffer(FRAMEBUFFER_ATTACH_TYPE _type, unsigned int _rboID) {
-        LOG_ASSERT(_rboID != -1);
+    void attachRenderBuffer(FRAMEBUFFER_ATTACH_TYPE _type, std::shared_ptr<RenderBuffer> &_rbo) {
+        LOG_ASSERT(_rbo->getID() != -1);
 
         GLenum type;
         switch (_type) {
@@ -58,7 +63,7 @@ public:
             default:                                        LOG(FATAL) << "Parameter error.";
         }
 
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, type, GL_RENDERBUFFER, _rboID);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, type, GL_RENDERBUFFER, _rbo->getID());
     }
 
     void check() {

@@ -9,12 +9,12 @@
 #ifndef OPENGL_PRIMARY_FLOOR_H
 #define OPENGL_PRIMARY_FLOOR_H
 
-#include "../primitive/IPrimitive.h"
+#include "../core/IPrimitive.h"
 #include "../base/VertexArray.h"
 #include "../base/Buffer.h"
 #include "../base/ShaderProgram.h"
 #include "../base/Texture.h"
-#include "../base/IScene.h"
+#include "../core/IScene.h"
 
 #include "glog/logging.h"
 #include "imgui/imgui.h"
@@ -27,8 +27,8 @@ class Floor: public IPrimitive{
         VTexCoord tex;
     };
 public:
-    Floor(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
-    void paint() override;
+    Floor(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
+    void render() override;
 
 private:
     std::shared_ptr<VertexArray> m_vao;

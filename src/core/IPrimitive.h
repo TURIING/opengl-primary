@@ -9,15 +9,20 @@
 #ifndef OPENGL_PRIMARY_IPRIMITIVE_H
 #define OPENGL_PRIMARY_IPRIMITIVE_H
 
-#include "../base/IScene.h"
 #include "../base/Texture.h"
 #include "../base/ShaderProgram.h"
+#include "IRenderer.h"
+class IScene;
 
 class IPrimitive: public IRenderer{
 public:
-    explicit IPrimitive(IScene *_parent);
-    IPrimitive(IScene *_parent, std::shared_ptr<ShaderProgram> &_shaderProgram);
+    explicit IPrimitive(IScene *_parent, std::string &_name);
+    IPrimitive(IScene *_parent, std::string &_name, std::shared_ptr<ShaderProgram> &_shaderProgram);
     IPrimitive() = delete;
+
+    // 摄像机
+    virtual void setCamera(std::shared_ptr<Camera> &_camera);
+    std::shared_ptr<Camera> getCamera();
 
     // 缩放
     virtual void scale() {};
@@ -36,6 +41,12 @@ public:
 
     std::shared_ptr<ShaderProgram> getShaderProgram();
     void setShaderProgram(std::shared_ptr<ShaderProgram> &_shaderProgram);
+
+    PrimitiveType getPrimitiveType();
+
+protected:
+    void setPrimitiveType(PrimitiveType _type) { m_primitiveType = _type;}
+
 private:
     glm::vec3 m_translatePos = { 1.0f, 1.0f, 1.0f };                                        // 平移后的位置
 
@@ -45,6 +56,10 @@ private:
 
     std::vector<std::shared_ptr<Texture>> m_textures;                                               // 纹理集合
     std::shared_ptr<ShaderProgram> m_shaderProgram;
+
+    std::shared_ptr<Camera> m_camera;
+
+    PrimitiveType m_primitiveType = PrimitiveType::None;
 };
 
 #endif //OPENGL_PRIMARY_IPRIMITIVE_H

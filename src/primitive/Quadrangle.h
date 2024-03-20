@@ -9,24 +9,22 @@
 #ifndef OPENGL_PRIMARY_QUADRANGLE_H
 #define OPENGL_PRIMARY_QUADRANGLE_H
 
-#include "IPrimitive.h"
-#include "../base/IScene.h"
+#include "../core/IPrimitive.h"
 #include "../base/VertexArray.h"
 #include "../base/Buffer.h"
 #include "../base/ShaderProgram.h"
 #include "../base/Texture.h"
 #include "../BaseDefine.h"
 
-class Quadrangle: public IPrimitive{
+class Quadrangle: public IPrimitive {
     // 顶点属性结构体定义
     struct Vertex {
         glm::vec2 pos;
         glm::vec2 tex;
     };
 public:
-    void paint() override;
-
-    Quadrangle(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
+    explicit Quadrangle(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
+    void render() override;
 
 private:
     std::unique_ptr<VertexArray> m_vao;

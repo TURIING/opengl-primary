@@ -8,7 +8,7 @@
 
 #include "Square.h"
 
-Square::Square(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram) : IPrimitive(_parent) {
+Square::Square(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram) : IPrimitive(_parent, _name) {
     m_vao = std::make_unique<VertexArray>();
 
     m_vbo = std::make_unique<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
@@ -23,7 +23,7 @@ Square::Square(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram) :
     m_vao->setAttribute<Vertex, VTexCoord>(this->getShaderProgram()->getAttrLocation("aTexCoord"), offsetof(Vertex, tex));
 }
 
-void Square::paint() {
+void Square::render() {
     this->getShaderProgram()->use();
     m_vao->bind();
     m_texture->activate(GL_TEXTURE0);
@@ -35,7 +35,7 @@ void Square::paint() {
 
     model = glm::translate(model, this->getTranslatePos());
     view = camera->getViewMatrix();
-    projection = glm::perspective(glm::radians(camera->getFov()), (float)getWindowWidth() / (float)getWindowHeight(), 0.1f, 100.0f);
+    projection = camera->getProjection();
 
     this->getShaderProgram()->setMat4("model", glm::value_ptr(model));
     this->getShaderProgram()->setMat4("view", glm::value_ptr(view));

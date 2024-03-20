@@ -9,6 +9,8 @@
 #ifndef OPENGL_PRIMARY_TEXTURE_H
 #define OPENGL_PRIMARY_TEXTURE_H
 
+#include <tuple>
+
 #include "glad/glad.h"
 #include "glog/logging.h"
 
@@ -16,8 +18,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "../BaseDefine.h"
+
 class Texture {
 public:
+    enum STORAGE_TYPE { IMAGE2D, STORAGE2D };           // 纹理存储的类型
+
     // 用于构造生成来自图像文件的纹理
     Texture(std::string _path, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode) {
         LOG_ASSERT(!_path.empty());
@@ -35,13 +41,23 @@ public:
      * 用于构造生成frame buffer的纹理
      * @param _scrWidth 屏幕宽度
      * @param _scrHeight 屏幕高度
+     * @param _type 纹理存储的类型
      */
-    Texture(int _scrWidth, int _scrHeight, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode) {
-        glGenTextures(1, &m_id);
+    Texture(Size &_scrSize, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode, STORAGE_TYPE _type) {
+        const auto [width, height] = _scrSize;
+
+        glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
         this->bind();
 
         this->setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _scrWidth, _scrHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        switch (_type) {
+            case STORAGE_TYPE::IMAGE2D:
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                break;
+            case STORAGE_TYPE::STORAGE2D:
+                glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, width, height);
+                break;
+        }
     }
 
     ~Texture() {

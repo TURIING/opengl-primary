@@ -9,11 +9,11 @@
 #ifndef OPENGL_PRIMARY_TRIANGLE_H
 #define OPENGL_PRIMARY_TRIANGLE_H
 
-#include "IPrimitive.h"
+#include "../core/IPrimitive.h"
 #include "../base/VertexArray.h"
 #include "../base/Buffer.h"
 #include "../base/ShaderProgram.h"
-#include "../base/IScene.h"
+#include "../core/IScene.h"
 #include <memory>
 #include "../BaseDefine.h"
 #include "imgui/imgui.h"
@@ -25,8 +25,8 @@ class Triangle: public IPrimitive {
         VColor color;
     };
 public:
-    explicit Triangle(IScene *_parent);
-    void paint() override;
+    explicit Triangle(IScene *_parent, std::string _name);
+    void render() override;
 
 private:
     std::shared_ptr<VertexArray> m_vao;

@@ -9,8 +9,11 @@
 #ifndef OPENGL_PRIMARY_RENDERBUFFER_H
 #define OPENGL_PRIMARY_RENDERBUFFER_H
 
+#include <tuple>
+
 #include "glad/glad.h"
 #include "glog/logging.h"
+#include "../BaseDefine.h"
 
 // RBO内部格式
 enum class RENDER_BUFFER_FORMAT { DEPTH24_STENCIL8 };
@@ -32,8 +35,9 @@ public:
         glBindRenderbuffer(GL_RENDERBUFFER, m_id);
     }
 
-    void storage(RENDER_BUFFER_FORMAT _format, int _scrWidth, int _scrHeight) {
-        glRenderbufferStorage(GL_RENDERBUFFER, transFormatToGLEnum(_format), _scrWidth, _scrHeight);
+    void storage(RENDER_BUFFER_FORMAT _format, Size &_size) {
+        const auto [width, height] = _size;
+        glRenderbufferStorage(GL_RENDERBUFFER, transFormatToGLEnum(_format), width, height);
     }
 
     unsigned int getID() {

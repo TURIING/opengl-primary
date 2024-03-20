@@ -2,6 +2,11 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include "../BaseDefine.h"
+#include <tuple>
+#include "glog/logging.h"
 
 /**
  * 摄像机移动的方向
@@ -21,52 +26,50 @@ constexpr float FOV = 45.0f;
 
 class Camera {
 public:
-    Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
+    Camera();
 
-    Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch);
+    [[nodiscard]] float getFov() const { return m_fov; }
 
+    [[nodiscard]] glm::vec3 getUp() const;
 
-    glm::mat4 getViewMatrix() const { return glm::lookAt(m_position, m_position + m_front, m_up); }
+    [[nodiscard]] glm::vec3 getRight() const;
 
-    glm::vec3 getPosition() const { return m_position; }
+    [[nodiscard]] glm::vec3 getForward() const;
 
-    glm::vec3 getFront() const { return m_front; }
+    [[nodiscard]] glm::quat getDirection() const;
 
-    void processKeyboard(CAMERA_DIRECTION _direction, float _deltaTime);
+    [[nodiscard]] glm::mat4 getProjection() const { return m_projection; }
 
-    /**
-     * \brief 处理鼠标移动事件
-     * \param _xOffset 
-     * \param _yOffset 
-     * \param _constrainPitch 
-     */
-    void processMouseMovement(float _xOffset, float _yOffset, GLboolean _constrainPitch = true);
+    [[nodiscard]] glm::mat4 getViewProjection() const { return m_projection * this->getViewMatrix(); }
 
+    [[nodiscard]] glm::mat4 getViewMatrix() const { return m_viewMatrix; }
 
-    /*
-     * 处理鼠标滚动事件
-     */
-    void processMouseScroll(float _yOffset);
+    void setWindowSize(Size _size);
 
+    void setDistance(float _offset);
 
-    float getFov() const { return m_fov; }
+    void dispatch(Event _event, EventParam _param);
+private:
+    void updateViewMatrix();
+    void onMouseMove(double _x, double _y);
+    void onMouseWheelScroll(double _delta);
 
 private:
-    void updateCameraVector();
-
-
-private:
-    glm::vec3 m_position;
-    glm::vec3 m_front = glm::vec3(0.0f, 0.0f, -1.0f);                     // 摄像机指向的向量
-    glm::vec3 m_up;
-    glm::vec3 m_right;
-    glm::vec3 m_worldUp;
-
-    float m_yaw;                                                                    // 偏航角
-    float m_pitch;                                                                  // 俯仰角
-
-    float m_movementSpeed = SPEED;
-    float m_mouseSensitivity = SENSITIVITY;
-    float m_fov = FOV;                                                              // 视野（Field of View），定义了我们可以看到场景中多大的范围
+    glm::vec3 m_position = { 0, 0, 3 };
+    glm::mat4 m_projection = glm::mat4(1.0f);
+    glm::mat4 m_viewMatrix;
+    glm::vec3 m_focus = { 0, 0, 0 };
+    float m_distance = 5.0f;
+    //float m_aspect = 1.3f;
+    float m_fov = 45.0f;
+    float m_near = 0.1f;
+    float m_far = 100.0f;
+    float m_pitch = 0;
+    float m_yaw = 0;
+    glm::vec2 m_lastCursorPos = { 0, 0 };
+    const glm::vec3 m_right = { 1.0, 0, 0};
+    const glm::vec3 m_up = { 0, 1, 0 };
+    const glm::vec3 m_forward = { 0, 0, -1 };
+    const float m_rotateSpeed = 2;
 };
 

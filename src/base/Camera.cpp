@@ -1,71 +1,76 @@
 #include "Camera.h"
 
-Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch) {
-    m_position = _position;
-    m_worldUp = _up;
-    m_yaw = _yaw;
-    m_pitch = _pitch;
-
-    updateCameraVector();
+glm::vec3 Camera::getUp() const {
+    return glm::rotate(this->getDirection(), m_up);
 }
 
-Camera::Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch) {
-
-    m_front = glm::vec3(0.0f, 0.0f, -1.0f);
-    m_worldUp = glm::vec3(_upX, _upY, _upZ);
-    m_position = glm::vec3(_posX, _posY, _posZ);
-    m_yaw = _yaw;
-    m_pitch = _pitch;
-
-    updateCameraVector();
+glm::quat Camera::getDirection() const {
+    return glm::quat(glm::vec3(-m_pitch, -m_yaw, 0.0f));
 }
 
-void Camera::processMouseMovement(float _xOffset, float _yOffset, GLboolean _constrainPitch) {
-    _xOffset *= m_mouseSensitivity;
-    _yOffset *= m_mouseSensitivity;
+void Camera::setWindowSize(Size _size) {
+    const auto [width, height] = _size;
+    m_projection = glm::perspective(m_fov, width / static_cast<float>(height), m_near, m_far);
+}
 
-    m_yaw += _xOffset;
-    m_pitch += _yOffset;
+void Camera::updateViewMatrix() {
+    m_position = m_focus - this->getForward() * m_distance;
 
-    if (_constrainPitch) {
-        if (m_pitch > 89.0f) m_pitch = 89.0f;
-        if (m_pitch < -89.0f) m_pitch = -89.0f;
+    m_viewMatrix = glm::translate(glm::mat4(1.0f), m_position) * glm::toMat4(this->getDirection());
+    m_viewMatrix = glm::inverse(m_viewMatrix);
+}
+
+glm::vec3 Camera::getForward() const {
+    return glm::rotate(this->getDirection(), m_forward);
+}
+
+void Camera::setDistance(float _offset) {
+    m_distance -= _offset;
+    this->updateViewMatrix();
+}
+
+glm::vec3 Camera::getRight() const {
+    return glm::rotate(this->getDirection(), m_right);
+}
+
+// 处理鼠标移动事件
+void Camera::onMouseMove(double _x, double _y) {
+    glm::vec2 pos { _x, _y };
+    glm::vec2 delta = (pos - m_lastCursorPos) * 0.004f;
+
+    const auto sign = this->getUp().y < 0 ? -1.0f : 1.0f;
+    m_yaw += sign * delta.x * m_rotateSpeed;
+    m_pitch += delta.y * m_rotateSpeed;
+
+    this->updateViewMatrix();
+    m_lastCursorPos = pos;
+}
+
+void Camera::onMouseWheelScroll(double _delta) {
+    this->setDistance(_delta * 0.5f);
+    this->updateViewMatrix();
+}
+
+// 分发事件
+void Camera::dispatch(Event _event, EventParam _param) {
+    switch (_event) {
+        case Event::MOUSE_MOVE: {
+            const auto [button, x, y] = std::get<MouseState>(_param);
+            if(button == MOUSE_BUTTON::Right) {
+                this->onMouseMove(x, y);
+            }
+            else {
+                m_lastCursorPos = glm::vec2 { x, y };
+            }
+            break;
+        }
+        case Event::MOUSE_WHEEL:    this->onMouseWheelScroll(std::get<double>(_param));   break;
+        default:                    LOG(FATAL) << "Parameter error.";
     }
-
-    updateCameraVector();
 }
 
-void Camera::updateCameraVector() {
-    glm::vec3 front;
-    front.x = static_cast<float>(cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch)));
-    front.y = static_cast<float>(sin(glm::radians(m_pitch)));
-    front.z = static_cast<float>(sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch)));
-    m_front = glm::normalize(front);
-
-    m_right = glm::normalize(glm::cross(m_front, m_worldUp));
-    m_up = glm::normalize(glm::cross(m_right, m_front));
+Camera::Camera() {
+    this->updateViewMatrix();
 }
 
-void Camera::processMouseScroll(float _yOffset) {
-    m_fov -= static_cast<float>(_yOffset);
-    if (m_fov < 1.0f)
-        m_fov = 1.0f;
-    if (m_fov > 45.0f)
-        m_fov = 45.0f;
-}
 
-/*
- * 处理键盘事件
- */
-void Camera::processKeyboard(CAMERA_DIRECTION _direction, float _deltaTime) {
-    const float velocity = m_movementSpeed * _deltaTime;
-
-    switch (_direction)
-    {
-    case CAMERA_DIRECTION::FORWARD:     m_position += velocity * m_front;       break;
-    case CAMERA_DIRECTION::BACKWARD:    m_position -= velocity * m_front;       break;
-    case CAMERA_DIRECTION::LEFT:        m_position -= m_right * velocity;       break;
-    case CAMERA_DIRECTION::RIGHT:       m_position += m_right * velocity;       break;
-    default:                            break;
-    }
-}

@@ -8,7 +8,10 @@
 
 #include "Cube.h"
 
-Cube::Cube(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram) : IPrimitive(_parent) {
+Cube::Cube(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram) : IPrimitive(_parent, _name) {
+    this->setRenderType(RenderType::Primitive);
+    this->setPrimitiveType(PrimitiveType::Cube);
+
     m_vao = std::make_shared<VertexArray>();
 
     m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
@@ -23,7 +26,7 @@ Cube::Cube(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram) : IPr
     m_vao->setAttribute<Vertex, VTexCoord>(this->getShaderProgram()->getAttrLocation("aTexCoord"), offsetof(Vertex, tex));
 }
 
-void Cube::paint() {
+void Cube::render() {
     this->isEnabledOutline() ? paintWithOutline() : paintNormally();
 }
 
@@ -38,9 +41,9 @@ void Cube::paintNormally() {
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = glm::mat4(1.0f);
 
-    model = glm::translate(model, this->getTranslatePos());
+    //model = glm::translate(model, this->getTranslatePos());
     view = camera->getViewMatrix();
-    projection = glm::perspective(glm::radians(camera->getFov()), (float)getWindowWidth() / (float)getWindowHeight(), 0.1f, 100.0f);
+    projection = camera->getProjection();
 
     this->getShaderProgram()->setMat4("model", glm::value_ptr(model));
     this->getShaderProgram()->setMat4("view", glm::value_ptr(view));

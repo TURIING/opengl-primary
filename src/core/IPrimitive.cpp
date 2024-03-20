@@ -6,12 +6,15 @@
 * @description: 
 ********************************************************************************/
 #include "IPrimitive.h"
+#include "IScene.h"
 
-IPrimitive::IPrimitive(IScene *_parent) {
-    _parent->addRender(this);
+IPrimitive::IPrimitive(IScene *_parent, std::string &_name) {
+    _parent->addPrimitive(this);
+    this->setCamera(_parent->getCamera());
+    this->setRenderName(_name);
 }
 
-IPrimitive::IPrimitive(IScene *_parent, std::shared_ptr<ShaderProgram> &_shaderProgram): IPrimitive(_parent) {
+IPrimitive::IPrimitive(IScene *_parent, std::string &_name, std::shared_ptr<ShaderProgram> &_shaderProgram): IPrimitive(_parent, _name) {
     m_shaderProgram = _shaderProgram;
 }
 
@@ -54,6 +57,20 @@ std::shared_ptr<Texture> IPrimitive::getTexture(int _index) {
     LOG_ASSERT(_index >= 0 && _index < m_textures.size());
 
     return m_textures.at(_index);
+}
+
+std::shared_ptr<Camera> IPrimitive::getCamera() {
+    LOG_ASSERT(m_camera) << " Camera pointer not initialized.";
+    return m_camera;
+}
+
+void IPrimitive::setCamera(std::shared_ptr<Camera> &_camera) {
+    m_camera = _camera;
+}
+
+PrimitiveType IPrimitive::getPrimitiveType() {
+    LOG_ASSERT(m_primitiveType != PrimitiveType::None);
+    return m_primitiveType;
 }
 
 

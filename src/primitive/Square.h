@@ -9,8 +9,8 @@
 #ifndef OPENGL_PRIMARY_SQUARE_H
 #define OPENGL_PRIMARY_SQUARE_H
 
-#include "IPrimitive.h"
-#include "../base/IScene.h"
+#include "../core/IPrimitive.h"
+#include "../core/IScene.h"
 #include "../base/VertexArray.h"
 #include "../base/Buffer.h"
 #include "../base/ShaderProgram.h"
@@ -24,9 +24,9 @@ class Square: public IPrimitive{
         VTexCoord tex;
     };
 public:
-    void paint() override;
+    void render() override;
 
-    Square(IScene *_parent, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
+    Square(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
 
 private:
     std::unique_ptr<VertexArray> m_vao;
