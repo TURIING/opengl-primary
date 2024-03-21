@@ -29,16 +29,15 @@ void Floor::render() {
 
     const auto camera = this->getCamera();
 
-    //ImGui::Begin("Floor");
-    //static float scaleValue[] = {1.0, 1.0, 1.0};
-    //ImGui::InputFloat3("scale", scaleValue);
-    //ImGui::End();
-
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = glm::mat4(1.0f);
 
-    //model = glm::scale(model, glm::vec3(scaleValue[0], scaleValue[1], scaleValue[2]));
+    model = glm::translate(model, *this->getPosition());
+    model = glm::scale(model, *this->getScaling());
+    model = glm::rotate(model, this->getRotation()->x, glm::vec3{ 1, 0, 0 });
+    model = glm::rotate(model, this->getRotation()->y, glm::vec3{ 0, 1, 0 });
+    model = glm::rotate(model, this->getRotation()->z, glm::vec3{ 0, 0, 1 });
     view = camera->getViewMatrix();
     projection = camera->getProjection();
 

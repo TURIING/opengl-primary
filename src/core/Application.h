@@ -29,7 +29,7 @@ public:
     void dispatch(Event _event, EventParam _param);
     GLFWwindow* getWindowHandle() { return m_glContext->getWindowHandle(); }
     std::shared_ptr<IScene> getCurrentScene() { return m_currentScene; }
-
+    std::vector<std::string> getSceneNameList();
 private:
     Application();
     void render();
@@ -38,15 +38,14 @@ private:
     inline void onMouseMove(EventParam &_param);
     inline void onMouseWheelScroll(EventParam &_param);
     inline void onKeyPress(EventParam &_param);
-
+    inline void onSceneSelected(EventParam &_param);
 private:
     std::string m_appName;
     std::unique_ptr<GLContext> m_glContext;
     std::unique_ptr<UIContext> m_uiContext;
     std::unique_ptr<PropertyPanel> m_propertyPanel;
     std::unique_ptr<InspectPanel> m_inspectPanel;
-    std::shared_ptr<IScene> m_scene;
-    bool m_shouldClose = false;
+    bool m_shouldClose = false;                                     // 程序是否应该关闭
     std::shared_ptr<IScene> m_currentScene;
 };
 

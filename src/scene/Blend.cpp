@@ -45,18 +45,18 @@ void Blend::render() {
 
     m_floor->render();
 
-    m_cube1->translate(-1.0f, 0.0f, -1.0f);
+    //m_cube1->translate(-1.0f, 0.0f, -1.0f);
     m_cube1->render();
 
-    m_cube2->translate(2.0f, 0.0f, -1.2f);
+    //m_cube2->translate(2.0f, 0.0f, -1.2f);
     m_cube2->render();
 
     //const auto pos1 = sortedPos.rbegin()->second;
-    m_window1->translate(1.5f, 0.0f, -0.48f);
+    //m_window1->translate(1.5f, 0.0f, -0.48f);
     m_window1->render();
 
     //const auto pos2 = sortedPos.begin()->second;
-    m_window2->translate(0.5f, 0.0f, -0.6f);
+    //m_window2->translate(0.5f, 0.0f, -0.6f);
     m_window2->render();
 
 }

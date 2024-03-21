@@ -25,10 +25,14 @@ public:
     std::shared_ptr<Camera> getCamera();
 
     // 缩放
-    virtual void scale() {};
+    void scale(float _x, float _y, float _z) { m_scaling = { _x, _y, _z }; }
+    glm::vec3 *getScaling() { return &m_scaling; }
     // 平移
-    void translate(float _x, float _y, float _z);
-    glm::vec3 getTranslatePos() { return m_translatePos; }
+    void translate(float _x, float _y, float _z) { m_position = { _x, _y, _z }; }
+    glm::vec3 *getPosition() { return &m_position; }
+    // 旋转
+    void rotate(float _x, float _y, float _z) { m_rotation = { _x, _y, _z }; }
+    glm::vec3 *getRotation() { return &m_rotation; }
 
     // 轮廓
     void setOutline(int _width, Color _color);
@@ -48,7 +52,9 @@ protected:
     void setPrimitiveType(PrimitiveType _type) { m_primitiveType = _type;}
 
 private:
-    glm::vec3 m_translatePos = { 1.0f, 1.0f, 1.0f };                                        // 平移后的位置
+    glm::vec3 m_position = { 0.0f, 0.0f, 0.0f };                                            // 平移后的位置
+    glm::vec3 m_scaling = { 1.0f , 1.0f, 1.0f };
+    glm::vec3 m_rotation = { 0.0f , 0.0f, 0.0f };
 
     bool m_enableOutline = false;                                                                   // 是否绘制轮廓
     Color m_outlineColor = { 0, 0, 0, 1};                                                           // 轮廓颜色

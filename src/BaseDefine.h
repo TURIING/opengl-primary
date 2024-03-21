@@ -10,6 +10,7 @@
 #define OPENGL_PRIMARY_BASEDEFINE_H
 
 #include <variant>
+#include <string>
 
 constexpr int SCREEN_WIDTH = 2250;                                  // 窗口宽度
 constexpr int SCREEN_HEIGHT = 1340;                                 // 窗口高度
@@ -79,13 +80,14 @@ enum class Event {
     KEY_PRESS,
 
     PRIMITIVE_SELECTED,             // 当前选中的图元被改变
+    SCENE_SELECTED,                 // 当前选中的场景被改变
 };
 
 enum class MOUSE_BUTTON { None, Left, Right, Middle };
 
 using MouseState = std::tuple<MOUSE_BUTTON, double, double>;                        // 鼠标按键的状态以及鼠标的位置
 
-using EventParam = std::variant<KEYBOARD, MouseState, Size, double, int>;
+using EventParam = std::variant<KEYBOARD, MouseState, Size, double, int, std::string>;
 
 struct VPos {
     float x;

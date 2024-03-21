@@ -15,11 +15,13 @@
 void InspectPanel::render() {
     ImGui::Begin("Inspect");
 
-    if(ImGui::CollapsingHeader("Transform")) {
+    if(ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
         if(m_currentPrimitive) {
             const auto name = m_currentPrimitive->getRenderName();
 
-            ImGui::Text(name.c_str());
+            ImGui::DragFloat3("Position", (float *)m_currentPrimitive->getPosition(), 0.01f, -100.0f, 100.0f, "%.2f");
+            ImGui::DragFloat3("Scale", (float *)m_currentPrimitive->getScaling(), 0.01f, 0.0f, 10.0f, "%.2f");
+            ImGui::DragFloat3("Rotate", (float *)m_currentPrimitive->getRotation(), 0.01f, -180.0f, 180.0f, "%.2f");
         }
     }
 

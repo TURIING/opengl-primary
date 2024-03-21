@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "../BaseDefine.h"
 #include "InspectPanel.h"
+#include "SceneFactory.h"
 
 Application::Application() { }
 
@@ -21,12 +22,12 @@ void Application::init() {
     m_uiContext = std::make_unique<UIContext>();
     m_propertyPanel = std::make_unique<PropertyPanel>();
     m_inspectPanel = std::make_unique<InspectPanel>();
-    m_scene = std::make_shared<Blend>();
 
-    m_currentScene = m_scene;
+    SceneFactory::instance()->registerScene<Blend>();
+    m_currentScene = SceneFactory::instance()->makeInitialScene();
 
     // 初始化窗口时，先向scene分发一次resize事件，初始化视口
-    m_scene->dispatch(Event::WINDOW_RESIZE, winSize);
+    m_currentScene->dispatch(Event::WINDOW_RESIZE, winSize);
 }
 
 void Application::loop() {
@@ -48,7 +49,8 @@ void Application::dispatch(Event _event, EventParam _param) {
         case Event::MOUSE_WHEEL:                            this->onMouseWheelScroll(_param);                           break;
         case Event::KEY_PRESS:                              this->onKeyPress(_param);                                   break;
         case Event::PRIMITIVE_SELECTED:                     m_inspectPanel->dispatch(_event, _param);             break;
-        default:                    LOG(FATAL) << "Parameter error.";
+        case Event::SCENE_SELECTED:                         this->onSceneSelected(_param);                              break;
+        default:                                            LOG(FATAL) << "Parameter error.";
     }
 }
 
@@ -56,9 +58,9 @@ void Application::render() {
     m_glContext->preRender();
     m_uiContext->preRender();
 
-    m_scene->preRender();
-    m_scene->render();
-    m_scene->postRender();
+    m_currentScene->preRender();
+    m_currentScene->render();
+    m_currentScene->postRender();
     m_propertyPanel->render();
     m_inspectPanel->render();
 
@@ -69,7 +71,7 @@ void Application::render() {
 }
 
 void Application::onWindowResize(EventParam &_param) {
-    m_scene->dispatch(Event::WINDOW_RESIZE, _param);
+    m_currentScene->dispatch(Event::WINDOW_RESIZE, _param);
     this->render();
 }
 
@@ -78,11 +80,11 @@ void Application::onWindowClose(EventParam &_param) {
 }
 
 void Application::onMouseMove(EventParam &_param) {
-    m_scene->dispatch(Event::MOUSE_MOVE, _param);
+    m_currentScene->dispatch(Event::MOUSE_MOVE, _param);
 }
 
 void Application::onMouseWheelScroll(EventParam &_param) {
-    m_scene->dispatch(Event::MOUSE_WHEEL, _param);
+    m_currentScene->dispatch(Event::MOUSE_WHEEL, _param);
 }
 
 void Application::onKeyPress(EventParam &_param) {
@@ -92,6 +94,18 @@ void Application::onKeyPress(EventParam &_param) {
         return;
     }
 
-    m_scene->dispatch(Event::KEY_PRESS, _param);
+    m_currentScene->dispatch(Event::KEY_PRESS, _param);
+}
+
+// 获得所有已注册的场景类的名称集合
+std::vector<std::string> Application::getSceneNameList() {
+    return SceneFactory::instance()->getSceneNameList();
+}
+
+void Application::onSceneSelected(EventParam &_param) {
+    m_currentScene = SceneFactory::instance()->makeScene(std::get<std::string>(_param));
+
+    const auto winSize = Size{ SCREEN_WIDTH, SCREEN_HEIGHT };
+    m_currentScene->dispatch(Event::WINDOW_RESIZE, winSize);
 }
 

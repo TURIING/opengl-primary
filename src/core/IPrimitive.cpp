@@ -30,11 +30,6 @@ void IPrimitive::setOutline(int _width, Color _color) {
     m_outlineWidth = _width;
 }
 
-// 平移
-void IPrimitive::translate(float _x, float _y, float _z) {
-    m_translatePos = { _x, _y, _z };
-}
-
 // 添加纹理
 void IPrimitive::addTexture(std::shared_ptr<Texture> _texture) {
     m_textures.push_back(_texture);

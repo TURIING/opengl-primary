@@ -17,16 +17,28 @@ PropertyPanel::PropertyPanel() {
 void PropertyPanel::render() {
     const auto currentScene = Application::instance()->getCurrentScene();
     const auto& primitiveList = currentScene->getAllPrimitive();
+    const auto& sceneList = Application::instance()->getSceneNameList();
 
     ImGui::Begin("Properties");
 
-    if(ImGui::CollapsingHeader("Scene")) {
+    if(ImGui::CollapsingHeader("Application", ImGuiTreeNodeFlags_DefaultOpen)) {
+        static std::string currentItemStr = sceneList.at(0);
+        if(ImGui::BeginCombo("Scene", currentItemStr.c_str())) {
+            for(auto i = 0; i < sceneList.size(); i++) {
+                if(const auto& value = sceneList.at(i); ImGui::Selectable(value.c_str(), currentItemStr == value)) {
+                    currentItemStr = value;
+                    Application::instance()->dispatch(Event::SCENE_SELECTED, value);
+                }
+            }
+            ImGui::EndCombo();
+        }
+    }
 
-        //const auto renderNameList = this->getRenderNameList(primitiveList);
+    if(ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen)) {
         static std::string currentItemStr = primitiveList.begin()->second->getRenderName();
         if(ImGui::BeginCombo("Primitive", currentItemStr.c_str())) {
             for(const auto [id, render]: primitiveList) {
-                if(const auto value = render->getRenderName(); ImGui::Selectable(render->getRenderName().c_str(), currentItemStr == value)) {
+                if(const auto& value = render->getRenderName(); ImGui::Selectable(value.c_str(), currentItemStr == value)) {
                     currentItemStr = value;
                     Application::instance()->dispatch(Event::PRIMITIVE_SELECTED, id);
                 }
