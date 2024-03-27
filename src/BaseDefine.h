@@ -36,6 +36,7 @@ enum class PrimitiveType {
     None,
     Cube,
     PhongLight,
+    Skybox,
 };
 
 // 渲染物体的类型

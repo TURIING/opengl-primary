@@ -21,6 +21,12 @@ class IRenderer {
 public:
     IRenderer();
 
+    bool getDeepTest() { return m_enableDeepTest; }
+    void setDeepTest(bool _on = true);
+
+    bool getStencilTest() { return m_enableStencilTest; }
+    void setStencilTest(bool _on = true);
+
     virtual void render() = 0;
 
     virtual void setWindowSize(std::tuple<int, int> &_windowSize);
@@ -43,6 +49,9 @@ private:
     RenderType m_renderType = RenderType::None;
     std::string m_renderName;
     int m_renderID = -1;
+
+    bool m_enableDeepTest = false;												                    // 是否启用深度测试
+    bool m_enableStencilTest = false;												                // 是否启用模板测试
 
     static int UUID;
 };

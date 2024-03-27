@@ -40,8 +40,6 @@ public:
 
     [[nodiscard]] glm::mat4 getProjection() const { return m_projection; }
 
-    [[nodiscard]] glm::mat4 getViewProjection() const { return m_projection * this->getViewMatrix(); }
-
     [[nodiscard]] glm::mat4 getViewMatrix() const { return m_viewMatrix; }
 
     void setWindowSize(Size _size);

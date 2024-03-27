@@ -10,41 +10,17 @@
 
 IScene::IScene() {
     m_camera = std::make_shared<Camera>();
+    m_ubo = std::make_unique<Buffer<VPMatrices>>(0);
 }
-
-// 启用深度测试
-void IScene::setDeepTest(bool _on) {
-    if(_on) {
-        glEnable(GL_DEPTH_TEST);
-        m_enableDeepTest = true;
-    }
-    else {
-        glDisable(GL_DEPTH_TEST);
-        m_enableDeepTest = false;
-    }
-}
-
-// 启用模板测试
-void IScene::setStencilTest(bool _on) {
-    if(_on) {
-        glEnable(GL_STENCIL_TEST);
-        m_enableStencilTest = true;
-    }
-    else {
-        glDisable(GL_STENCIL_TEST);
-        m_enableStencilTest = false;
-    }
-}
-
 
 void IScene::clear() {
     std::apply(glClearColor, m_clearColor);                                                // 设置清空屏幕所用的颜色
 
-    if (m_enableDeepTest) {
+    if (this->getDeepTest()) {
         glClear(GL_DEPTH_BUFFER_BIT);                                                      // 清空屏幕的颜色缓冲及深度缓冲
     }
 
-    if(m_enableStencilTest) {
+    if(this->getStencilTest()) {
         glClear(GL_STENCIL_BUFFER_BIT);
     }
 
@@ -91,6 +67,10 @@ void IScene::preRender() {
     m_fbo->bind();
 
     this->setDeepTest(true);
+
+    m_ubo->setData<glm::mat4>(offsetof(VPMatrices, view), static_cast<const void *>(glm::value_ptr(this->getCamera()->getViewMatrix())));
+    m_ubo->setData<glm::mat4>(offsetof(VPMatrices, projection), static_cast<const void *>(glm::value_ptr(this->getCamera()->getProjection())));
+
     this->clear();
 }
 

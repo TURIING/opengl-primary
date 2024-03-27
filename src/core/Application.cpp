@@ -10,6 +10,7 @@
 #include "../BaseDefine.h"
 #include "InspectPanel.h"
 #include "SceneFactory.h"
+#include "../scene/SkyboxDemo.h"
 
 Application::Application() { }
 
@@ -24,6 +25,7 @@ void Application::init() {
     m_inspectPanel = std::make_unique<InspectPanel>();
 
     SceneFactory::instance()->registerScene<Blend>();
+    //SceneFactory::instance()->registerScene<SkyboxDemo>();
     m_currentScene = SceneFactory::instance()->makeInitialScene();
 
     // 初始化窗口时，先向scene分发一次resize事件，初始化视口

@@ -44,4 +44,28 @@ void IRenderer::setRenderName(std::string &_name) {
     m_renderName = _name;
 }
 
+// 启用深度测试
+void IRenderer::setDeepTest(bool _on) {
+    if(_on) {
+        glEnable(GL_DEPTH_TEST);
+        m_enableDeepTest = true;
+    }
+    else {
+        glDisable(GL_DEPTH_TEST);
+        m_enableDeepTest = false;
+    }
+}
+
+// 启用模板测试
+void IRenderer::setStencilTest(bool _on) {
+    if(_on) {
+        glEnable(GL_STENCIL_TEST);
+        m_enableStencilTest = true;
+    }
+    else {
+        glDisable(GL_STENCIL_TEST);
+        m_enableStencilTest = false;
+    }
+}
+
 

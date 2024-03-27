@@ -18,11 +18,13 @@
 #include "../primitive/Quadrangle.h"
 
 class IScene: public IRenderer{
+    struct VPMatrices {
+        glm::mat4 view;
+        glm::mat4 projection;
+    };
+
 public:
     IScene();
-
-    void setDeepTest(bool _on = true);
-    void setStencilTest(bool _on = true);
 
     // 清屏颜色
     void clear();
@@ -42,7 +44,6 @@ public:
     std::shared_ptr<Camera>& getCamera();
 
 protected:
-
     virtual void onWindowResize(Size &_size);
     virtual void onKeyPress(KEYBOARD _key);
 
@@ -53,9 +54,6 @@ private:
     std::map<int, IPrimitive *> m_primitiveList;                                                    // 场景中的图元集合
     Color m_clearColor = { 0.26f, 0.30f, 0.31f, 1.0f };					                            // 清屏颜色
 
-    bool m_enableDeepTest = false;												                    // 是否启用深度测试
-    bool m_enableStencilTest = false;												                // 是否启用模板测试
-
     std::shared_ptr<Camera> m_camera;
 private:
     std::unique_ptr<FrameBuffer> m_fbo;
@@ -63,6 +61,7 @@ private:
     std::shared_ptr<Texture> m_fboColorTexture;
     std::shared_ptr<Texture> m_fboDepthTexture;
     std::shared_ptr<Texture> m_screenTexture;
+    std::unique_ptr<Buffer<VPMatrices>> m_ubo;
 };
 
 #endif //OPENGL_PRIMARY_ISCENE_H

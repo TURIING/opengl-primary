@@ -18,7 +18,6 @@ class IPrimitive: public IRenderer{
 public:
     explicit IPrimitive(IScene *_parent, std::string &_name);
     IPrimitive(IScene *_parent, std::string &_name, std::shared_ptr<ShaderProgram> &_shaderProgram);
-    IPrimitive() = delete;
 
     // 摄像机
     virtual void setCamera(std::shared_ptr<Camera> &_camera);
@@ -44,6 +43,8 @@ public:
     std::shared_ptr<Texture> getTexture(int _index);
 
     std::shared_ptr<ShaderProgram> getShaderProgram();
+
+public:
     void setShaderProgram(std::shared_ptr<ShaderProgram> &_shaderProgram);
 
     PrimitiveType getPrimitiveType();
