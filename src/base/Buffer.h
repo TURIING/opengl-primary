@@ -59,6 +59,8 @@ public:
     // 用于给ubo设置数据
     template<class U>
     void setData(unsigned int _offset, const void *_dataPtr) {
+        LOG_ASSERT(m_bufferType == BUFFER_TYPE::UNIFORM_BUFFER);
+
         this->bind();
 
         const auto target = this->transformBufferTypeToTarget(m_bufferType);

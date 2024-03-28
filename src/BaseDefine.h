@@ -11,6 +11,8 @@
 
 #include <variant>
 #include <string>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 constexpr int SCREEN_WIDTH = 2250;                                  // 窗口宽度
 constexpr int SCREEN_HEIGHT = 1340;                                 // 窗口高度
@@ -30,6 +32,27 @@ constexpr char *MODEL_PATH = "./resources/model";
 using Color = std::tuple<float, float, float, float>;
 
 using Size = std::tuple<float, float>;
+
+struct PointLight {
+    glm::vec3 position;
+    int :4;
+
+    glm::vec3 ambient;
+    int :4;
+
+    glm::vec3 diffuse;
+    int :4;
+
+    glm::vec3 specular;
+    int :4;
+};
+
+struct Material {
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    float shininess;
+};
 
 // 图元类型
 enum class PrimitiveType {

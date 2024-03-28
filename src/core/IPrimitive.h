@@ -26,9 +26,11 @@ public:
     // 缩放
     void scale(float _x, float _y, float _z) { m_scaling = { _x, _y, _z }; }
     glm::vec3 *getScaling() { return &m_scaling; }
+
     // 平移
     void translate(float _x, float _y, float _z) { m_position = { _x, _y, _z }; }
     glm::vec3 *getPosition() { return &m_position; }
+
     // 旋转
     void rotate(float _x, float _y, float _z) { m_rotation = { _x, _y, _z }; }
     glm::vec3 *getRotation() { return &m_rotation; }
@@ -39,18 +41,26 @@ public:
     Color getOutlineColor() { return m_outlineColor; }
     int getOutlineWidth() const { return m_outlineWidth; }
 
+    // 纹理
     void addTexture(std::shared_ptr<Texture> _texture);
     std::shared_ptr<Texture> getTexture(int _index);
+    [[nodiscard]] std::vector<std::shared_ptr<Texture>> getTextureList() { return m_textures; }
+
+    // 材质
+    void setMaterial(const Material &_material);
+    Material *getMaterial() { return &m_material; }
+
+    // 光源
+    PointLight *getPointLight();
 
     std::shared_ptr<ShaderProgram> getShaderProgram();
 
+    void setPrimitiveType(PrimitiveType _type) { m_primitiveType = _type;}
+
 public:
     void setShaderProgram(std::shared_ptr<ShaderProgram> &_shaderProgram);
-
     PrimitiveType getPrimitiveType();
-
-protected:
-    void setPrimitiveType(PrimitiveType _type) { m_primitiveType = _type;}
+    void preRender() override;
 
 private:
     glm::vec3 m_position = { 0.0f, 0.0f, 0.0f };                                            // 平移后的位置
@@ -61,12 +71,26 @@ private:
     Color m_outlineColor = { 0, 0, 0, 1};                                                           // 轮廓颜色
     int m_outlineWidth = 0;                                                                         // 轮廓宽度
 
-    std::vector<std::shared_ptr<Texture>> m_textures;                                               // 纹理集合
+    std::vector<std::shared_ptr<Texture>> m_textures;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 
     std::shared_ptr<Camera> m_camera;
 
     PrimitiveType m_primitiveType = PrimitiveType::None;
+
+    Material m_material = {
+        glm::vec3(1.0f, 0.5f, 0.31f),
+        glm::vec3(1.0f, 0.5f, 0.31f),
+        glm::vec3(0.5f, 0.5f, 0.5f),
+        32.0f
+    };
+
+    PointLight m_pointLight = {
+        .position =  glm::vec3(0.0f, 0.0f, 0.0f),
+        .ambient = glm::vec3(0.2f, 0.2f, 0.2f),
+        .diffuse = glm::vec3(0.5f, 0.5f, 0.5f),
+        .specular = glm::vec3(1.0f, 1.0f, 1.0f)
+    };
 };
 
 #endif //OPENGL_PRIMARY_IPRIMITIVE_H

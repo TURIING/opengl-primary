@@ -10,7 +10,8 @@
 
 IScene::IScene() {
     m_camera = std::make_shared<Camera>();
-    m_ubo = std::make_unique<Buffer<VPMatrices>>(0);
+    m_vpMatricesUbo = std::make_unique<Buffer<VPMatricesBlock>>(0);
+    m_pointLightUbo = std::make_unique<Buffer<PointLight>>(1);
 }
 
 void IScene::clear() {
@@ -68,8 +69,20 @@ void IScene::preRender() {
 
     this->setDeepTest(true);
 
-    m_ubo->setData<glm::mat4>(offsetof(VPMatrices, view), static_cast<const void *>(glm::value_ptr(this->getCamera()->getViewMatrix())));
-    m_ubo->setData<glm::mat4>(offsetof(VPMatrices, projection), static_cast<const void *>(glm::value_ptr(this->getCamera()->getProjection())));
+    // 传递view、projection矩阵
+    m_vpMatricesUbo->setData<glm::mat4>(offsetof(VPMatricesBlock, view), static_cast<const void *>(glm::value_ptr(this->getCamera()->getViewMatrix())));
+    m_vpMatricesUbo->setData<glm::mat4>(offsetof(VPMatricesBlock, projection), static_cast<const void *>(glm::value_ptr(this->getCamera()->getProjection())));
+
+    // 传递光源信息
+    for(const auto [id, child]: m_primitiveList) {
+        if(child->getPrimitiveType() == PrimitiveType::PhongLight) {
+            const auto light = child->getPointLight();
+            m_pointLightUbo->setData<glm::vec3>(offsetof(PointLight, position), static_cast<const void *>(glm::value_ptr(*child->getPosition())));
+            m_pointLightUbo->setData<glm::vec3>(offsetof(PointLight, ambient), static_cast<const void *>(glm::value_ptr(light->ambient)));
+            m_pointLightUbo->setData<glm::vec3>(offsetof(PointLight, diffuse), static_cast<const void *>(glm::value_ptr(light->diffuse)));
+            m_pointLightUbo->setData<glm::vec3>(offsetof(PointLight, specular), static_cast<const void *>(glm::value_ptr(light->specular)));
+        }
+    }
 
     this->clear();
 }

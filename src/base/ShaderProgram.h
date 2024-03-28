@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glog/logging.h>
 
 class ShaderProgram
 {
@@ -44,7 +45,12 @@ public:
 private:
 	static void checkLinkError(unsigned int _id);
 
+    inline void checkCurrentProgramBeUsed() const {
+        LOG_ASSERT(m_currentUseProgramId = m_id);
+    }
+
 private:
 	unsigned int m_id = -1;
+    static unsigned int m_currentUseProgramId;
 };
 

@@ -15,11 +15,8 @@ Floor::Floor(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> 
     auto shadeProgram = _shaderProgram ? _shaderProgram : std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
     this->setShaderProgram(shadeProgram);
 
-    m_vao->setAttribute<Vertex, VPos>(this->getShaderProgram()->getAttrLocation("aPos"), offsetof(Vertex, pos));
-    m_vao->setAttribute<Vertex, VTexCoord>(this->getShaderProgram()->getAttrLocation("aTexCoord"), offsetof(Vertex, tex));
-
-    m_texture = std::make_shared<Texture>(TEXTURE_FILE, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
-    this->getShaderProgram()->setInt("texture1", 0);
+    m_vao->setAttribute<Vertex, decltype(Vertex::pos)>(this->getShaderProgram()->getAttrLocation("aPos"), offsetof(Vertex, pos));
+    m_vao->setAttribute<Vertex, decltype(Vertex::tex)>(this->getShaderProgram()->getAttrLocation("aTexCoord"), offsetof(Vertex, tex));
 }
 
 void Floor::render() {
@@ -28,14 +25,6 @@ void Floor::render() {
     m_texture->activate(GL_TEXTURE0);
 
     const auto camera = this->getCamera();
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, *this->getPosition());
-    model = glm::scale(model, *this->getScaling());
-    model = glm::rotate(model, this->getRotation()->x, glm::vec3{ 1, 0, 0 });
-    model = glm::rotate(model, this->getRotation()->y, glm::vec3{ 0, 1, 0 });
-    model = glm::rotate(model, this->getRotation()->z, glm::vec3{ 0, 0, 1 });
-    this->getShaderProgram()->setMat4("model", glm::value_ptr(model));
 
     this->getShaderProgram()->setBool("enableOutline", false);
 

@@ -35,7 +35,6 @@ public:
 
     std::shared_ptr<IScene> makeInitialScene() {
         LOG_ASSERT(!m_map.empty());
-
         return m_map.begin()->second();
     }
 
@@ -56,6 +55,7 @@ public:
     }
 private:
     SceneFactory() { }
+
 private:
     std::map<std::string, std::function<std::shared_ptr<IScene>()>> m_map;
 };

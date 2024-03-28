@@ -24,11 +24,12 @@
 #include "../core/IScene.h"
 
 class Cube: public IPrimitive {
-    // 顶点属性结构体定义
     struct Vertex {
-        VPos pos;
-        VTexCoord tex;
+        glm::vec3 position;
+        glm::vec3 normal;
+        glm::vec2 texCoords;
     };
+
 public:
     Cube(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
     void render() override;
@@ -40,55 +41,53 @@ private:
 private:
     std::shared_ptr<VertexArray> m_vao;
     std::shared_ptr<Buffer<Vertex>> m_vbo;
-    std::shared_ptr<Texture> m_texture;
 
     const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";
     const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/cube/fragment.glsl";
-    const std::string TEXTURE_FILE = std::string(TEXTURE_PATH) + "/container2.png";
 
     std::vector<Vertex> m_vertices = {
-        // Back face
-        Vertex{ VPos{ -0.5f, -0.5f, -0.5f }, VTexCoord{ 0.0f, 0.0f }}, // Bottom-left
-        Vertex{ VPos{ 0.5f,  0.5f, -0.5f }, VTexCoord{ 1.0f, 1.0f }}, // top-right
-        Vertex{ VPos{ 0.5f, -0.5f, -0.5f }, VTexCoord{ 1.0f, 0.0f }}, // bottom-right
-        Vertex{ VPos{ 0.5f,  0.5f, -0.5f }, VTexCoord{ 1.0f, 1.0f }}, // top-right
-        Vertex{ VPos{ -0.5f, -0.5f, -0.5f }, VTexCoord{ 0.0f, 0.0f }}, // bottom-left
-        Vertex{ VPos{ -0.5f,  0.5f, -0.5f }, VTexCoord{ 0.0f, 1.0f }}, // top-left
-        // Front face
-        Vertex{ VPos{ -0.5f, -0.5f,  0.5f }, VTexCoord{ 0.0f, 0.0f }}, // bottom-left
-        Vertex{ VPos{ 0.5f, -0.5f,  0.5f }, VTexCoord{ 1.0f, 0.0f }}, // bottom-right
-        Vertex{ VPos{ 0.5f,  0.5f,  0.5f }, VTexCoord{ 1.0f, 1.0f }}, // top-right
-        Vertex{ VPos{ 0.5f,  0.5f,  0.5f }, VTexCoord{ 1.0f, 1.0f }}, // top-right
-        Vertex{ VPos{ -0.5f,  0.5f,  0.5f }, VTexCoord{ 0.0f, 1.0f }}, // top-left
-        Vertex{ VPos{ -0.5f, -0.5f,  0.5f }, VTexCoord{ 0.0f, 0.0f }}, // bottom-left
-        // Left face
-        Vertex{ VPos{ -0.5f,  0.5f,  0.5f }, VTexCoord{ 1.0f, 0.0f }}, // top-right
-        Vertex{ VPos{ -0.5f,  0.5f, -0.5f }, VTexCoord{ 1.0f, 1.0f }}, // top-left
-        Vertex{ VPos{ -0.5f, -0.5f, -0.5f }, VTexCoord{ 0.0f, 1.0f }}, // bottom-left
-        Vertex{ VPos{ -0.5f, -0.5f, -0.5f }, VTexCoord{ 0.0f, 1.0f }}, // bottom-left
-        Vertex{ VPos{ -0.5f, -0.5f,  0.5f }, VTexCoord{ 0.0f, 0.0f }}, // bottom-right
-        Vertex{ VPos{ -0.5f,  0.5f,  0.5f }, VTexCoord{ 1.0f, 0.0f }}, // top-right
-        // Right face
-        Vertex{ VPos{ 0.5f,  0.5f,  0.5f }, VTexCoord{ 1.0f, 0.0f }}, // top-left
-        Vertex{ VPos{ 0.5f, -0.5f, -0.5f }, VTexCoord{ 0.0f, 1.0f }}, // bottom-right
-        Vertex{ VPos{ 0.5f,  0.5f, -0.5f }, VTexCoord{ 1.0f, 1.0f }}, // top-right
-        Vertex{ VPos{ 0.5f, -0.5f, -0.5f }, VTexCoord{ 0.0f, 1.0f }}, // bottom-right
-        Vertex{ VPos{ 0.5f,  0.5f,  0.5f }, VTexCoord{ 1.0f, 0.0f }}, // top-left
-        Vertex{ VPos{ 0.5f, -0.5f,  0.5f }, VTexCoord{ 0.0f, 0.0f }}, // bottom-left
-        // Bottom face
-        Vertex{ VPos{ -0.5f, -0.5f, -0.5f }, VTexCoord{ 0.0f, 1.0f }}, // top-right
-        Vertex{ VPos{ 0.5f, -0.5f, -0.5f }, VTexCoord{ 1.0f, 1.0f }}, // top-left
-        Vertex{ VPos{ 0.5f, -0.5f,  0.5f }, VTexCoord{ 1.0f, 0.0f }}, // bottom-left
-        Vertex{ VPos{ 0.5f, -0.5f,  0.5f }, VTexCoord{ 1.0f, 0.0f }}, // bottom-left
-        Vertex{ VPos{ -0.5f, -0.5f,  0.5f }, VTexCoord{ 0.0f, 0.0f }}, // bottom-right
-        Vertex{ VPos{ -0.5f, -0.5f, -0.5f }, VTexCoord{ 0.0f, 1.0f }}, // top-right
-        // Top face
-        Vertex{ VPos{ -0.5f,  0.5f, -0.5f }, VTexCoord{ 0.0f, 1.0f }}, // top-left
-        Vertex{ VPos{ 0.5f,  0.5f,  0.5f }, VTexCoord{ 1.0f, 0.0f }}, // bottom-right
-        Vertex{ VPos{ 0.5f,  0.5f, -0.5f }, VTexCoord{ 1.0f, 1.0f }}, // top-right
-        Vertex{ VPos{ 0.5f,  0.5f,  0.5f }, VTexCoord{ 1.0f, 0.0f }}, // bottom-right
-        Vertex{ VPos{ -0.5f,  0.5f, -0.5f }, VTexCoord{ 0.0f, 1.0f }}, // top-left
-        Vertex{ VPos{ -0.5f,  0.5f,  0.5f }, VTexCoord{ 0.0f, 0.0f }}  // bottom-left
+        // positions          // normals           // texture coords
+        Vertex { glm::vec3{ -0.5f, -0.5f, -0.5f }, glm::vec3{ 0.0f,  0.0f, -1.0f }, glm::vec2{ 0.0f,  0.0f } },
+        Vertex { glm::vec3{ 0.5f,  -0.5f, -0.5f }, glm::vec3{ 0.0f,  0.0f, -1.0f }, glm::vec2{ 1.0f,  0.0f } },
+        Vertex { glm::vec3{ 0.5f,  0.5f, -0.5f }, glm::vec3{ 0.0f,  0.0f, -1.0f }, glm::vec2{ 1.0f,  1.0f } },
+        Vertex { glm::vec3{ 0.5f,  0.5f, -0.5f }, glm::vec3{ 0.0f,  0.0f, -1.0f }, glm::vec2{ 1.0f,  1.0f } },
+        Vertex { glm::vec3{ -0.5f,  0.5f, -0.5f }, glm::vec3{ 0.0f,  0.0f, -1.0f }, glm::vec2{ 0.0f,  1.0f } },
+        Vertex { glm::vec3{ -0.5f, -0.5f, -0.5f }, glm::vec3{ 0.0f,  0.0f, -1.0f }, glm::vec2{ 0.0f,  0.0f } },
+
+        Vertex { glm::vec3{ -0.5f, -0.5f,  0.5f }, glm::vec3{ 0.0f,  0.0f,  1.0f }, glm::vec2{ 0.0f,  0.0f } },
+        Vertex { glm::vec3{ 0.5f,  -0.5f,  0.5f }, glm::vec3{ 0.0f,  0.0f,  1.0f }, glm::vec2{ 1.0f,  0.0f } },
+        Vertex { glm::vec3{ 0.5f,  0.5f,  0.5f }, glm::vec3{ 0.0f,  0.0f,  1.0f }, glm::vec2{ 1.0f,  1.0f  } },
+        Vertex { glm::vec3{ 0.5f,  0.5f,  0.5f }, glm::vec3{ 0.0f,  0.0f,  1.0f }, glm::vec2{ 1.0f,  1.0f  } },
+        Vertex { glm::vec3{ -0.5f, 0.5f,  0.5f }, glm::vec3{ 0.0f,  0.0f,  1.0f }, glm::vec2{ 0.0f,  1.0f } },
+        Vertex { glm::vec3{ -0.5f, -0.5f,  0.5f }, glm::vec3{ 0.0f,  0.0f,  1.0f }, glm::vec2{ 0.0f,  0.0f } },
+
+        Vertex { glm::vec3{ -0.5f,  0.5f,  0.5f }, glm::vec3{ -1.0f,  0.0f,  0.0f }, glm::vec2{ 1.0f,  0.0f } },
+        Vertex { glm::vec3{ -0.5f,  0.5f, -0.5f }, glm::vec3{ -1.0f,  0.0f,  0.0f }, glm::vec2{ 1.0f,  1.0f } },
+        Vertex { glm::vec3{ -0.5f, -0.5f, -0.5f }, glm::vec3{ -1.0f,  0.0f,  0.0f }, glm::vec2{ 0.0f,  1.0f } },
+        Vertex { glm::vec3{ -0.5f, -0.5f, -0.5f }, glm::vec3{ -1.0f,  0.0f,  0.0f }, glm::vec2{ 0.0f,  1.0f } },
+        Vertex { glm::vec3{ -0.5f, -0.5f,  0.5f }, glm::vec3{ -1.0f,  0.0f,  0.0f }, glm::vec2{ 0.0f,  0.0f } },
+        Vertex { glm::vec3{ -0.5f,  0.5f,  0.5f }, glm::vec3{ -1.0f,  0.0f,  0.0f }, glm::vec2{ 1.0f,  0.0f } },
+
+        Vertex { glm::vec3{ 0.5f,  0.5f,  0.5f }, glm::vec3{ 1.0f,  0.0f,  0.0f }, glm::vec2{ 1.0f,  0.0f } },
+        Vertex { glm::vec3{ 0.5f,  0.5f, -0.5f }, glm::vec3{ 1.0f,  0.0f,  0.0f }, glm::vec2{ 1.0f,  1.0f } },
+        Vertex { glm::vec3{ 0.5f, -0.5f, -0.5f }, glm::vec3{ 1.0f,  0.0f,  0.0f }, glm::vec2{ 0.0f,  1.0f } },
+        Vertex { glm::vec3{ 0.5f, -0.5f, -0.5f }, glm::vec3{ 1.0f,  0.0f,  0.0f }, glm::vec2{ 0.0f,  1.0f } },
+        Vertex { glm::vec3{ 0.5f, -0.5f,  0.5f }, glm::vec3{ 1.0f,  0.0f,  0.0f }, glm::vec2{ 0.0f,  0.0f } },
+        Vertex { glm::vec3{ 0.5f,  0.5f,  0.5f }, glm::vec3{ 1.0f,  0.0f,  0.0f }, glm::vec2{ 1.0f,  0.0f } },
+
+        Vertex { glm::vec3{ -0.5f, -0.5f, -0.5f }, glm::vec3{ 0.0f, -1.0f,  0.0f }, glm::vec2{ 0.0f,  1.0f } },
+        Vertex { glm::vec3{ 0.5f,  -0.5f, -0.5f }, glm::vec3{ 0.0f, -1.0f,  0.0f }, glm::vec2{ 1.0f,  1.0f } },
+        Vertex { glm::vec3{ 0.5f,  -0.5f,  0.5f }, glm::vec3{ 0.0f, -1.0f,  0.0f }, glm::vec2{ 1.0f,  0.0f } },
+        Vertex { glm::vec3{ 0.5f,  -0.5f,  0.5f }, glm::vec3{ 0.0f, -1.0f,  0.0f }, glm::vec2{ 1.0f,  0.0f } },
+        Vertex { glm::vec3{ -0.5f, -0.5f,  0.5f }, glm::vec3{ 0.0f, -1.0f,  0.0f }, glm::vec2{ 0.0f,  0.0f } },
+        Vertex { glm::vec3{ -0.5f, -0.5f, -0.5f }, glm::vec3{ 0.0f, -1.0f,  0.0f }, glm::vec2{ 0.0f,  1.0f } },
+
+        Vertex { glm::vec3{ -0.5f,  0.5f, -0.5f }, glm::vec3{ 0.0f,  1.0f,  0.0f }, glm::vec2{ 0.0f,  1.0f } },
+        Vertex { glm::vec3{ 0.5f,   0.5f, -0.5f }, glm::vec3{ 0.0f,  1.0f,  0.0f }, glm::vec2{ 1.0f,  1.0f } },
+        Vertex { glm::vec3{ 0.5f,   0.5f,  0.5f }, glm::vec3{ 0.0f,  1.0f,  0.0f }, glm::vec2{ 1.0f,  0.0f } },
+        Vertex { glm::vec3{ 0.5f,   0.5f,  0.5f }, glm::vec3{ 0.0f,  1.0f,  0.0f }, glm::vec2{ 1.0f,  0.0f } },
+        Vertex { glm::vec3{ -0.5f,  0.5f,  0.5f }, glm::vec3{ 0.0f,  1.0f,  0.0f }, glm::vec2{ 0.0f,  0.0f } },
+        Vertex { glm::vec3{ -0.5f,  0.5f, -0.5f }, glm::vec3{ 0.0f,  1.0f,  0.0f }, glm::vec2{ 0.0f,  1.0f } }
     };
 };
 

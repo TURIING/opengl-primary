@@ -22,7 +22,7 @@ void PropertyPanel::render() {
     ImGui::Begin("Properties");
 
     if(ImGui::CollapsingHeader("Application", ImGuiTreeNodeFlags_DefaultOpen)) {
-        static std::string currentItemStr = sceneList.at(0);
+        static std::string currentItemStr = sceneList.back();
         if(ImGui::BeginCombo("Scene", currentItemStr.c_str())) {
             for(auto i = 0; i < sceneList.size(); i++) {
                 if(const auto& value = sceneList.at(i); ImGui::Selectable(value.c_str(), currentItemStr == value)) {

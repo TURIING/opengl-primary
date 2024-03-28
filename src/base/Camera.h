@@ -42,6 +42,8 @@ public:
 
     [[nodiscard]] glm::mat4 getViewMatrix() const { return m_viewMatrix; }
 
+    [[nodiscard]] glm::vec3 getPosition() { return m_position; }
+
     void setWindowSize(Size _size);
 
     void setDistance(float _offset);

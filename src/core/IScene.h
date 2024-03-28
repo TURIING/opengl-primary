@@ -18,7 +18,7 @@
 #include "../primitive/Quadrangle.h"
 
 class IScene: public IRenderer{
-    struct VPMatrices {
+    struct VPMatricesBlock {
         glm::mat4 view;
         glm::mat4 projection;
     };
@@ -61,7 +61,8 @@ private:
     std::shared_ptr<Texture> m_fboColorTexture;
     std::shared_ptr<Texture> m_fboDepthTexture;
     std::shared_ptr<Texture> m_screenTexture;
-    std::unique_ptr<Buffer<VPMatrices>> m_ubo;
+    std::unique_ptr<Buffer<VPMatricesBlock>> m_vpMatricesUbo;
+    std::unique_ptr<Buffer<PointLight>> m_pointLightUbo;
 };
 
 #endif //OPENGL_PRIMARY_ISCENE_H
