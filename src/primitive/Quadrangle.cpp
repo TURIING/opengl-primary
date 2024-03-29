@@ -23,7 +23,7 @@ Quadrangle::Quadrangle(IScene *_parent, std::string _name, std::shared_ptr<Shade
 void Quadrangle::render() {
     this->getShaderProgram()->use();
     m_vao->bind();
-    this->getTexture(0)->activate(GL_TEXTURE0);
+    this->getTexture(0)->activate();
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }

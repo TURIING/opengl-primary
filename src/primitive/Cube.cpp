@@ -8,9 +8,8 @@
 
 #include "Cube.h"
 
-Cube::Cube(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram) : IPrimitive(_parent, _name) {
-    this->setRenderType(RenderType::Primitive);
-    this->setPrimitiveType(PrimitiveType::Cube);
+Cube::Cube(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram) : IPrimitive(_parent, _name, _shaderProgram) {
+    this->setPrimitiveType(PrimitiveType::Common);
 
     m_vao = std::make_shared<VertexArray>();
 

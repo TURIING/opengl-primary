@@ -13,6 +13,7 @@
 #include "../base/ShaderProgram.h"
 #include "IRenderer.h"
 class IScene;
+class Material;
 
 class IPrimitive: public IRenderer{
 public:
@@ -43,12 +44,13 @@ public:
 
     // 纹理
     void addTexture(std::shared_ptr<Texture> _texture);
+    void resetTexture(unsigned int _index, Texture* _texture);
     std::shared_ptr<Texture> getTexture(int _index);
     [[nodiscard]] std::vector<std::shared_ptr<Texture>> getTextureList() { return m_textures; }
 
     // 材质
-    void setMaterial(const Material &_material);
-    Material *getMaterial() { return &m_material; }
+    void setMaterial(std::shared_ptr<Material> _material);
+    std::shared_ptr<Material> getMaterial() { return m_material; }
 
     // 光源
     PointLight *getPointLight();
@@ -78,15 +80,13 @@ private:
 
     PrimitiveType m_primitiveType = PrimitiveType::None;
 
-    Material m_material = {
-        glm::vec3(1.0f, 0.5f, 0.31f),
-        glm::vec3(1.0f, 0.5f, 0.31f),
-        glm::vec3(0.5f, 0.5f, 0.5f),
-        32.0f
-    };
+    std::shared_ptr<Material> m_material;
 
     PointLight m_pointLight = {
         .position =  glm::vec3(0.0f, 0.0f, 0.0f),
+        .constant = 1.0f,
+        .linear = 0.09f,
+        .quadratic = 0.032f,
         .ambient = glm::vec3(0.2f, 0.2f, 0.2f),
         .diffuse = glm::vec3(0.5f, 0.5f, 0.5f),
         .specular = glm::vec3(1.0f, 1.0f, 1.0f)

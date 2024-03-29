@@ -10,16 +10,20 @@
 #define OPENGL_PRIMARY_INSPECTPANEL_H
 
 #include "IPanel.h"
+#include <memory>
 
 class IPrimitive;
+class Material;
 
 class InspectPanel: public IPanel {
 public:
     void render() override;
 
     void dispatch(Event _event, EventParam &_param) override;
+
 private:
     void onPrimitiveSelected(EventParam &_param);
+    void buildMaterialItem(std::shared_ptr<Material> &_material);
 
 private:
     IPrimitive *m_currentPrimitive = nullptr;

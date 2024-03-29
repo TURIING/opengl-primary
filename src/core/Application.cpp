@@ -12,6 +12,7 @@
 #include "SceneFactory.h"
 #include "../scene/SkyboxDemo.h"
 #include "../scene/PhongLight.h"
+#include "../scene/Blend.h"
 
 Application::Application() { }
 

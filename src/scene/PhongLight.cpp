@@ -7,6 +7,7 @@
 ********************************************************************************/
 
 #include "PhongLight.h"
+#include "../base/Material.h"
 
 PhongLight::PhongLight() {
     this->setClearColor(0.2, 0.2, 0.2, 1);
@@ -23,13 +24,6 @@ PhongLight::PhongLight() {
 }
 
 void PhongLight::render() {
-    // 给窗户的位置排序
-    //std::map<float, VPos> sortedPos;
-    //for(auto &pos: m_windowPos) {
-    //    auto distance = glm::length(this->getCamera()->getPosition() - glm::vec3(pos.x, pos.y, pos.z));
-    //    sortedPos[distance] = pos;
-    //}
-
     m_cube->render();
     m_light->render();
 }

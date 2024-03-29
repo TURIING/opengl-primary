@@ -9,8 +9,7 @@ glm::quat Camera::getDirection() const {
 }
 
 void Camera::setWindowSize(Size _size) {
-    const auto [width, height] = _size;
-    m_projection = glm::perspective(m_fov, width / static_cast<float>(height), m_near, m_far);
+    m_projection = glm::perspective(m_fov, _size.width / _size.height, m_near, m_far);
 }
 
 void Camera::updateViewMatrix() {

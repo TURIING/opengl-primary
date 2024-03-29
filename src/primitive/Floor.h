@@ -33,13 +33,10 @@ public:
 private:
     std::shared_ptr<VertexArray> m_vao;
     std::shared_ptr<Buffer<Vertex>> m_vbo;
-    std::shared_ptr<Texture> m_texture;
 
     // shader同cube的一致
     const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";
     const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/cube/fragment.glsl";
-
-    const std::string TEXTURE_FILE = std::string(TEXTURE_PATH) + "/metal.png";
 
     std::vector<Vertex> m_vertices = {
         Vertex{ VPos{5.0f,  -0.5f,  5.0f,}, VTexCoord{2.0f, 0.0f,}},

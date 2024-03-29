@@ -17,6 +17,7 @@ Blend::Blend() {
     m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
 
     m_floor = std::make_unique<Floor>(this, "floor", m_shaderProgram);
+    //m_floor->addTexture(std::make_shared<Texture>())
 
     m_cube1 = std::make_unique<Cube>(this, "cube_1", m_shaderProgram);
 
@@ -24,7 +25,6 @@ Blend::Blend() {
 
     m_window1 = std::make_unique<Square>(this, "window_1", m_shaderProgram);
     m_window2 = std::make_unique<Square>(this, "window_2", m_shaderProgram);
-    //m_window3 = std::make_unique<Square>(this, m_shaderProgram);
 }
 
 void Blend::render() {

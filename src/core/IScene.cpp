@@ -78,6 +78,9 @@ void IScene::preRender() {
         if(child->getPrimitiveType() == PrimitiveType::PhongLight) {
             const auto light = child->getPointLight();
             m_pointLightUbo->setData<glm::vec3>(offsetof(PointLight, position), static_cast<const void *>(glm::value_ptr(*child->getPosition())));
+            m_pointLightUbo->setData<float>(offsetof(PointLight, constant), static_cast<const void *>(&light->constant));
+            m_pointLightUbo->setData<float>(offsetof(PointLight, linear), static_cast<const void *>(&light->linear));
+            m_pointLightUbo->setData<float>(offsetof(PointLight, quadratic), static_cast<const void *>(&light->quadratic));
             m_pointLightUbo->setData<glm::vec3>(offsetof(PointLight, ambient), static_cast<const void *>(glm::value_ptr(light->ambient)));
             m_pointLightUbo->setData<glm::vec3>(offsetof(PointLight, diffuse), static_cast<const void *>(glm::value_ptr(light->diffuse)));
             m_pointLightUbo->setData<glm::vec3>(offsetof(PointLight, specular), static_cast<const void *>(glm::value_ptr(light->specular)));

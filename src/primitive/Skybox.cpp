@@ -44,7 +44,7 @@ void Skybox::render() {
 
     this->getShaderProgram()->use();
     m_vao->bind();
-    m_texture->activate(GL_TEXTURE0);
+    m_texture->activate();
     const auto camera = this->getCamera();
 
     glm::mat4 view = camera->getViewMatrix();

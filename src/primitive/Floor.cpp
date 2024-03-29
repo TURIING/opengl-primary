@@ -9,6 +9,8 @@
 #include "Floor.h"
 
 Floor::Floor(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram): IPrimitive(_parent, _name) {
+    this->setPrimitiveType(PrimitiveType::Common);
+
     m_vao = std::make_shared<VertexArray>();
     m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
 
@@ -22,7 +24,6 @@ Floor::Floor(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> 
 void Floor::render() {
     this->getShaderProgram()->use();
     m_vao->bind();
-    m_texture->activate(GL_TEXTURE0);
 
     const auto camera = this->getCamera();
 

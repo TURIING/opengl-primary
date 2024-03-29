@@ -16,9 +16,9 @@
 #include "../BaseDefine.h"
 #include "GLFW/glfw3.h"
 #include "PropertyPanel.h"
-#include "../scene/Blend.h"
 
 class InspectPanel;
+class IScene;
 
 class Application {
 public:

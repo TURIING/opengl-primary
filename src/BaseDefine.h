@@ -28,15 +28,25 @@ constexpr char *TEXTURE_PATH = "./resources/texture";
 constexpr char *MODEL_PATH = "./resources/model";
 #endif
 
+const auto TEXTURE_DEFAULT_FILE = std::string(TEXTURE_PATH) + "/default_texture.png";
+
 // ----------------------------------------------- 类型定义 ----------------------------------------------------------
 using Color = std::tuple<float, float, float, float>;
 
-using Size = std::tuple<float, float>;
+struct Size {
+    float width;
+    float height;
+};
 
 struct PointLight {
     glm::vec3 position;
     int :4;
 
+    float constant;
+    float linear;
+    float quadratic;
+    int :4;
+
     glm::vec3 ambient;
     int :4;
 
@@ -45,19 +55,12 @@ struct PointLight {
 
     glm::vec3 specular;
     int :4;
-};
-
-struct Material {
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
-    float shininess;
 };
 
 // 图元类型
 enum class PrimitiveType {
     None,
-    Cube,
+    Common,
     PhongLight,
     Skybox,
 };

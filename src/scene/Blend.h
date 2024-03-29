@@ -31,7 +31,6 @@ private:
     std::unique_ptr<Cube> m_cube2;
     std::unique_ptr<Square> m_window1;
     std::unique_ptr<Square> m_window2;
-    //std::unique_ptr<Square> m_window3;
 
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 

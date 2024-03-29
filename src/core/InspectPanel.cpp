@@ -8,9 +8,12 @@
 
 #include "InspectPanel.h"
 #include <tuple>
+#include "ImGuiFileDialog/ImGuiFileDialog.h"
 #include "imgui/imgui.h"
 #include "Application.h"
 #include "IPrimitive.h"
+#include "IScene.h"
+#include "../base/Material.h"
 
 void InspectPanel::render() {
     ImGui::Begin("Inspect");
@@ -29,16 +32,19 @@ void InspectPanel::render() {
     // 材质
     if(ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
         auto material = m_currentPrimitive->getMaterial();
-        ImGui::DragFloat3("ambient", (float *)(&material->ambient), 0.01f, 0.0f, 10.0f, "%.2f");
-        ImGui::DragFloat3("diffuse", (float *)(&material->diffuse), 0.01f, 0.0f, 10.0f, "%.2f");
-        ImGui::DragFloat3("specular", (float *)(&material->specular), 0.01f, 0.0f, 10.0f, "%.2f");
-        ImGui::DragFloat("shininess", &material->shininess, 1, 0.0f, 100.0f, "%.2f");
+
+        this->buildMaterialItem(material);
+
+        ImGui::DragFloat("shininess", material->getShininess(), 1, 0.0f, 100.0f, "%.2f");
     }
 
     // 点光源
     if(m_currentPrimitive->getPrimitiveType() == PrimitiveType::PhongLight) {
         if(ImGui::CollapsingHeader("PointLight", ImGuiTreeNodeFlags_DefaultOpen)) {
             auto light = m_currentPrimitive->getPointLight();
+            ImGui::DragFloat("constant", (float *)(&light->constant), 0.01f, 0.0f, 1.0f, "%.2f");
+            ImGui::DragFloat("linear", (float *)(&light->linear), 0.01f, 0.0f, 1.0f, "%.2f");
+            ImGui::DragFloat("quadratic", (float *)(&light->quadratic), 0.001f, 0.0f, 0.1f, "%.3f");
             ImGui::DragFloat3("ambient", (float *)(&light->ambient), 0.01f, 0.0f, 10.0f, "%.2f");
             ImGui::DragFloat3("diffuse", (float *)(&light->diffuse), 0.01f, 0.0f, 10.0f, "%.2f");
             ImGui::DragFloat3("specular", (float *)(&light->specular), 0.01f, 0.0f, 10.0f, "%.2f");
@@ -58,3 +64,62 @@ void InspectPanel::onPrimitiveSelected(EventParam &_param) {
     const auto primitiveID = std::get<int>(_param);
     m_currentPrimitive = Application::instance()->getCurrentScene()->getPrimitiveByID(primitiveID);
 }
+
+void InspectPanel::buildMaterialItem(std::shared_ptr<Material> &_material) {
+    const auto borderCol = ImGui::GetStyleColorVec4(ImGuiCol_Border);
+    const auto tintCol = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    const auto diffuseTitle = "Diffuse";
+    const auto diffuseTexture = _material->getDiffuse();
+    const auto diffuseKey = diffuseTitle + std::to_string(diffuseTexture->getID());
+    ImGui::PushID(diffuseTitle);
+    ImGui::Separator();
+    ImGui::Text(diffuseTitle);
+    ImGui::Image((void*)diffuseTexture->getID(), ImVec2{ 100, 100 }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), tintCol, borderCol);
+    ImGui::SameLine();
+    if(ImGui::Button("Open file")) {
+        IGFD::FileDialogConfig config;
+        config.path = TEXTURE_PATH;
+        ImGuiFileDialog::Instance()->OpenDialog(diffuseKey, "Choose File", ".png,.jpg", config);
+    }
+    if (ImGuiFileDialog::Instance()->Display(diffuseKey)) {
+        if (ImGuiFileDialog::Instance()->IsOk()) {
+            std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+            _material->resetDiffuse(filePathName);
+        }
+        ImGuiFileDialog::Instance()->Close();
+    }
+    ImGui::SameLine();
+    if(ImGui::Button("Reset")) {
+        _material->resetDiffuse(TEXTURE_DEFAULT_FILE);
+    }
+    ImGui::PopID();
+
+    const auto specularTitle = "Specular";
+    const auto specularTexture = _material->getSpecular();
+    const auto specularKey = specularTitle + std::to_string(specularTexture->getID());
+    ImGui::PushID(specularTitle);
+    ImGui::Separator();
+    ImGui::Text(specularTitle);
+    ImGui::Image((void*)specularTexture->getID(), ImVec2{ 100, 100 }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), tintCol, borderCol);
+    ImGui::SameLine();
+    if(ImGui::Button("Open file")) {
+        IGFD::FileDialogConfig config;
+        config.path = TEXTURE_PATH;
+        ImGuiFileDialog::Instance()->OpenDialog(specularKey, "Choose File", ".png,.jpg", config);
+    }
+    if (ImGuiFileDialog::Instance()->Display(specularKey)) {
+        if (ImGuiFileDialog::Instance()->IsOk()) {
+            std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+            _material->resetSpecular(filePathName);
+        }
+        ImGuiFileDialog::Instance()->Close();
+    }
+    ImGui::SameLine();
+    if(ImGui::Button("Reset")) {
+        _material->resetSpecular(TEXTURE_DEFAULT_FILE);
+    }
+    ImGui::PopID();
+}
+
+
