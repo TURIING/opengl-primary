@@ -28,6 +28,7 @@ private:
 
     std::unique_ptr<Cube> m_cube;
     std::unique_ptr<Cube> m_light;
+    std::unique_ptr<Cube> m_light1;
 
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 };

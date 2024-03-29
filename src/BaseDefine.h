@@ -40,21 +40,16 @@ struct Size {
 
 struct PointLight {
     glm::vec3 position;
-    int :4;
-
     float constant;
-    float linear;
-    float quadratic;
-    int :4;
 
     glm::vec3 ambient;
-    int :4;
+    float linear;
 
     glm::vec3 diffuse;
-    int :4;
+    float quadratic;
 
     glm::vec3 specular;
-    int :4;
+    int :8;
 };
 
 // 图元类型

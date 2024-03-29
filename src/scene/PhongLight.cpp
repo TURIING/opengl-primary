@@ -21,9 +21,15 @@ PhongLight::PhongLight() {
     m_light->setPrimitiveType(PrimitiveType::PhongLight);
     m_light->scale(0.2, 0.2, 0.2);
     m_light->translate(1, 1, 1);
+
+    m_light1 = std::make_unique<Cube>(this, "light1", m_shaderProgram);
+    m_light1->setPrimitiveType(PrimitiveType::PhongLight);
+    m_light1->scale(0.2, 0.2, 0.2);
+    m_light1->translate(1, 1, 1);
 }
 
 void PhongLight::render() {
     m_cube->render();
     m_light->render();
+    m_light1->render();
 }

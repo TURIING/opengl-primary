@@ -1,19 +1,23 @@
 #version 460 core
 
+#define MAX_LIGHT_NUM 10
+
 struct PointLight {
 	vec3 position;
-
 	float constant;
-	float linear;
-	float quadratic;
 
 	vec3 ambient;
+	float linear;
+
 	vec3 diffuse;
+	float quadratic;
+
 	vec3 specular;
 };
 
 layout (std140, binding = 1) uniform Light {
-	PointLight pointLight;
+	PointLight pointLight[MAX_LIGHT_NUM];
+	int actualPointLightNum;
 };
 
 out vec4 FragColor;
@@ -45,7 +49,10 @@ void main()
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(cameraPos - FragPos);
 
-	vec3 result = CalcPointLight(pointLight, norm, FragPos, viewDir);
+	vec3 result = vec3(0, 0, 0);
+	for(int i = 0; i < actualPointLightNum; i++) {
+		result += CalcPointLight(pointLight[i], norm, FragPos, viewDir);
+	}
 
 	if(!enableOutline) {
 		FragColor = vec4(result, 1.0);

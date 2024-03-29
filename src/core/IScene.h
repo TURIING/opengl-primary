@@ -17,10 +17,17 @@
 #include "IRenderer.h"
 #include "../primitive/Quadrangle.h"
 
+#define MAX_LIGHT_NUM 10
+
 class IScene: public IRenderer{
     struct VPMatricesBlock {
         glm::mat4 view;
         glm::mat4 projection;
+    };
+
+    struct PointLightBlock {
+        PointLight pointLight[MAX_LIGHT_NUM];
+        int actualPointLightNum = 0;
     };
 
 public:
@@ -62,7 +69,7 @@ private:
     std::shared_ptr<Texture> m_fboDepthTexture;
     std::shared_ptr<Texture> m_screenTexture;
     std::unique_ptr<Buffer<VPMatricesBlock>> m_vpMatricesUbo;
-    std::unique_ptr<Buffer<PointLight>> m_pointLightUbo;
+    std::unique_ptr<Buffer<PointLightBlock>> m_pointLightUbo;
 };
 
 #endif //OPENGL_PRIMARY_ISCENE_H

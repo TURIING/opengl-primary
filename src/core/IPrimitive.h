@@ -85,10 +85,10 @@ private:
     PointLight m_pointLight = {
         .position =  glm::vec3(0.0f, 0.0f, 0.0f),
         .constant = 1.0f,
-        .linear = 0.09f,
-        .quadratic = 0.032f,
         .ambient = glm::vec3(0.2f, 0.2f, 0.2f),
+        .linear = 0.09f,
         .diffuse = glm::vec3(0.5f, 0.5f, 0.5f),
+        .quadratic = 0.032f,
         .specular = glm::vec3(1.0f, 1.0f, 1.0f)
     };
 };
