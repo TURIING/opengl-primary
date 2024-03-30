@@ -25,7 +25,7 @@ class Triangle: public IPrimitive {
         VColor color;
     };
 public:
-    explicit Triangle(IScene *_parent, std::string _name);
+    explicit Triangle(std::shared_ptr<IScene> &_parent, const std::string &_name);
     void render() override;
 
 private:

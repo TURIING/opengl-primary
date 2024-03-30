@@ -23,14 +23,11 @@ public:
 
     void render() override;
 private:
-    const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";
-    const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/cube/fragment.glsl";
-
     std::unique_ptr<Cube> m_cube;
-    std::unique_ptr<Cube> m_light;
-    std::unique_ptr<Cube> m_light1;
+    //std::unique_ptr<Cube> m_light;
+    //std::unique_ptr<Cube> m_light1;
+    //std::unique_ptr<Cube> m_light2;
 
-    std::shared_ptr<ShaderProgram> m_shaderProgram;
 };
 
 

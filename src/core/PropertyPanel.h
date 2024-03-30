@@ -20,14 +20,9 @@ class IRenderer;
 class PropertyPanel: public IPanel {
 public:
     PropertyPanel();
-
-private:
-    void dispatch(Event _event, EventParam &_param) override;
-
-public:
     void render() override;
 
+private:
+    void dispatch(Event _event, EventParam _param) override;
 };
-
-
 #endif //OPENGL_PRIMARY_PROPERTYPANEL_H

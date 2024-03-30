@@ -17,8 +17,7 @@ class Material;
 
 class IPrimitive: public IRenderer{
 public:
-    explicit IPrimitive(IScene *_parent, std::string &_name);
-    IPrimitive(IScene *_parent, std::string &_name, std::shared_ptr<ShaderProgram> &_shaderProgram);
+    explicit IPrimitive(std::shared_ptr<IScene> &_parent, const std::string &_name);
 
     // 摄像机
     virtual void setCamera(std::shared_ptr<Camera> &_camera);
@@ -54,7 +53,8 @@ public:
 
     // 光源
     PointLight *getPointLight();
-
+    void setLightType(LightType _type) { m_lightType = _type; }
+    LightType getLightType() { return m_lightType; }
     std::shared_ptr<ShaderProgram> getShaderProgram();
 
     void setPrimitiveType(PrimitiveType _type) { m_primitiveType = _type;}
@@ -65,7 +65,7 @@ public:
     void preRender() override;
 
 private:
-    glm::vec3 m_position = { 0.0f, 0.0f, 0.0f };                                            // 平移后的位置
+    glm::vec3 m_position = { -1.0f, -1.0f, -1.0f };                                         // 平移后的位置
     glm::vec3 m_scaling = { 1.0f , 1.0f, 1.0f };
     glm::vec3 m_rotation = { 0.0f , 0.0f, 0.0f };
 
@@ -82,6 +82,7 @@ private:
 
     std::shared_ptr<Material> m_material;
 
+    LightType m_lightType = LightType::None;                                                        // 光源类型
     PointLight m_pointLight = {
         .position =  glm::vec3(0.0f, 0.0f, 0.0f),
         .constant = 1.0f,

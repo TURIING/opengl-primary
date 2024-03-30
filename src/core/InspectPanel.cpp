@@ -14,6 +14,7 @@
 #include "IPrimitive.h"
 #include "IScene.h"
 #include "../base/Material.h"
+#include "../Utility.h"
 
 void InspectPanel::render() {
     ImGui::Begin("Inspect");
@@ -35,12 +36,27 @@ void InspectPanel::render() {
 
         this->buildMaterialItem(material);
 
-        ImGui::DragFloat("shininess", material->getShininess(), 1, 0.0f, 100.0f, "%.2f");
+        ImGui::DragFloat("shininess", material->getShininess(), 1, 2.0f, 256.0f, "%.2f");
     }
 
-    // 点光源
-    if(m_currentPrimitive->getPrimitiveType() == PrimitiveType::PhongLight) {
-        if(ImGui::CollapsingHeader("PointLight", ImGuiTreeNodeFlags_DefaultOpen)) {
+    // 光源
+    if(ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+        auto lightTypeSelected = m_currentPrimitive->getLightType();
+
+        if(ImGui::BeginCombo("Light Type", Utility::transformLightTypeToStr(lightTypeSelected))) {
+            for(auto i = 0; i < static_cast<int>(LightType::End); i++) {
+                if(const auto type = static_cast<LightType>(i); ImGui::Selectable(Utility::transformLightTypeToStr(type), lightTypeSelected == type)) {
+                    lightTypeSelected = type;
+                    m_currentPrimitive->setLightType(type);
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        // 点光源
+        if(m_currentPrimitive->getLightType() == LightType::PointLight) {
+            ImGui::SeparatorText("Point Light Info");
+
             auto light = m_currentPrimitive->getPointLight();
             ImGui::DragFloat("constant", (float *)(&light->constant), 0.01f, 0.0f, 1.0f, "%.2f");
             ImGui::DragFloat("linear", (float *)(&light->linear), 0.01f, 0.0f, 1.0f, "%.2f");
@@ -54,9 +70,11 @@ void InspectPanel::render() {
     ImGui::End();
 }
 
-void InspectPanel::dispatch(Event _event, EventParam &_param) {
+void InspectPanel::dispatch(Event _event, EventParam _param) {
     switch (_event) {
-        case Event::PRIMITIVE_SELECTED: this->onPrimitiveSelected(_param);
+        case Event::PRIMITIVE_SELECTED:         this->onPrimitiveSelected(_param);      break;
+        case Event::SCENE_CREATED:              m_currentPrimitive = nullptr;              break;
+        case Event::PRIMITIVE_DELETED:          m_currentPrimitive = nullptr;              break;
     }
 }
 

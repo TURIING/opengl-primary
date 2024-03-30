@@ -19,7 +19,7 @@ SkyboxDemo::SkyboxDemo() {
 
     //m_cube1 = std::make_unique<Cube>(this, "cube_1", m_shaderProgram);
     //m_cube2 = std::make_unique<Cube>(this, "cube_2", m_shaderProgram);
-    m_skybox = std::make_unique<Skybox>(this, "skybox");
+    //m_skybox = std::make_unique<Skybox>(this, "skybox");
 }
 
 void SkyboxDemo::render() {

@@ -8,10 +8,15 @@
 
 #include "IScene.h"
 
+const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";
+const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/cube/fragment.glsl";
+
 IScene::IScene() {
+    this->setDeepTest(true);
     m_camera = std::make_shared<Camera>();
     m_vpMatricesUbo = std::make_unique<Buffer<VPMatricesBlock>>(0);
     m_pointLightUbo = std::make_unique<Buffer<PointLightBlock>>(1);
+    m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
 }
 
 void IScene::clear() {
@@ -76,7 +81,7 @@ void IScene::preRender() {
     // 传递光源信息
     int i = 0;
     for(const auto [id, child]: m_primitiveList) {
-        if(child->getPrimitiveType() == PrimitiveType::PhongLight) {
+        if(child->getLightType() == LightType::PointLight) {
             const auto extraOffset = i * sizeof(PointLight);
             const auto light = child->getPointLight();
             m_pointLightUbo->setData<glm::vec3>(extraOffset + offsetof(PointLight, position), static_cast<const void *>(glm::value_ptr(*child->getPosition())));
@@ -106,11 +111,12 @@ void IScene::postRender() {
 // 分发事件
 void IScene::dispatch(Event _event, EventParam _param) {
     switch (_event) {
-        case Event::WINDOW_RESIZE:  this->onWindowResize(std::get<Size>(_param));           break;
+        case Event::WINDOW_RESIZE:              this->onWindowResize(std::get<Size>(_param));           break;
         case Event::MOUSE_MOVE:
-        case Event::MOUSE_WHEEL:    m_camera->dispatch(_event, _param);               break;
-        case Event::KEY_PRESS:      this->onKeyPress(std::get<KEYBOARD>(_param));          break;
-        default:                    LOG(FATAL) << "Parameter error.";
+        case Event::MOUSE_WHEEL:                m_camera->dispatch(_event, _param);               break;
+        case Event::KEY_PRESS:                  this->onKeyPress(std::get<KEYBOARD>(_param));          break;
+        case Event::PRIMITIVE_DELETED:          this->deletePrimitive(std::get<int>(_param));           break;
+        default:                                LOG(FATAL) << " Undefined conditional branch.";
     }
 }
 
@@ -127,12 +133,16 @@ void IScene::onKeyPress(KEYBOARD _key) {
 }
 
 // 将图元挂载在场景上
-void IScene::addPrimitive(IPrimitive *_render) {
+void IScene::addPrimitive(std::shared_ptr<IPrimitive> &_render) {
     m_primitiveList.emplace(_render->getRenderID(), _render);
 }
 
+void IScene::render() {
+    for(auto [id, primitive]: this->getAllPrimitive()) {
+        primitive->render();
+    }
+}
 
-
-
-
-
+void IScene::deletePrimitive(int _id) {
+    m_primitiveList.erase(_id);
+}

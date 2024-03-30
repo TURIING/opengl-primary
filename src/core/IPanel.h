@@ -14,7 +14,7 @@
 class Application;
 class IPanel {
     virtual void render() = 0;
-    virtual void dispatch(Event _event, EventParam &_param) = 0;
+    virtual void dispatch(Event _event, EventParam _param) = 0;
 };
 
 #endif //OPENGL_PRIMARY_IPANEL_H

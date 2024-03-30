@@ -27,16 +27,12 @@ class Floor: public IPrimitive{
         VTexCoord tex;
     };
 public:
-    Floor(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
+    Floor(std::shared_ptr<IScene> _parent, std::string _name);
     void render() override;
 
 private:
     std::shared_ptr<VertexArray> m_vao;
     std::shared_ptr<Buffer<Vertex>> m_vbo;
-
-    // shader同cube的一致
-    const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";
-    const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/cube/fragment.glsl";
 
     std::vector<Vertex> m_vertices = {
         Vertex{ VPos{5.0f,  -0.5f,  5.0f,}, VTexCoord{2.0f, 0.0f,}},

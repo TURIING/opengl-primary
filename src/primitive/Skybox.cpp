@@ -20,16 +20,13 @@ const std::vector<std::string> pathVec = {
 const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/skybox/vertex.glsl";
 const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/skybox/fragment.glsl";
 
-Skybox::Skybox(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram): IPrimitive(_parent, _name){
+Skybox::Skybox(std::shared_ptr<IScene> &_parent, const std::string &_name): IPrimitive(_parent, _name){
     this->setRenderType(RenderType::Primitive);
     this->setPrimitiveType(PrimitiveType::Skybox);
 
     m_vao = std::make_shared<VertexArray>();
 
     m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
-
-    auto shadeProgram = _shaderProgram ? _shaderProgram : std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
-    this->setShaderProgram(shadeProgram);
 
     m_vao->setAttribute<Vertex, glm::vec3>(this->getShaderProgram()->getAttrLocation("aPos"), offsetof(Vertex, position));
 

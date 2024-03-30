@@ -19,6 +19,7 @@
 
 class InspectPanel;
 class IScene;
+class IPrimitive;
 
 class Application {
 public:
@@ -29,7 +30,7 @@ public:
     void dispatch(Event _event, EventParam _param);
     GLFWwindow* getWindowHandle() { return m_glContext->getWindowHandle(); }
     std::shared_ptr<IScene> getCurrentScene() { return m_currentScene; }
-    std::vector<std::string> getSceneNameList();
+
 private:
     Application();
     void render();
@@ -38,7 +39,11 @@ private:
     inline void onMouseMove(EventParam &_param);
     inline void onMouseWheelScroll(EventParam &_param);
     inline void onKeyPress(EventParam &_param);
-    inline void onSceneSelected(EventParam &_param);
+    inline void onSceneCreated();
+    inline void onPrimitiveAdded(EventParam &_param);
+    inline void onPrimitiveDeleted(EventParam &_param);
+    std::shared_ptr<IPrimitive> makePrimitiveByType(PrimitiveType _type, const std::string &_name);
+
 private:
     std::string m_appName;
     std::unique_ptr<GLContext> m_glContext;

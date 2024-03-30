@@ -55,9 +55,19 @@ struct PointLight {
 // 图元类型
 enum class PrimitiveType {
     None,
-    Common,
-    PhongLight,
+    Cube,
+    Floor,
+    Square,
     Skybox,
+    End
+};
+
+// 光源类型
+enum class LightType {
+    None,
+    PhongLight,
+    PointLight,
+    End
 };
 
 // 渲染物体的类型
@@ -102,14 +112,18 @@ enum class Event {
     KEY_PRESS,
 
     PRIMITIVE_SELECTED,             // 当前选中的图元被改变
-    SCENE_SELECTED,                 // 当前选中的场景被改变
+    SCENE_CREATED,                  // 创建新场景
+
+    PRIMITIVE_CREATED,              // 添加图元
+    PRIMITIVE_DELETED,              // 删除图元
 };
 
 enum class MOUSE_BUTTON { None, Left, Right, Middle };
 
 using MouseState = std::tuple<MOUSE_BUTTON, double, double>;                        // 鼠标按键的状态以及鼠标的位置
+using PrimitiveInfo = std::tuple<PrimitiveType, std::string>;
 
-using EventParam = std::variant<KEYBOARD, MouseState, Size, double, int, std::string>;
+using EventParam = std::variant<KEYBOARD, MouseState, Size, double, int, std::string, PrimitiveInfo>;
 
 struct VPos {
     float x;

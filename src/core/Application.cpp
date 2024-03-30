@@ -9,10 +9,9 @@
 #include "Application.h"
 #include "../BaseDefine.h"
 #include "InspectPanel.h"
-#include "SceneFactory.h"
-#include "../scene/SkyboxDemo.h"
-#include "../scene/PhongLight.h"
-#include "../scene/Blend.h"
+#include "../primitive/Cube.h"
+#include "../primitive/Floor.h"
+#include "../primitive/Square.h"
 
 Application::Application() { }
 
@@ -26,13 +25,11 @@ void Application::init() {
     m_propertyPanel = std::make_unique<PropertyPanel>();
     m_inspectPanel = std::make_unique<InspectPanel>();
 
-    //SceneFactory::instance()->registerScene<Blend>();
-    //SceneFactory::instance()->registerScene<SkyboxDemo>();
-    SceneFactory::instance()->registerScene<PhongLight>();
-    m_currentScene = SceneFactory::instance()->makeInitialScene();
+    m_currentScene = std::make_shared<IScene>();
 
     // 初始化窗口时，先向scene分发一次resize事件，初始化视口
     m_currentScene->dispatch(Event::WINDOW_RESIZE, winSize);
+    this->dispatch(Event::PRIMITIVE_CREATED, PrimitiveInfo { PrimitiveType::Cube, "cube1"});
 }
 
 void Application::loop() {
@@ -53,8 +50,10 @@ void Application::dispatch(Event _event, EventParam _param) {
         case Event::MOUSE_MOVE:                        this->onMouseMove(_param);                                  break;
         case Event::MOUSE_WHEEL:                       this->onMouseWheelScroll(_param);                           break;
         case Event::KEY_PRESS:                         this->onKeyPress(_param);                                   break;
-        case Event::PRIMITIVE_SELECTED:                m_inspectPanel->dispatch(_event, _param);             break;
-        case Event::SCENE_SELECTED:                    this->onSceneSelected(_param);                              break;
+        case Event::PRIMITIVE_SELECTED:                m_inspectPanel->dispatch(_event, _param);          break;
+        case Event::SCENE_CREATED:                     this->onSceneCreated();                                        break;
+        case Event::PRIMITIVE_CREATED:                 this->onPrimitiveAdded(_param);                             break;
+        case Event::PRIMITIVE_DELETED:                 this->onPrimitiveDeleted(_param);                           break;
         default:                                       LOG(FATAL) << "Parameter error.";
     }
 }
@@ -102,15 +101,33 @@ void Application::onKeyPress(EventParam &_param) {
     m_currentScene->dispatch(Event::KEY_PRESS, _param);
 }
 
-// 获得所有已注册的场景类的名称集合
-std::vector<std::string> Application::getSceneNameList() {
-    return SceneFactory::instance()->getSceneNameList();
-}
-
-void Application::onSceneSelected(EventParam &_param) {
-    m_currentScene = SceneFactory::instance()->makeScene(std::get<std::string>(_param));
+void Application::onSceneCreated() {
+    m_currentScene.reset(new IScene());
 
     const auto winSize = Size{ SCREEN_WIDTH, SCREEN_HEIGHT };
     m_currentScene->dispatch(Event::WINDOW_RESIZE, winSize);
+    m_inspectPanel->dispatch(Event::SCENE_CREATED, -1);
+}
+
+void Application::onPrimitiveAdded(EventParam &_param) {
+    const auto [type, name] = std::get<PrimitiveInfo>(_param);
+    std::shared_ptr<IPrimitive> primitive = this->makePrimitiveByType(type, name);
+    m_currentScene->addPrimitive(primitive);
+}
+
+std::shared_ptr<IPrimitive> Application::makePrimitiveByType(PrimitiveType _type, const std::string &_name) {
+    LOG_ASSERT(m_currentScene);
+
+    switch (_type) {
+        case PrimitiveType::Cube:           return std::make_shared<Cube>(m_currentScene, _name);
+        case PrimitiveType::Floor:          return std::make_shared<Floor>(m_currentScene, _name);
+        case PrimitiveType::Square:         return std::make_shared<Square>(m_currentScene, _name);
+        default:                            LOG(FATAL) << " Undefined conditional branch.";
+    }
+}
+
+void Application::onPrimitiveDeleted(EventParam &_param) {
+    m_currentScene->dispatch(Event::PRIMITIVE_DELETED, _param);
+    m_inspectPanel->dispatch(Event::PRIMITIVE_DELETED, _param);
 }
 

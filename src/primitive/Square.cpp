@@ -8,15 +8,12 @@
 
 #include "Square.h"
 
-Square::Square(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram) : IPrimitive(_parent, _name) {
-    this->setPrimitiveType(PrimitiveType::Common);
+Square::Square(std::shared_ptr<IScene> _parent, std::string _name): IPrimitive(_parent, _name) {
+    this->setPrimitiveType(PrimitiveType::Square);
 
     m_vao = std::make_unique<VertexArray>();
 
     m_vbo = std::make_unique<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
-
-    auto shadeProgram = _shaderProgram ? _shaderProgram : std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
-    this->setShaderProgram(shadeProgram);
 
     m_texture = std::make_unique<Texture>(TEXTURE_FILE, 0, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
     this->getShaderProgram()->setInt("texture1", m_texture->getTextureUnit());

@@ -8,14 +8,11 @@
 
 #include "Floor.h"
 
-Floor::Floor(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram): IPrimitive(_parent, _name) {
-    this->setPrimitiveType(PrimitiveType::Common);
+Floor::Floor(std::shared_ptr<IScene> _parent, std::string _name): IPrimitive(_parent, _name) {
+    this->setPrimitiveType(PrimitiveType::Floor);
 
     m_vao = std::make_shared<VertexArray>();
     m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
-
-    auto shadeProgram = _shaderProgram ? _shaderProgram : std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
-    this->setShaderProgram(shadeProgram);
 
     m_vao->setAttribute<Vertex, decltype(Vertex::pos)>(this->getShaderProgram()->getAttrLocation("aPos"), offsetof(Vertex, pos));
     m_vao->setAttribute<Vertex, decltype(Vertex::tex)>(this->getShaderProgram()->getAttrLocation("aTexCoord"), offsetof(Vertex, tex));

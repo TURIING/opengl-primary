@@ -8,13 +8,10 @@
 
 #include "Triangle.h"
 
-Triangle::Triangle(IScene *_parent, std::string _name): IPrimitive(_parent, _name) {
+Triangle::Triangle(std::shared_ptr<IScene> &_parent, const std::string &_name): IPrimitive(_parent, _name) {
     m_vao = std::make_shared<VertexArray>();
 
     m_vbo = std::make_shared<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
-
-    auto shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
-    this->setShaderProgram(shaderProgram);
 
     m_vao->setAttribute<Vertex, VPos>(this->getShaderProgram()->getAttrLocation("aPos"), offsetof(Vertex, pos));
     m_vao->setAttribute<Vertex, VColor>(this->getShaderProgram()->getAttrLocation("aColor"), offsetof(Vertex, color));

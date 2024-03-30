@@ -9,15 +9,11 @@
 #include "IScene.h"
 #include "../base/Material.h"
 
-IPrimitive::IPrimitive(IScene *_parent, std::string &_name) {
+IPrimitive::IPrimitive(std::shared_ptr<IScene> &_parent, const std::string &_name) {
     this->setRenderType(RenderType::Primitive);
-    _parent->addPrimitive(this);
+    m_shaderProgram = _parent->getShaderProgram();
     this->setCamera(_parent->getCamera());
     this->setRenderName(_name);
-}
-
-IPrimitive::IPrimitive(IScene *_parent, std::string &_name, std::shared_ptr<ShaderProgram> &_shaderProgram): IPrimitive(_parent, _name) {
-    m_shaderProgram = _shaderProgram;
 
     // 添加默认材质
     this->setMaterial(std::make_shared<Material>(m_shaderProgram, TEXTURE_DEFAULT_FILE, TEXTURE_DEFAULT_FILE));
@@ -118,10 +114,6 @@ void IPrimitive::preRender() {
 }
 
 PointLight *IPrimitive::getPointLight() {
-    LOG_ASSERT(m_primitiveType == PrimitiveType::PhongLight);
+    LOG_ASSERT(m_lightType == LightType::PointLight);
     return &m_pointLight;
 }
-
-
-
-

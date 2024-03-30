@@ -8,6 +8,7 @@
 
 #include "UIContext.h"
 #include "Application.h"
+#include "Common.h"
 
 UIContext::UIContext() {
     // 初始化imgui
@@ -73,7 +74,7 @@ void UIContext::preRender() {
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
                                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                                    ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
-                                   ImGuiWindowFlags_NoBackground;
+                                   ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_MenuBar;
 
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
@@ -89,6 +90,9 @@ void UIContext::preRender() {
     ImGuiID dockSpaceId = ImGui::GetID("InvisibleWindowDockSpace");
 
     ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+    paintMenuBar();
+
     ImGui::End();
 }
 
@@ -105,6 +109,31 @@ void UIContext::postRender() {
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
         glfwMakeContextCurrent(backup_current_context);
+    }
+}
+
+void UIContext::paintMenuBar() {
+    if(ImGui::BeginMenuBar()) {
+        if(ImGui::BeginMenu("File")) {
+            if(ImGui::MenuItem("New Scene")) {
+                Application::instance()->dispatch(Event::SCENE_CREATED, -1);
+            }
+            ImGui::MenuItem("Open");
+            ImGui::MenuItem("Save");
+            ImGui::MenuItem("Save as");
+            ImGui::MenuItem("Close");
+            ImGui::EndMenu();
+        }
+
+        if(ImGui::BeginMenu("Scene")) {
+            if(ImGui::Button("New Primitive")) {
+                ImGui::OpenPopup("Add primitive");
+            }
+            Common::paintAddPrimitiveModal();
+
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
     }
 }
 

@@ -37,7 +37,7 @@ public:
     std::string getRenderName() { return m_renderName; }
     int getRenderID() { return m_renderID; }
 
-    void setRenderName(std::string &_name);
+    void setRenderName(const std::string &_name);
 
 protected:
     virtual void preRender();

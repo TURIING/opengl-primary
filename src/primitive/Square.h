@@ -26,15 +26,13 @@ class Square: public IPrimitive{
 public:
     void render() override;
 
-    Square(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
+    Square(std::shared_ptr<IScene> _parent, std::string _name);
 
 private:
     std::unique_ptr<VertexArray> m_vao;
     std::unique_ptr<Buffer<Vertex>> m_vbo;
     std::unique_ptr<Texture> m_texture;
 
-    const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";
-    const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/cube/fragment.glsl";
     const std::string TEXTURE_FILE = std::string(TEXTURE_PATH) + "/window.png";
 
     std::vector<Vertex> m_vertices = {

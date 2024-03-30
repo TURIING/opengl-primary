@@ -14,17 +14,17 @@ Blend::Blend() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
-
-    m_floor = std::make_unique<Floor>(this, "floor", m_shaderProgram);
-    //m_floor->addTexture(std::make_shared<Texture>())
-
-    m_cube1 = std::make_unique<Cube>(this, "cube_1", m_shaderProgram);
-
-    m_cube2 = std::make_unique<Cube>(this, "cube_2", m_shaderProgram);
-
-    m_window1 = std::make_unique<Square>(this, "window_1", m_shaderProgram);
-    m_window2 = std::make_unique<Square>(this, "window_2", m_shaderProgram);
+    //m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
+    //
+    //m_floor = std::make_unique<Floor>(this, "floor", m_shaderProgram);
+    ////m_floor->addTexture(std::make_shared<Texture>())
+    //
+    //m_cube1 = std::make_unique<Cube>(this, "cube_1", m_shaderProgram);
+    //
+    //m_cube2 = std::make_unique<Cube>(this, "cube_2", m_shaderProgram);
+    //
+    //m_window1 = std::make_unique<Square>(this, "window_1", m_shaderProgram);
+    //m_window2 = std::make_unique<Square>(this, "window_2", m_shaderProgram);
 }
 
 void Blend::render() {

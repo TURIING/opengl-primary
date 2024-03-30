@@ -37,9 +37,12 @@ public:
     void clear();
     void setClearColor(float _r, float _g, float _b, float _a) { m_clearColor = {_r, _g, _b, _a}; }
 
-    void addPrimitive(IPrimitive *_render);
-    IPrimitive *getPrimitiveByID(unsigned int _id) { return m_primitiveList.find(_id)->second; }
-    std::map<int, IPrimitive *> getAllPrimitive() { return m_primitiveList; }
+    void addPrimitive(std::shared_ptr<IPrimitive> &_render);
+    void deletePrimitive(int _id);
+    std::shared_ptr<IPrimitive> getPrimitiveByID(unsigned int _id) { return m_primitiveList.find(_id)->second; }
+    std::map<int, std::shared_ptr<IPrimitive>> getAllPrimitive() { return m_primitiveList; }
+
+    void render() override;
 
     void setWindowSize(std::tuple<int, int> &_windowSize) final;
 
@@ -49,6 +52,7 @@ public:
     void postRender() override;
 
     std::shared_ptr<Camera>& getCamera();
+    std::shared_ptr<ShaderProgram> getShaderProgram() { return m_shaderProgram; }
 
 protected:
     virtual void onWindowResize(Size &_size);
@@ -58,10 +62,10 @@ private:
     void offScreenRender(Size &_size);
 
 private:
-    std::map<int, IPrimitive *> m_primitiveList;                                                    // 场景中的图元集合
-    Color m_clearColor = { 0.26f, 0.30f, 0.31f, 1.0f };					                            // 清屏颜色
-
+    std::map<int, std::shared_ptr<IPrimitive>> m_primitiveList;                                     // 场景中的图元集合
+    Color m_clearColor = { 0.2, 0.2, 0.2, 1 };					                                    // 清屏颜色
     std::shared_ptr<Camera> m_camera;
+
 private:
     std::unique_ptr<FrameBuffer> m_fbo;
     std::shared_ptr<RenderBuffer> m_rbo;
@@ -70,6 +74,7 @@ private:
     std::shared_ptr<Texture> m_screenTexture;
     std::unique_ptr<Buffer<VPMatricesBlock>> m_vpMatricesUbo;
     std::unique_ptr<Buffer<PointLightBlock>> m_pointLightUbo;
+    std::shared_ptr<ShaderProgram> m_shaderProgram;
 };
 
 #endif //OPENGL_PRIMARY_ISCENE_H

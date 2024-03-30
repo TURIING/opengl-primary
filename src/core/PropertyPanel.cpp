@@ -9,6 +9,8 @@
 #include "PropertyPanel.h"
 #include "Application.h"
 #include "IScene.h"
+#include "Common.h"
+#include "../Utility.h"
 
 PropertyPanel::PropertyPanel() {
 
@@ -17,39 +19,40 @@ PropertyPanel::PropertyPanel() {
 void PropertyPanel::render() {
     const auto currentScene = Application::instance()->getCurrentScene();
     const auto& primitiveList = currentScene->getAllPrimitive();
-    const auto& sceneList = Application::instance()->getSceneNameList();
 
     ImGui::Begin("Properties");
 
-    if(ImGui::CollapsingHeader("Application", ImGuiTreeNodeFlags_DefaultOpen)) {
-        static std::string currentItemStr = sceneList.back();
-        if(ImGui::BeginCombo("Scene", currentItemStr.c_str())) {
-            for(auto i = 0; i < sceneList.size(); i++) {
-                if(const auto& value = sceneList.at(i); ImGui::Selectable(value.c_str(), currentItemStr == value)) {
-                    currentItemStr = value;
-                    Application::instance()->dispatch(Event::SCENE_SELECTED, value);
-                }
-            }
-            ImGui::EndCombo();
-        }
-    }
-
     if(ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen)) {
-        static std::string currentItemStr = primitiveList.begin()->second->getRenderName();
-        if(ImGui::BeginCombo("Primitive", currentItemStr.c_str())) {
-            for(const auto [id, render]: primitiveList) {
-                if(const auto& value = render->getRenderName(); ImGui::Selectable(value.c_str(), currentItemStr == value)) {
-                    currentItemStr = value;
-                    Application::instance()->dispatch(Event::PRIMITIVE_SELECTED, id);
-                }
+        ImGui::SeparatorText("All primitives");
+
+        static int primitiveSelected = primitiveList.begin()->second->getRenderID();
+        for(const auto [id, render]: primitiveList) {
+            if(ImGui::Selectable(render->getRenderName().c_str(), primitiveSelected == id)) {
+                primitiveSelected = id;
+                Application::instance()->dispatch(Event::PRIMITIVE_SELECTED, id);
             }
-            ImGui::EndCombo();
+
+            if(ImGui::BeginPopupContextItem()) {
+                primitiveSelected = id;
+                Application::instance()->dispatch(Event::PRIMITIVE_SELECTED, id);
+
+                if(ImGui::Button("Add")) {
+                    ImGui::OpenPopup("Add primitive");
+                }
+
+                if(ImGui::Button("Delete")) {
+                    Application::instance()->dispatch(Event::PRIMITIVE_DELETED, id);
+                }
+
+                Common::paintAddPrimitiveModal();
+                ImGui::EndPopup();
+            }
         }
     }
 
     ImGui::End();
 }
 
-void PropertyPanel::dispatch(Event _event, EventParam &_param) {
+void PropertyPanel::dispatch(Event _event, EventParam _param) {
 
 }

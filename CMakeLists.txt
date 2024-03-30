@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")                   
 
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR})
 
-file(GLOB_RECURSE MAIN CONFIGURE_DEPENDS src/main.cpp)
+file(GLOB_RECURSE MAIN CONFIGURE_DEPENDS src/main.cpp src/Utility.cpp)
 file(GLOB_RECURSE SRC_BASE CONFIGURE_DEPENDS src/base/*.h src/base/*.cpp)
 file(GLOB_RECURSE SRC_CORE CONFIGURE_DEPENDS src/core/*.h src/core/*.cpp)
 file(GLOB_RECURSE SRC_PRIMITIVE CONFIGURE_DEPENDS src/primitive/*.h src/primitive/*.cpp)
@@ -31,3 +31,4 @@ target_link_libraries(${PROJECT_NAME} IMGUI_FILE_DIALOG)
 file(COPY ${CMAKE_SOURCE_DIR}/lib/glfw3.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/lib/libglog.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/lib/libassimp-5.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

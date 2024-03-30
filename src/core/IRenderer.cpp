@@ -39,7 +39,7 @@ void IRenderer::setRenderType(RenderType _type) {
 }
 
 // 设置渲染物体的名称
-void IRenderer::setRenderName(std::string &_name) {
+void IRenderer::setRenderName(const std::string &_name) {
     LOG_ASSERT(!_name.empty());
     m_renderName = _name;
 }

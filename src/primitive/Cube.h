@@ -31,7 +31,7 @@ class Cube: public IPrimitive {
     };
 
 public:
-    Cube(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
+    Cube(std::shared_ptr<IScene> &_parent, const std::string &_name);
     void render() override;
 
 private:

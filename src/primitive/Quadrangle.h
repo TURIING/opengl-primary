@@ -23,7 +23,7 @@ class Quadrangle: public IPrimitive {
         glm::vec2 tex;
     };
 public:
-    explicit Quadrangle(IScene *_parent, std::string _name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
+    explicit Quadrangle(std::shared_ptr<IScene> &_parent, const std::string &_name);
     void render() override;
 
 private:

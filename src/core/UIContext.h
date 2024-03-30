@@ -22,6 +22,9 @@ public:
     void preRender() override;
 
     void postRender() override;
+
+private:
+    void paintMenuBar();
 };
 
 
