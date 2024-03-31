@@ -53,13 +53,13 @@ public:
 
     // 光源
     PointLight *getPointLight();
+    DirectionalLight *getDirectionalLight();
     void setLightType(LightType _type) { m_lightType = _type; }
     LightType getLightType() { return m_lightType; }
     std::shared_ptr<ShaderProgram> getShaderProgram();
 
     void setPrimitiveType(PrimitiveType _type) { m_primitiveType = _type;}
 
-public:
     void setShaderProgram(std::shared_ptr<ShaderProgram> &_shaderProgram);
     PrimitiveType getPrimitiveType();
     void preRender() override;
@@ -91,6 +91,13 @@ private:
         .diffuse = glm::vec3(0.5f, 0.5f, 0.5f),
         .quadratic = 0.032f,
         .specular = glm::vec3(1.0f, 1.0f, 1.0f)
+    };
+
+    DirectionalLight m_directionalLight {
+        .direction = glm::vec3(0.0f, 0.0f, 0.0f),
+        .ambient = glm::vec3(0.05f, 0.05f, 0.05f),
+        .diffuse = glm::vec3(0.4f, 0.4f, 0.4f),
+        .specular = glm::vec3(0.5f, 0.5f, 0.5f)
     };
 };
 

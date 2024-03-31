@@ -23,9 +23,11 @@
 class Floor: public IPrimitive{
     // 顶点属性结构体定义
     struct Vertex {
-        VPos pos;
-        VTexCoord tex;
+        glm::vec3 position;
+        glm::vec3 normal;
+        glm::vec2 texCoord;
     };
+
 public:
     Floor(std::shared_ptr<IScene> _parent, std::string _name);
     void render() override;
@@ -35,15 +37,15 @@ private:
     std::shared_ptr<Buffer<Vertex>> m_vbo;
 
     std::vector<Vertex> m_vertices = {
-        Vertex{ VPos{5.0f,  -0.5f,  5.0f,}, VTexCoord{2.0f, 0.0f,}},
-        Vertex{ VPos{-5.0f, -0.5f,  5.0f,}, VTexCoord{0.0f, 0.0f,}},
-        Vertex{ VPos{-5.0f, -0.5f, -5.0f,}, VTexCoord{0.0f, 2.0f,}},
+            // positions            // normals         // texcoords
+        Vertex { glm::vec3(10.0f, -0.5f,  10.0f),  glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec2(10.0f,  0.0f) },
+        Vertex { glm::vec3(-10.0f, -0.5f,  10.0f),  glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec2(0.0f,  0.0f) },
+        Vertex { glm::vec3(-10.0f, -0.5f, -10.0f),  glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec2(0.0f, 10.0f) },
 
-        Vertex{ VPos{5.0f,  -0.5f,  5.0f,}, VTexCoord{2.0f, 0.0f,}},
-        Vertex{ VPos{-5.0f, -0.5f, -5.0f,}, VTexCoord{0.0f, 2.0f,}},
-        Vertex{ VPos{5.0f,  -0.5f, -5.0f,}, VTexCoord{2.0f, 2.0f}},
+        Vertex { glm::vec3(10.0f, -0.5f,  10.0f),  glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec2(10.0f,  0.0f) },
+        Vertex { glm::vec3(-10.0f, -0.5f, -10.0f),  glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec2(0.0f, 10.0f) },
+        Vertex { glm::vec3(10.0f, -0.5f, -10.0f),  glm::vec3(0.0f, 1.0f, 0.0f),  glm::vec2(10.0f, 10.0f) }
     };
-
 };
 
 

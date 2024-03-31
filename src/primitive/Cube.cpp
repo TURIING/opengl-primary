@@ -9,7 +9,7 @@
 #include "Cube.h"
 
 Cube::Cube(std::shared_ptr<IScene> &_parent, const std::string &_name): IPrimitive(_parent, _name) {
-    this->setPrimitiveType(PrimitiveType::Cube);
+    this->setPrimitiveType(PrimitiveType::Floor);
 
     m_vao = std::make_shared<VertexArray>();
 
@@ -28,8 +28,6 @@ void Cube::render() {
 // 常规地绘制立方体
 void Cube::paintNormally() {
     m_vao->bind();
-    const auto camera = this->getCamera();
-
     this->getShaderProgram()->setBool("enableOutline", false);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);

@@ -29,7 +29,6 @@ void Application::init() {
 
     // 初始化窗口时，先向scene分发一次resize事件，初始化视口
     m_currentScene->dispatch(Event::WINDOW_RESIZE, winSize);
-    this->dispatch(Event::PRIMITIVE_CREATED, PrimitiveInfo { PrimitiveType::Cube, "cube1"});
 }
 
 void Application::loop() {
@@ -113,8 +112,10 @@ void Application::onPrimitiveAdded(EventParam &_param) {
     const auto [type, name] = std::get<PrimitiveInfo>(_param);
     std::shared_ptr<IPrimitive> primitive = this->makePrimitiveByType(type, name);
     m_currentScene->addPrimitive(primitive);
+    this->dispatch(Event::PRIMITIVE_SELECTED, primitive->getRenderID());
 }
 
+// 通过给定的类型生成对应的图元派生类
 std::shared_ptr<IPrimitive> Application::makePrimitiveByType(PrimitiveType _type, const std::string &_name) {
     LOG_ASSERT(m_currentScene);
 

@@ -15,7 +15,7 @@ IScene::IScene() {
     this->setDeepTest(true);
     m_camera = std::make_shared<Camera>();
     m_vpMatricesUbo = std::make_unique<Buffer<VPMatricesBlock>>(0);
-    m_pointLightUbo = std::make_unique<Buffer<PointLightBlock>>(1);
+    m_lightUbo = std::make_unique<Buffer<LightBlock>>(1);
     m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
 }
 
@@ -79,22 +79,38 @@ void IScene::preRender() {
     m_vpMatricesUbo->setData<glm::mat4>(offsetof(VPMatricesBlock, projection), static_cast<const void *>(glm::value_ptr(this->getCamera()->getProjection())));
 
     // 传递光源信息
-    int i = 0;
+    int pointLightIndex = 0, directionalLightIndex = 0;
     for(const auto [id, child]: m_primitiveList) {
         if(child->getLightType() == LightType::PointLight) {
-            const auto extraOffset = i * sizeof(PointLight);
+            const auto extraOffset = pointLightIndex * sizeof(PointLight);
             const auto light = child->getPointLight();
-            m_pointLightUbo->setData<glm::vec3>(extraOffset + offsetof(PointLight, position), static_cast<const void *>(glm::value_ptr(*child->getPosition())));
-            m_pointLightUbo->setData<float>(extraOffset + offsetof(PointLight, constant), static_cast<const void *>(&light->constant));
-            m_pointLightUbo->setData<glm::vec3>(extraOffset + offsetof(PointLight, ambient), static_cast<const void *>(glm::value_ptr(light->ambient)));
-            m_pointLightUbo->setData<float>(extraOffset + offsetof(PointLight, linear), static_cast<const void *>(&light->linear));
-            m_pointLightUbo->setData<glm::vec3>(extraOffset + offsetof(PointLight, diffuse), static_cast<const void *>(glm::value_ptr(light->diffuse)));
-            m_pointLightUbo->setData<float>(extraOffset + offsetof(PointLight, quadratic), static_cast<const void *>(&light->quadratic));
-            m_pointLightUbo->setData<glm::vec3>(extraOffset + offsetof(PointLight, specular), static_cast<const void *>(glm::value_ptr(light->specular)));
-            i++;
+            m_lightUbo->setData<glm::vec3>(extraOffset + offsetof(PointLight, position), static_cast<const void *>(glm::value_ptr(*child->getPosition())));
+            m_lightUbo->setData<float>(extraOffset + offsetof(PointLight, constant), static_cast<const void *>(&light->constant));
+            m_lightUbo->setData<glm::vec3>(extraOffset + offsetof(PointLight, ambient), static_cast<const void *>(glm::value_ptr(light->ambient)));
+            m_lightUbo->setData<float>(extraOffset + offsetof(PointLight, linear), static_cast<const void *>(&light->linear));
+            m_lightUbo->setData<glm::vec3>(extraOffset + offsetof(PointLight, diffuse), static_cast<const void *>(glm::value_ptr(light->diffuse)));
+            m_lightUbo->setData<float>(extraOffset + offsetof(PointLight, quadratic), static_cast<const void *>(&light->quadratic));
+            m_lightUbo->setData<glm::vec3>(extraOffset + offsetof(PointLight, specular), static_cast<const void *>(glm::value_ptr(light->specular)));
+            pointLightIndex++;
         }
     }
-    m_pointLightUbo->setData<int>(10 * sizeof(PointLight), static_cast<const void *>(&i));
+
+    for(const auto [id, child]: m_primitiveList) {
+        if(child->getLightType() == LightType::DirectionalLight) {
+            const auto extraOffset = directionalLightIndex * sizeof(DirectionalLight) + MAX_LIGHT_NUM * sizeof(PointLight);
+            const auto light = child->getDirectionalLight();
+            const auto direction = -(*child->getPosition());
+            m_lightUbo->setData<glm::vec3>(extraOffset + offsetof(DirectionalLight, direction), static_cast<const void *>(glm::value_ptr(direction)));
+            m_lightUbo->setData<glm::vec3>(extraOffset + offsetof(DirectionalLight, ambient), static_cast<const void *>(glm::value_ptr(light->ambient)));
+            m_lightUbo->setData<glm::vec3>(extraOffset + offsetof(DirectionalLight, diffuse), static_cast<const void *>(glm::value_ptr(light->diffuse)));
+            m_lightUbo->setData<glm::vec3>(extraOffset + offsetof(DirectionalLight, specular), static_cast<const void *>(glm::value_ptr(light->specular)));
+            directionalLightIndex++;
+        }
+    }
+
+    m_lightUbo->setData<int>(MAX_LIGHT_NUM * (sizeof(PointLight) + sizeof(DirectionalLight)), static_cast<const void *>(&pointLightIndex));
+    m_lightUbo->setData<int>(MAX_LIGHT_NUM * (sizeof(PointLight) + sizeof(DirectionalLight)) + sizeof(int), static_cast<const void *>(&directionalLightIndex));
+
     this->clear();
 }
 

@@ -18,6 +18,8 @@ constexpr int SCREEN_WIDTH = 2250;                                  // 窗口宽
 constexpr int SCREEN_HEIGHT = 1340;                                 // 窗口高度
 constexpr const char *WINDOW_TITLE = "opengl_primary";              // 窗口标题
 
+constexpr int MAX_LIGHT_NUM = 10;
+
 #ifdef DEBUG
 constexpr char *SHADER_CODE_PATH = "../src/glsl";
 constexpr char *TEXTURE_PATH = "../resources/texture";
@@ -52,6 +54,20 @@ struct PointLight {
     int :8;
 };
 
+struct DirectionalLight {
+    glm::vec3 direction;
+    int :8;
+
+    glm::vec3 ambient;
+    int :8;
+
+    glm::vec3 diffuse;
+    int :8;
+
+    glm::vec3 specular;
+    int :8;
+};
+
 // 图元类型
 enum class PrimitiveType {
     None,
@@ -67,6 +83,8 @@ enum class LightType {
     None,
     PhongLight,
     PointLight,
+    DirectionalLight,
+    BlinnPhong,
     End
 };
 

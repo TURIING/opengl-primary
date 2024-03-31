@@ -25,9 +25,11 @@ class IScene: public IRenderer{
         glm::mat4 projection;
     };
 
-    struct PointLightBlock {
+    struct LightBlock {
         PointLight pointLight[MAX_LIGHT_NUM];
+        DirectionalLight directionalLight[MAX_LIGHT_NUM];
         int actualPointLightNum = 0;
+        int actualDirectionalLightNum = 0;
     };
 
 public:
@@ -73,7 +75,7 @@ private:
     std::shared_ptr<Texture> m_fboDepthTexture;
     std::shared_ptr<Texture> m_screenTexture;
     std::unique_ptr<Buffer<VPMatricesBlock>> m_vpMatricesUbo;
-    std::unique_ptr<Buffer<PointLightBlock>> m_pointLightUbo;
+    std::unique_ptr<Buffer<LightBlock>> m_lightUbo;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 };
 

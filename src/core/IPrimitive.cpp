@@ -117,3 +117,8 @@ PointLight *IPrimitive::getPointLight() {
     LOG_ASSERT(m_lightType == LightType::PointLight);
     return &m_pointLight;
 }
+
+DirectionalLight *IPrimitive::getDirectionalLight() {
+    LOG_ASSERT(m_lightType == LightType::DirectionalLight);
+    return &m_directionalLight;
+}

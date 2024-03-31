@@ -25,6 +25,8 @@ const char *Utility::transformLightTypeToStr(LightType _type) {
         case LightType::None:                           return "None";
         case LightType::PhongLight:                     return "PhongLight";
         case LightType::PointLight:                     return "PointLight";
+        case LightType::DirectionalLight:               return "DirectionalLight";
+        case LightType::BlinnPhong:                     return "BlinnPhong";
         default:                                        LOG(FATAL) << " Undefined conditional branch.";
     }
 }

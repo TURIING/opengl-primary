@@ -65,6 +65,16 @@ void InspectPanel::render() {
             ImGui::DragFloat3("diffuse", (float *)(&light->diffuse), 0.01f, 0.0f, 10.0f, "%.2f");
             ImGui::DragFloat3("specular", (float *)(&light->specular), 0.01f, 0.0f, 10.0f, "%.2f");
         }
+
+        // 平行光
+        if(m_currentPrimitive->getLightType() == LightType::DirectionalLight) {
+            ImGui::SeparatorText("Directional Light Info");
+
+            auto light = m_currentPrimitive->getDirectionalLight();
+            ImGui::DragFloat3("ambient", (float *)(&light->ambient), 0.01f, 0.0f, 10.0f, "%.2f");
+            ImGui::DragFloat3("diffuse", (float *)(&light->diffuse), 0.01f, 0.0f, 10.0f, "%.2f");
+            ImGui::DragFloat3("specular", (float *)(&light->specular), 0.01f, 0.0f, 10.0f, "%.2f");
+        }
     }
 
     ImGui::End();
