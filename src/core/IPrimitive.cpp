@@ -7,16 +7,16 @@
 ********************************************************************************/
 #include "IPrimitive.h"
 #include "IScene.h"
-#include "../base/Material.h"
+#include "../material/PhongMaterial.h"
+#include "../material/SkyboxMaterial.h"
 
-IPrimitive::IPrimitive(std::shared_ptr<IScene> &_parent, const std::string &_name) {
+IPrimitive::IPrimitive(std::shared_ptr<IScene> &_parent, const std::string &_name, std::shared_ptr<ShaderProgram> _shaderProgram) {
     this->setRenderType(RenderType::Primitive);
-    m_shaderProgram = _parent->getShaderProgram();
+    m_shaderProgram = _shaderProgram ? _shaderProgram : _parent->getShaderProgram();
     this->setCamera(_parent->getCamera());
     this->setRenderName(_name);
 
-    // 添加默认材质
-    this->setMaterial(std::make_shared<Material>(m_shaderProgram, TEXTURE_DEFAULT_FILE, TEXTURE_DEFAULT_FILE));
+    this->setMaterial(std::make_shared<IMaterial>());
 }
 
 /**
@@ -76,41 +76,15 @@ PrimitiveType IPrimitive::getPrimitiveType() {
     return m_primitiveType;
 }
 
-void IPrimitive::setMaterial(std::shared_ptr<Material> _material) {
+void IPrimitive::setMaterial(std::shared_ptr<IMaterial> _material) {
     m_material = _material;
 }
 
 void IPrimitive::preRender() {
     m_shaderProgram->use();
+
     // 传递材质
-    m_shaderProgram->setInt("material.diffuse", m_material->getDiffuse()->getTextureUnit());
-    m_shaderProgram->setInt("material.specular", m_material->getSpecular()->getTextureUnit());
-    m_shaderProgram->setFloat("material.shininess", *m_material->getShininess());
-    m_material->getDiffuse()->activate();
-    m_material->getSpecular()->activate();
-
-    // 传递model矩阵
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, *this->getPosition());
-    model = glm::scale(model, *this->getScaling());
-    model = glm::rotate(model, this->getRotation()->x, glm::vec3{ 1, 0, 0 });
-    model = glm::rotate(model, this->getRotation()->y, glm::vec3{ 0, 1, 0 });
-    model = glm::rotate(model, this->getRotation()->z, glm::vec3{ 0, 0, 1 });
-    this->getShaderProgram()->setMat4("model", glm::value_ptr(model));
-
-    // 激活纹理
-    if(m_textures.size() == 0) {
-        //this->getShaderProgram()->setBool("enableTexture", false);
-    }
-    else {
-        //this->getShaderProgram()->setBool("enableTexture", true);
-        for(auto i = 0; i < m_textures.size(); i++) {
-            m_textures[i]->activate();
-        }
-    }
-
-    // 摄像机信息
-     m_shaderProgram->setVec3("cameraPos", this->getCamera()->getPosition());
+    this->transmitMaterialToShader();
 }
 
 PointLight *IPrimitive::getPointLight() {
@@ -121,4 +95,18 @@ PointLight *IPrimitive::getPointLight() {
 DirectionalLight *IPrimitive::getDirectionalLight() {
     LOG_ASSERT(m_lightType == LightType::DirectionalLight);
     return &m_directionalLight;
+}
+
+// 传输材质信息到shader
+void IPrimitive::transmitMaterialToShader() {
+    switch (m_material->getMaterialType()) {
+        case MaterialType::Phong: {
+            const std::shared_ptr<PhongMaterial> material = std::dynamic_pointer_cast<PhongMaterial>(this->getMaterial());
+            this->getShaderProgram()->setInt("material.diffuse", material->getDiffuse()->getTextureUnit());
+            this->getShaderProgram()->setInt("material.specular", material->getSpecular()->getTextureUnit());
+            this->getShaderProgram()->setFloat("material.shininess", *(material->getShininess()));
+            material->getDiffuse()->activate();
+            material->getSpecular()->activate();
+        }
+    }
 }

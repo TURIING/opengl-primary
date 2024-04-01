@@ -13,11 +13,11 @@
 #include "../base/ShaderProgram.h"
 #include "IRenderer.h"
 class IScene;
-class Material;
+class IMaterial;
 
 class IPrimitive: public IRenderer{
 public:
-    explicit IPrimitive(std::shared_ptr<IScene> &_parent, const std::string &_name);
+    explicit IPrimitive(std::shared_ptr<IScene> &_parent, const std::string &_name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
 
     // 摄像机
     virtual void setCamera(std::shared_ptr<Camera> &_camera);
@@ -48,8 +48,8 @@ public:
     [[nodiscard]] std::vector<std::shared_ptr<Texture>> getTextureList() { return m_textures; }
 
     // 材质
-    void setMaterial(std::shared_ptr<Material> _material);
-    std::shared_ptr<Material> getMaterial() { return m_material; }
+    void setMaterial(std::shared_ptr<IMaterial> _material);
+    std::shared_ptr<IMaterial> getMaterial() { return m_material; }
 
     // 光源
     PointLight *getPointLight();
@@ -63,6 +63,9 @@ public:
     void setShaderProgram(std::shared_ptr<ShaderProgram> &_shaderProgram);
     PrimitiveType getPrimitiveType();
     void preRender() override;
+
+private:
+    void transmitMaterialToShader();
 
 private:
     glm::vec3 m_position = { -1.0f, -1.0f, -1.0f };                                         // 平移后的位置
@@ -80,7 +83,7 @@ private:
 
     PrimitiveType m_primitiveType = PrimitiveType::None;
 
-    std::shared_ptr<Material> m_material;
+    std::shared_ptr<IMaterial> m_material;
 
     LightType m_lightType = LightType::None;                                                        // 光源类型
     PointLight m_pointLight = {

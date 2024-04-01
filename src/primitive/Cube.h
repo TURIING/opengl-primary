@@ -31,6 +31,9 @@ class Cube: public IPrimitive {
     };
 
 public:
+    void preRender() override;
+
+public:
     Cube(std::shared_ptr<IScene> &_parent, const std::string &_name);
     void render() override;
 

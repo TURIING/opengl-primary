@@ -16,6 +16,7 @@ IScene::IScene() {
     m_camera = std::make_shared<Camera>();
     m_vpMatricesUbo = std::make_unique<Buffer<VPMatricesBlock>>(0);
     m_lightUbo = std::make_unique<Buffer<LightBlock>>(1);
+    m_cameraUbo = std::make_unique<Buffer<CameraInfoBlock>>(2);
     m_shaderProgram = std::make_shared<ShaderProgram>(VERTEX_FILE, FRAGMENT_FILE);
 }
 
@@ -111,6 +112,10 @@ void IScene::preRender() {
     m_lightUbo->setData<int>(MAX_LIGHT_NUM * (sizeof(PointLight) + sizeof(DirectionalLight)), static_cast<const void *>(&pointLightIndex));
     m_lightUbo->setData<int>(MAX_LIGHT_NUM * (sizeof(PointLight) + sizeof(DirectionalLight)) + sizeof(int), static_cast<const void *>(&directionalLightIndex));
 
+    // 传递摄像机信息
+    m_cameraUbo->setData<glm::vec3>(offsetof(CameraInfoBlock, cameraPos), static_cast<const void *>(glm::value_ptr(this->getCamera()->getPosition())));
+
+    // 清屏
     this->clear();
 }
 
@@ -155,6 +160,7 @@ void IScene::addPrimitive(std::shared_ptr<IPrimitive> &_render) {
 
 void IScene::render() {
     for(auto [id, primitive]: this->getAllPrimitive()) {
+        primitive->preRender();
         primitive->render();
     }
 }

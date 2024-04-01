@@ -11,11 +11,12 @@ file(GLOB_RECURSE MAIN CONFIGURE_DEPENDS src/main.cpp src/Utility.cpp)
 file(GLOB_RECURSE SRC_BASE CONFIGURE_DEPENDS src/base/*.h src/base/*.cpp)
 file(GLOB_RECURSE SRC_CORE CONFIGURE_DEPENDS src/core/*.h src/core/*.cpp)
 file(GLOB_RECURSE SRC_PRIMITIVE CONFIGURE_DEPENDS src/primitive/*.h src/primitive/*.cpp)
+file(GLOB_RECURSE SRC_MATERIAL CONFIGURE_DEPENDS src/material/*.h src/material/*.cpp)
 file(GLOB_RECURSE SRC_SCENE CONFIGURE_DEPENDS src/scene/*.h src/scene/*.cpp)
 file(GLOB_RECURSE SRC_IMGUI CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/include/imgui/*.cpp)
 file(GLOB_RECURSE SRC_IMGUI_FILE_DIALOG CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/include/ImGuiFileDialog/*.cpp)
 
-add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/include/glad/glad.c ${SRC_BASE} ${SRC_PRIMITIVE} ${SRC_CORE} ${SRC_SCENE} ${MAIN} )
+add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/include/glad/glad.c ${SRC_BASE} ${SRC_PRIMITIVE} ${SRC_CORE} ${SRC_SCENE} ${SRC_MATERIAL} ${MAIN} )
 
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 add_library(IMGUI ${SRC_IMGUI})

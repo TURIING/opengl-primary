@@ -40,7 +40,7 @@ public:
     void setVec4(const std::string &_name, const glm::vec4 &_value) const;
 
     // ------------------------------------------------------------------------------------------------
-    void setMat4(const std::string &_name, const GLfloat *_value) const;
+    void setMat4(const std::string &_name, const float *_value) const;
 
 private:
 	static void checkLinkError(unsigned int _id);

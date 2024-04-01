@@ -20,11 +20,10 @@
 #include "../base/Buffer.h"
 #include "../base/ShaderProgram.h"
 #include "../base/Texture.h"
-#include "../BaseDefine.h"
 
 class Skybox: public IPrimitive {
     struct Vertex{
-        glm::vec2 position;
+        glm::vec3 position;
     };
 
 public:
@@ -33,10 +32,11 @@ public:
 public:
     void render() override;
 
+    void preRender() override;
+
 private:
     std::shared_ptr<VertexArray> m_vao;
     std::shared_ptr<Buffer<Vertex>> m_vbo;
-    std::shared_ptr<Texture> m_texture;
 
     std::vector<Vertex> m_vertices = {
         // positions

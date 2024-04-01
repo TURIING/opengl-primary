@@ -40,6 +40,15 @@ struct Size {
     float height;
 };
 
+enum class MaterialType {
+    None,
+    Phong,                          // 冯氏光照贴图材质
+    Color,                          // 颜色材质
+    Texture,                        // 纹理材质（包括多张纹理）
+    SkyBox,                         // 天空盒纹理
+    End
+};
+
 struct PointLight {
     glm::vec3 position;
     float constant;

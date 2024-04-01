@@ -35,6 +35,10 @@ public:
 private:
     std::shared_ptr<VertexArray> m_vao;
     std::shared_ptr<Buffer<Vertex>> m_vbo;
+public:
+    void preRender() override;
+
+private:
 
     std::vector<Vertex> m_vertices = {
             // positions            // normals         // texcoords

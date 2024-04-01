@@ -32,6 +32,11 @@ class IScene: public IRenderer{
         int actualDirectionalLightNum = 0;
     };
 
+    struct CameraInfoBlock {
+        glm::vec3 cameraPos;
+        int :8;
+    };
+
 public:
     IScene();
 
@@ -76,6 +81,7 @@ private:
     std::shared_ptr<Texture> m_screenTexture;
     std::unique_ptr<Buffer<VPMatricesBlock>> m_vpMatricesUbo;
     std::unique_ptr<Buffer<LightBlock>> m_lightUbo;
+    std::unique_ptr<Buffer<CameraInfoBlock>> m_cameraUbo;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 };
 

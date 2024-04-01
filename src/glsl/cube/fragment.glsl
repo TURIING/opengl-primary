@@ -32,6 +32,10 @@ layout (std140, binding = 1) uniform Light {
 	int actualDirectionalLightNum;
 };
 
+layout (std140, binding = 2) uniform CameraInfo {
+	vec3 cameraPos;
+};
+
 out vec4 FragColor;
 in vec2 TexCoord;
 in vec3 Normal;
@@ -51,8 +55,6 @@ uniform sampler2D texture2;
 uniform vec4 outlineColor;
 uniform bool enableOutline;
 uniform bool enableTexture;
-
-uniform vec3 cameraPos;
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
@@ -108,10 +110,10 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 	// diffuse shading
 	float diff = max(dot(normal, lightDir), 0.0);
 	// specular shading
-//	vec3 reflectDir = reflect(-lightDir, normal);
-//	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-	vec3 halfWayDir = normalize(lightDir + viewDir);
-	float spec = pow(max(dot(normal, halfWayDir), 0.0), material.shininess);
+	vec3 reflectDir = reflect(-lightDir, normal);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+//	vec3 halfWayDir = normalize(lightDir + viewDir);
+//	float spec = pow(max(dot(normal, halfWayDir), 0.0), material.shininess);
 	// combine results
 	vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoord));
 	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoord));

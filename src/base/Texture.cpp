@@ -22,11 +22,12 @@ Texture::Texture(std::string _path, unsigned int _unit, GLuint _wrapModeS, GLuin
 }
 
 // 用于生成立方体贴图的纹理
-Texture::Texture(const std::vector<std::string> &_pathVec, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode) {
+Texture::Texture(const std::vector<std::string> &_pathVec, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode) {
     LOG_ASSERT(!_pathVec.empty());
 
     glGenTextures(1, &m_id);
     m_textureTarget = TARGET_TYPE::CUBE_MAP;
+    m_textureUnit = _unit;
 
     this->bind();
     this->generateTextureForCubeMap(_pathVec);

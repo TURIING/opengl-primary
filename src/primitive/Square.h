@@ -28,6 +28,8 @@ public:
 
     Square(std::shared_ptr<IScene> _parent, std::string _name);
 
+    void preRender() override;
+
 private:
     std::unique_ptr<VertexArray> m_vao;
     std::unique_ptr<Buffer<Vertex>> m_vbo;

@@ -3,19 +3,21 @@
 * @email: turiing@163.com
 * @date: 2024/3/29 15:14
 * @version: 1.0
-* @description: 材质类
+* @description: 冯氏光照材质类
 ********************************************************************************/
 
-#ifndef OPENGL_PRIMARY_MATERIAL_H
-#define OPENGL_PRIMARY_MATERIAL_H
+#ifndef OPENGL_PRIMARY_PHONGMATERIAL_H
+#define OPENGL_PRIMARY_PHONGMATERIAL_H
 
 #include <memory>
+#include "../base/IMaterial.h"
+
 class Texture;
 class ShaderProgram;
 
-class Material {
+class PhongMaterial: public IMaterial{
 public:
-    Material(std::shared_ptr<ShaderProgram> &_shaderProgram, const std::string &_diffuse, const std::string &_specular, float _shininess = 32);
+    PhongMaterial(std::shared_ptr<ShaderProgram> &_shaderProgram, const std::string &_diffuse, const std::string &_specular, float _shininess = 32);
 
     std::shared_ptr<Texture> &getDiffuse();
     std::shared_ptr<Texture> &getSpecular();
@@ -35,6 +37,4 @@ private:
     float m_shininess = 32.0f;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 };
-
-
-#endif //OPENGL_PRIMARY_MATERIAL_H
+#endif //OPENGL_PRIMARY_PHONGMATERIAL_H

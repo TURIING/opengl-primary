@@ -13,7 +13,7 @@
 #include <memory>
 
 class IPrimitive;
-class Material;
+class IMaterial;
 
 class InspectPanel: public IPanel {
 public:
@@ -23,7 +23,10 @@ public:
 
 private:
     void onPrimitiveSelected(EventParam &_param);
-    void buildMaterialItem(std::shared_ptr<Material> &_material);
+    void buildMaterialItem(std::shared_ptr<IMaterial> _material);
+    void buildItemForPhongMaterial(std::shared_ptr<IMaterial> &_material);
+    void buildItemForSkyboxMaterial(std::shared_ptr<IMaterial> &_material);
+    std::shared_ptr<IMaterial> makeMaterialByType(MaterialType _type);
 
 private:
     std::shared_ptr<IPrimitive> m_currentPrimitive = nullptr;

@@ -30,3 +30,14 @@ const char *Utility::transformLightTypeToStr(LightType _type) {
         default:                                        LOG(FATAL) << " Undefined conditional branch.";
     }
 }
+
+const char *Utility::transformMaterialTypeToStr(MaterialType _type) {
+    switch (_type) {
+        case MaterialType::None:                   return "None";
+        case MaterialType::Phong:                  return "Phong";
+        case MaterialType::Color:                  return "Color";
+        case MaterialType::Texture:                return "Texture";
+        case MaterialType::SkyBox:                 return "SkyBox";
+        default:                                   LOG(FATAL) << " Undefined conditional branch.";
+    }
+}

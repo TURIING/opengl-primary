@@ -27,7 +27,7 @@ public:
     enum STORAGE_TYPE { IMAGE2D, STORAGE2D };           // 纹理存储的类型
 
     Texture(std::string _path, GLenum _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode);
-    Texture(const std::vector<std::string> &_pathVec, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode);
+    Texture(const std::vector<std::string> &_pathVec, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode);
     Texture(Size &_scrSize, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode, STORAGE_TYPE _type);
     ~Texture();
     unsigned int getID() { return m_id; }

@@ -7,6 +7,7 @@
 ********************************************************************************/
 
 #include "Cube.h"
+#include "../material/PhongMaterial.h"
 
 Cube::Cube(std::shared_ptr<IScene> &_parent, const std::string &_name): IPrimitive(_parent, _name) {
     this->setPrimitiveType(PrimitiveType::Floor);
@@ -21,7 +22,6 @@ Cube::Cube(std::shared_ptr<IScene> &_parent, const std::string &_name): IPrimiti
 }
 
 void Cube::render() {
-    this->preRender();
     this->isEnabledOutline() ? paintWithOutline() : paintNormally();
 }
 
@@ -78,6 +78,19 @@ void Cube::paintWithOutline() {
     //glStencilMask(0xff);
     //glStencilFunc(GL_ALWAYS, 0, 0xff);
     //glEnable(GL_DEPTH_TEST);
+}
+
+void Cube::preRender() {
+    IPrimitive::preRender();
+
+    // 传递model矩阵
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, *this->getPosition());
+    model = glm::scale(model, *this->getScaling());
+    model = glm::rotate(model, this->getRotation()->x, glm::vec3{ 1, 0, 0 });
+    model = glm::rotate(model, this->getRotation()->y, glm::vec3{ 0, 1, 0 });
+    model = glm::rotate(model, this->getRotation()->z, glm::vec3{ 0, 0, 1 });
+    this->getShaderProgram()->setMat4("model", glm::value_ptr(model));
 }
 
 

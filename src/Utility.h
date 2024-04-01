@@ -14,5 +14,6 @@
 namespace Utility {
     const char* transformPrimitiveTypeToStr(PrimitiveType _type);
     const char* transformLightTypeToStr(LightType _type);
+    const char* transformMaterialTypeToStr(MaterialType _type);
 }
 #endif //OPENGL_PRIMARY_UTILITY_H

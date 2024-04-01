@@ -7,6 +7,7 @@
 ********************************************************************************/
 
 #include "Floor.h"
+#include "../material/PhongMaterial.h"
 
 Floor::Floor(std::shared_ptr<IScene> _parent, std::string _name): IPrimitive(_parent, _name) {
     this->setPrimitiveType(PrimitiveType::Floor);
@@ -20,7 +21,6 @@ Floor::Floor(std::shared_ptr<IScene> _parent, std::string _name): IPrimitive(_pa
 }
 
 void Floor::render() {
-    this->preRender();
     m_vao->bind();
 
     //const auto camera = this->getCamera();
@@ -28,4 +28,17 @@ void Floor::render() {
     //this->getShaderProgram()->setBool("enableOutline", false);
 
     glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
+}
+
+void Floor::preRender() {
+    IPrimitive::preRender();
+
+    // 传递model矩阵
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, *this->getPosition());
+    model = glm::scale(model, *this->getScaling());
+    model = glm::rotate(model, this->getRotation()->x, glm::vec3{ 1, 0, 0 });
+    model = glm::rotate(model, this->getRotation()->y, glm::vec3{ 0, 1, 0 });
+    model = glm::rotate(model, this->getRotation()->z, glm::vec3{ 0, 0, 1 });
+    this->getShaderProgram()->setMat4("model", glm::value_ptr(model));
 }

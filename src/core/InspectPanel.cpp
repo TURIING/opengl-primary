@@ -13,7 +13,7 @@
 #include "Application.h"
 #include "IPrimitive.h"
 #include "IScene.h"
-#include "../base/Material.h"
+#include "../material/PhongMaterial.h"
 #include "../Utility.h"
 
 void InspectPanel::render() {
@@ -32,11 +32,21 @@ void InspectPanel::render() {
 
     // 材质
     if(ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
-        auto material = m_currentPrimitive->getMaterial();
+        auto materialTypeSelected = m_currentPrimitive->getMaterial()->getMaterialType();
 
-        this->buildMaterialItem(material);
+        if(ImGui::BeginCombo("Material Type", Utility::transformMaterialTypeToStr(materialTypeSelected))) {
+            for(auto i = 1; i < static_cast<int>(MaterialType::End); i++) {
+                if(const auto type = static_cast<MaterialType>(i); ImGui::Selectable(Utility::transformMaterialTypeToStr(type), materialTypeSelected == type)) {
+                    materialTypeSelected = type;
+                    m_currentPrimitive->setMaterial(this->makeMaterialByType(type));
+                }
+            }
+            ImGui::EndCombo();
+        }
 
-        ImGui::DragFloat("shininess", material->getShininess(), 1, 2.0f, 256.0f, "%.2f");
+        if(materialTypeSelected != MaterialType::None && materialTypeSelected != MaterialType::End) {
+            this->buildMaterialItem(m_currentPrimitive->getMaterial());
+        }
     }
 
     // 光源
@@ -93,12 +103,14 @@ void InspectPanel::onPrimitiveSelected(EventParam &_param) {
     m_currentPrimitive = Application::instance()->getCurrentScene()->getPrimitiveByID(primitiveID);
 }
 
-void InspectPanel::buildMaterialItem(std::shared_ptr<Material> &_material) {
+void InspectPanel::buildItemForPhongMaterial(std::shared_ptr<IMaterial> &_material) {
+    const auto material = std::dynamic_pointer_cast<PhongMaterial>(_material);
+
     const auto borderCol = ImGui::GetStyleColorVec4(ImGuiCol_Border);
     const auto tintCol = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     const auto diffuseTitle = "Diffuse";
-    const auto diffuseTexture = _material->getDiffuse();
+    const auto diffuseTexture = material->getDiffuse();
     const auto diffuseKey = diffuseTitle + std::to_string(diffuseTexture->getID());
     ImGui::PushID(diffuseTitle);
     ImGui::Separator();
@@ -113,18 +125,18 @@ void InspectPanel::buildMaterialItem(std::shared_ptr<Material> &_material) {
     if (ImGuiFileDialog::Instance()->Display(diffuseKey)) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-            _material->resetDiffuse(filePathName);
+            material->resetDiffuse(filePathName);
         }
         ImGuiFileDialog::Instance()->Close();
     }
     ImGui::SameLine();
     if(ImGui::Button("Reset")) {
-        _material->resetDiffuse(TEXTURE_DEFAULT_FILE);
+        material->resetDiffuse(TEXTURE_DEFAULT_FILE);
     }
     ImGui::PopID();
 
     const auto specularTitle = "Specular";
-    const auto specularTexture = _material->getSpecular();
+    const auto specularTexture = material->getSpecular();
     const auto specularKey = specularTitle + std::to_string(specularTexture->getID());
     ImGui::PushID(specularTitle);
     ImGui::Separator();
@@ -139,15 +151,49 @@ void InspectPanel::buildMaterialItem(std::shared_ptr<Material> &_material) {
     if (ImGuiFileDialog::Instance()->Display(specularKey)) {
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-            _material->resetSpecular(filePathName);
+            material->resetSpecular(filePathName);
         }
         ImGuiFileDialog::Instance()->Close();
     }
     ImGui::SameLine();
     if(ImGui::Button("Reset")) {
-        _material->resetSpecular(TEXTURE_DEFAULT_FILE);
+        material->resetSpecular(TEXTURE_DEFAULT_FILE);
     }
     ImGui::PopID();
+
+    ImGui::DragFloat("shininess", material->getShininess(), 1, 2.0f, 256.0f, "%.2f");
 }
 
+// 根据类型生成对应的材质类
+std::shared_ptr<IMaterial> InspectPanel::makeMaterialByType(MaterialType _type) {
+    LOG_ASSERT(_type != MaterialType::None && _type != MaterialType::End);
+    auto&& shaderProgram = m_currentPrimitive->getShaderProgram();
+    switch (_type) {
+        case MaterialType::Phong:           return std::make_shared<PhongMaterial>(shaderProgram, TEXTURE_DEFAULT_FILE, TEXTURE_DEFAULT_FILE);
+        default:                            LOG(FATAL) << " Undefined conditional branch.";
+    }
+}
 
+void InspectPanel::buildMaterialItem(std::shared_ptr<IMaterial> _material) {
+    switch (_material->getMaterialType()) {
+        case MaterialType::Phong:                  this->buildItemForPhongMaterial(_material);          break;
+        //case MaterialType::ColorMaterial:                  return "ColorMaterial";
+        //case MaterialType::TextureMaterial:                return "TextureMaterial";
+        //case MaterialType::SkyBox:                 this->buildItemForSkyboxMaterial(_material);          break;
+        //default:                                           LOG(FATAL) << " Undefined conditional branch.";
+    }
+}
+
+void InspectPanel::buildItemForSkyboxMaterial(std::shared_ptr<IMaterial> &_material) {
+    //const auto material = std::dynamic_pointer_cast<PhongMaterial>(_material);
+    //const auto borderCol = ImGui::GetStyleColorVec4(ImGuiCol_Border);
+    //const auto tintCol = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+    //
+    //ImGui::SeparatorText("Skybox Material");
+    //
+    //ImGui::Text("px");
+    //ImGui::SameLine();
+    //ImGui::Text("nx");
+    //ImGui::Image((void*)diffuseTexture->getID(), ImVec2{ 100, 100 }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), tintCol, borderCol);
+
+}

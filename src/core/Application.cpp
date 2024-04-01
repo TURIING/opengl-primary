@@ -12,6 +12,7 @@
 #include "../primitive/Cube.h"
 #include "../primitive/Floor.h"
 #include "../primitive/Square.h"
+#include "../primitive/Skybox.h"
 
 Application::Application() { }
 
@@ -123,6 +124,7 @@ std::shared_ptr<IPrimitive> Application::makePrimitiveByType(PrimitiveType _type
         case PrimitiveType::Cube:           return std::make_shared<Cube>(m_currentScene, _name);
         case PrimitiveType::Floor:          return std::make_shared<Floor>(m_currentScene, _name);
         case PrimitiveType::Square:         return std::make_shared<Square>(m_currentScene, _name);
+        case PrimitiveType::Skybox:         return std::make_shared<Skybox>(m_currentScene, _name);
         default:                            LOG(FATAL) << " Undefined conditional branch.";
     }
 }
