@@ -14,6 +14,8 @@
 #include "IPrimitive.h"
 #include "IScene.h"
 #include "../material/PhongMaterial.h"
+#include "../material/ReflectMaterial.h"
+#include "../material/SkyboxMaterial.h"
 #include "../Utility.h"
 
 void InspectPanel::render() {
@@ -170,6 +172,11 @@ std::shared_ptr<IMaterial> InspectPanel::makeMaterialByType(MaterialType _type) 
     auto&& shaderProgram = m_currentPrimitive->getShaderProgram();
     switch (_type) {
         case MaterialType::Phong:           return std::make_shared<PhongMaterial>(shaderProgram, TEXTURE_DEFAULT_FILE, TEXTURE_DEFAULT_FILE);
+        case MaterialType::Reflect: {
+            const auto material = std::dynamic_pointer_cast<SkyboxMaterial>(Application::instance()->getCurrentScene()->getSkyboxPrimitive()->getMaterial());
+            LOG_IF(ERROR, !material);
+            return std::make_shared<ReflectMaterial>(material->getTexture());
+        }
         default:                            LOG(FATAL) << " Undefined conditional branch.";
     }
 }

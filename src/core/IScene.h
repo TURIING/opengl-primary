@@ -61,6 +61,8 @@ public:
     std::shared_ptr<Camera>& getCamera();
     std::shared_ptr<ShaderProgram> getShaderProgram() { return m_shaderProgram; }
 
+    std::shared_ptr<IPrimitive> getSkyboxPrimitive() { return m_skyboxPrimitive; }
+
 protected:
     virtual void onWindowResize(Size &_size);
     virtual void onKeyPress(KEYBOARD _key);
@@ -83,6 +85,7 @@ private:
     std::unique_ptr<Buffer<LightBlock>> m_lightUbo;
     std::unique_ptr<Buffer<CameraInfoBlock>> m_cameraUbo;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
+    std::shared_ptr<IPrimitive> m_skyboxPrimitive;                                                  // 需要记录下来天空盒的图元
 };
 
 #endif //OPENGL_PRIMARY_ISCENE_H

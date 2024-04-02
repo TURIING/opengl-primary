@@ -38,6 +38,7 @@ const char *Utility::transformMaterialTypeToStr(MaterialType _type) {
         case MaterialType::Color:                  return "Color";
         case MaterialType::Texture:                return "Texture";
         case MaterialType::SkyBox:                 return "SkyBox";
+        case MaterialType::Reflect:                return "Reflect";
         default:                                   LOG(FATAL) << " Undefined conditional branch.";
     }
 }

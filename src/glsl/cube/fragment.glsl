@@ -3,6 +3,8 @@
 #define MAX_LIGHT_NUM 10
 #define LIGHT_TYPE_POINTLIGHT 2
 #define LIGHT_TYPE_BLINNPHONG 3
+#define MATERIAL_TYPE_PHONG 1
+#define MATERIAL_TYPE_REFLECT 2
 
 struct PointLight {
 	vec3 position;
@@ -44,9 +46,15 @@ in vec3 FragPos;
 // 定义材质属性
 // 移除了环境光材质颜色向量，是因为环境光颜色在几乎所有情况下都等于漫反射颜色
 struct Material {
+	int type;									// 材质类型
+
+	// PhongMaterial
 	sampler2D diffuse;  						// 漫反射贴图
 	sampler2D specular; 						// 镜面贴图
 	float shininess;    						// 反光度，镜面高光的散射/半径
+
+	// ReflectMaterial
+	samplerCube skybox;
 };
 
 uniform Material material;
@@ -64,21 +72,27 @@ void main()
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(cameraPos - FragPos);
 
-	vec3 result = vec3(0, 0, 0);
-	for(int i = 0; i < actualDirectionalLightNum; i++) {
-		result += CalcDirLight(directionalLight[i], norm, viewDir);
-	}
+	if(material.type == MATERIAL_TYPE_PHONG) {
+		vec3 result = vec3(0, 0, 0);
+		for(int i = 0; i < actualDirectionalLightNum; i++) {
+			result += CalcDirLight(directionalLight[i], norm, viewDir);
+		}
 
-	for(int i = 0; i < actualPointLightNum; i++) {
-		result += CalcPointLight(pointLight[i], norm, FragPos, viewDir);
-	}
+		for(int i = 0; i < actualPointLightNum; i++) {
+			result += CalcPointLight(pointLight[i], norm, FragPos, viewDir);
+		}
 
-	if(!enableOutline) {
 		FragColor = vec4(result, 1.0);
 	}
-	else {
-		FragColor = outlineColor;
+	else if(material.type == MATERIAL_TYPE_REFLECT) {
+		vec3 reflectDir = reflect(-viewDir, norm);
+		FragColor = vec4(texture(material.skybox, reflectDir).rgb, 1.0);
 	}
+	else {
+		FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	}
+
+
 };
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)

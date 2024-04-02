@@ -156,6 +156,11 @@ void IScene::onKeyPress(KEYBOARD _key) {
 // 将图元挂载在场景上
 void IScene::addPrimitive(std::shared_ptr<IPrimitive> &_render) {
     m_primitiveList.emplace(_render->getRenderID(), _render);
+
+    // 记录天空盒图元
+    if(_render->getPrimitiveType() == PrimitiveType::Skybox) {
+        m_skyboxPrimitive = _render;
+    }
 }
 
 void IScene::render() {

@@ -8,6 +8,7 @@
 
 #include "Cube.h"
 #include "../material/PhongMaterial.h"
+#include "../material/ReflectMaterial.h"
 
 Cube::Cube(std::shared_ptr<IScene> &_parent, const std::string &_name): IPrimitive(_parent, _name) {
     this->setPrimitiveType(PrimitiveType::Floor);
@@ -28,8 +29,12 @@ void Cube::render() {
 // 常规地绘制立方体
 void Cube::paintNormally() {
     m_vao->bind();
-    this->getShaderProgram()->setBool("enableOutline", false);
-
+    //this->getShaderProgram()->setBool("enableOutline", false);
+    if(this->getMaterial()->getMaterialType() == MaterialType::Reflect) {
+        const auto& material = std::dynamic_pointer_cast<ReflectMaterial>(this->getMaterial());
+        const auto& texture = material->getSkyboxTexture().lock();
+        if(texture) texture->activate();
+    }
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 

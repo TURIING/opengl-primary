@@ -29,7 +29,7 @@ void Square::render() {
     m_texture->activate();
     const auto camera = this->getCamera();
 
-    this->getShaderProgram()->setBool("enableOutline", false);
+    //this->getShaderProgram()->setBool("enableOutline", false);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }

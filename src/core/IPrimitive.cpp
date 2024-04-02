@@ -9,6 +9,7 @@
 #include "IScene.h"
 #include "../material/PhongMaterial.h"
 #include "../material/SkyboxMaterial.h"
+#include "../material/ReflectMaterial.h"
 
 IPrimitive::IPrimitive(std::shared_ptr<IScene> &_parent, const std::string &_name, std::shared_ptr<ShaderProgram> _shaderProgram) {
     this->setRenderType(RenderType::Primitive);
@@ -101,12 +102,21 @@ DirectionalLight *IPrimitive::getDirectionalLight() {
 void IPrimitive::transmitMaterialToShader() {
     switch (m_material->getMaterialType()) {
         case MaterialType::Phong: {
-            const std::shared_ptr<PhongMaterial> material = std::dynamic_pointer_cast<PhongMaterial>(this->getMaterial());
+            const auto material = std::dynamic_pointer_cast<PhongMaterial>(this->getMaterial());
+            this->getShaderProgram()->setInt("material.type", static_cast<int>(material->getMaterialType()));
             this->getShaderProgram()->setInt("material.diffuse", material->getDiffuse()->getTextureUnit());
             this->getShaderProgram()->setInt("material.specular", material->getSpecular()->getTextureUnit());
             this->getShaderProgram()->setFloat("material.shininess", *(material->getShininess()));
             material->getDiffuse()->activate();
             material->getSpecular()->activate();
+            break;
+        }
+        case MaterialType::Reflect: {
+            const auto material = std::dynamic_pointer_cast<ReflectMaterial>(this->getMaterial());
+            this->getShaderProgram()->setInt("material.type", static_cast<int>(material->getMaterialType()));
+            const auto& texture = material->getSkyboxTexture().lock();
+            this->getShaderProgram()->setInt("material.skybox", texture ? texture->getTextureUnit() : -1);
+            break;
         }
     }
 }
