@@ -21,10 +21,10 @@ class IRenderer {
 public:
     IRenderer();
 
-    bool getDeepTest() { return m_enableDeepTest; }
+    [[nodiscard]] bool getDeepTest() const { return m_enableDeepTest; }
     void setDeepTest(bool _on = true);
 
-    bool getStencilTest() { return m_enableStencilTest; }
+    [[nodiscard]] bool getStencilTest() const { return m_enableStencilTest; }
     void setStencilTest(bool _on = true);
 
     virtual void render() = 0;
@@ -35,7 +35,7 @@ public:
 
     RenderType getRenderType();
     std::string getRenderName() { return m_renderName; }
-    int getRenderID() { return m_renderID; }
+    [[nodiscard]] int getRenderID() const { return m_renderID; }
 
     void setRenderName(const std::string &_name);
 

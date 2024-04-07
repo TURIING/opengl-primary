@@ -16,6 +16,7 @@
 #include "../material/PhongMaterial.h"
 #include "../material/ReflectMaterial.h"
 #include "../material/SkyboxMaterial.h"
+#include "../material/CommonMaterial.h"
 #include "../Utility.h"
 
 void InspectPanel::render() {
@@ -28,7 +29,7 @@ void InspectPanel::render() {
     // 基本变换
     if(ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::DragFloat3("Position", (float *)m_currentPrimitive->getPosition(), 0.01f, -100.0f, 100.0f, "%.2f");
-        ImGui::DragFloat3("Scale", (float *)m_currentPrimitive->getScaling(), 0.01f, 0.0f, 10.0f, "%.2f");
+        ImGui::DragFloat("Scale", m_currentPrimitive->getScaling(), 0.01f, 0.0f, 10.0f, "%.2f");
         ImGui::DragFloat3("Rotate", (float *)m_currentPrimitive->getRotation(), 0.01f, -180.0f, 180.0f, "%.2f");
     }
 
@@ -46,7 +47,10 @@ void InspectPanel::render() {
             ImGui::EndCombo();
         }
 
-        if(materialTypeSelected != MaterialType::None && materialTypeSelected != MaterialType::End) {
+        if(materialTypeSelected == MaterialType::Phong && m_currentPrimitive->getPrimitiveType() == PrimitiveType::Model && m_currentMesh) {
+            this->buildMaterialItem(m_currentMesh->getMaterial());
+        }
+        else if(materialTypeSelected != MaterialType::None && materialTypeSelected != MaterialType::End) {
             this->buildMaterialItem(m_currentPrimitive->getMaterial());
         }
     }
@@ -95,6 +99,7 @@ void InspectPanel::render() {
 void InspectPanel::dispatch(Event _event, EventParam _param) {
     switch (_event) {
         case Event::PRIMITIVE_SELECTED:         this->onPrimitiveSelected(_param);      break;
+        case Event::MESH_SELECTED:              this->onMeshSelected(_param);           break;
         case Event::SCENE_CREATED:              m_currentPrimitive = nullptr;              break;
         case Event::PRIMITIVE_DELETED:          m_currentPrimitive = nullptr;              break;
     }
@@ -103,6 +108,7 @@ void InspectPanel::dispatch(Event _event, EventParam _param) {
 void InspectPanel::onPrimitiveSelected(EventParam &_param) {
     const auto primitiveID = std::get<int>(_param);
     m_currentPrimitive = Application::instance()->getCurrentScene()->getPrimitiveByID(primitiveID);
+    m_currentMesh = nullptr;
 }
 
 void InspectPanel::buildItemForPhongMaterial(std::shared_ptr<IMaterial> &_material) {
@@ -184,9 +190,7 @@ std::shared_ptr<IMaterial> InspectPanel::makeMaterialByType(MaterialType _type) 
 void InspectPanel::buildMaterialItem(std::shared_ptr<IMaterial> _material) {
     switch (_material->getMaterialType()) {
         case MaterialType::Phong:                  this->buildItemForPhongMaterial(_material);          break;
-        //case MaterialType::ColorMaterial:                  return "ColorMaterial";
-        //case MaterialType::TextureMaterial:                return "TextureMaterial";
-        //case MaterialType::SkyBox:                 this->buildItemForSkyboxMaterial(_material);          break;
+        case MaterialType::Common:                 this->buildItemForCommonMaterial(_material);         break;
         //default:                                           LOG(FATAL) << " Undefined conditional branch.";
     }
 }
@@ -203,4 +207,140 @@ void InspectPanel::buildItemForSkyboxMaterial(std::shared_ptr<IMaterial> &_mater
     //ImGui::Text("nx");
     //ImGui::Image((void*)diffuseTexture->getID(), ImVec2{ 100, 100 }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), tintCol, borderCol);
 
+}
+
+void InspectPanel::onMeshSelected(EventParam &_param) {
+    m_currentMesh = std::move(std::get<std::shared_ptr<Mesh>>(_param));
+}
+
+void InspectPanel::buildItemForCommonMaterial(std::shared_ptr<IMaterial> &_material) {
+    const auto material = std::dynamic_pointer_cast<CommonMaterial>(_material);
+
+    const auto borderCol = ImGui::GetStyleColorVec4(ImGuiCol_Border);
+    const auto tintCol = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    // Diffuse
+    {
+        const auto diffuseTitle = "Diffuse";
+        const auto diffuseTexture = material->getDiffuseMap();
+        const auto diffuseKey = diffuseTitle + std::to_string(diffuseTexture->getID());
+        ImGui::PushID(diffuseTitle);
+        ImGui::Separator();
+        ImGui::Text(diffuseTitle);
+        ImGui::Image((void *) diffuseTexture->getID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
+                     tintCol, borderCol);
+        ImGui::SameLine();
+        if (ImGui::Button("Open file")) {
+            IGFD::FileDialogConfig config;
+            config.path = TEXTURE_PATH;
+            ImGuiFileDialog::Instance()->OpenDialog(diffuseKey, "Choose File", ".png,.jpg", config);
+        }
+        if (ImGuiFileDialog::Instance()->Display(diffuseKey)) {
+            if (ImGuiFileDialog::Instance()->IsOk()) {
+                std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+                material->resetDiffuseMap(filePathName);
+            }
+            ImGuiFileDialog::Instance()->Close();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Reset")) {
+            material->resetDiffuseMap(TEXTURE_DEFAULT_FILE);
+        }
+        ImGui::PopID();
+    }
+
+    // Specular
+    {
+        const auto specularTitle = "Specular";
+        const auto specularTexture = material->getSpecularMap();
+        if(specularTexture) {
+            const auto specularKey = specularTitle + std::to_string(specularTexture->getID());
+            ImGui::PushID(specularTitle);
+            ImGui::Separator();
+            ImGui::Text(specularTitle);
+            ImGui::Image((void *) specularTexture->getID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
+                         tintCol, borderCol);
+            ImGui::SameLine();
+            if (ImGui::Button("Open file")) {
+                IGFD::FileDialogConfig config;
+                config.path = TEXTURE_PATH;
+                ImGuiFileDialog::Instance()->OpenDialog(specularKey, "Choose File", ".png,.jpg", config);
+            }
+            if (ImGuiFileDialog::Instance()->Display(specularKey)) {
+                if (ImGuiFileDialog::Instance()->IsOk()) {
+                    std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+                    material->resetSpecularMap(filePathName);
+                }
+                ImGuiFileDialog::Instance()->Close();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Reset")) {
+                material->resetSpecularMap(TEXTURE_DEFAULT_FILE);
+            }
+            ImGui::PopID();
+        }
+    }
+    // Normal
+    {
+        const auto normalTitle = "Normal";
+        const auto normalTexture = material->getNormalMap();
+        if(normalTexture) {
+            const auto normalKey = normalTitle + std::to_string(normalTexture->getID());
+            ImGui::PushID(normalTitle);
+            ImGui::Separator();
+            ImGui::Text(normalTitle);
+            ImGui::Image((void *) normalTexture->getID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
+                         tintCol, borderCol);
+            ImGui::SameLine();
+            if (ImGui::Button("Open file")) {
+                IGFD::FileDialogConfig config;
+                config.path = TEXTURE_PATH;
+                ImGuiFileDialog::Instance()->OpenDialog(normalKey, "Choose File", ".png,.jpg", config);
+            }
+            if (ImGuiFileDialog::Instance()->Display(normalKey)) {
+                if (ImGuiFileDialog::Instance()->IsOk()) {
+                    std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+                    material->resetNormalMap(filePathName);
+                }
+                ImGuiFileDialog::Instance()->Close();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Reset")) {
+                material->resetNormalMap(TEXTURE_DEFAULT_FILE);
+            }
+            ImGui::PopID();
+        }
+    }
+
+    // Height
+    {
+        const auto heightTitle = "Height";
+        const auto heightTexture = material->getHeightMap();
+        if(heightTexture) {
+            const auto heightKey = heightTitle + std::to_string(heightTexture->getID());
+            ImGui::PushID(heightTitle);
+            ImGui::Separator();
+            ImGui::Text(heightTitle);
+            ImGui::Image((void *) heightTexture->getID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
+                         tintCol, borderCol);
+            ImGui::SameLine();
+            if (ImGui::Button("Open file")) {
+                IGFD::FileDialogConfig config;
+                config.path = TEXTURE_PATH;
+                ImGuiFileDialog::Instance()->OpenDialog(heightKey, "Choose File", ".png,.jpg", config);
+            }
+            if (ImGuiFileDialog::Instance()->Display(heightKey)) {
+                if (ImGuiFileDialog::Instance()->IsOk()) {
+                    std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+                    material->resetHeightMap(filePathName);
+                }
+                ImGuiFileDialog::Instance()->Close();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Reset")) {
+                material->resetHeightMap(TEXTURE_DEFAULT_FILE);
+            }
+            ImGui::PopID();
+        }
+    }
 }

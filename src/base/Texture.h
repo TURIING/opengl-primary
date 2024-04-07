@@ -17,7 +17,8 @@
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include "../BaseDefine.h"
+
+struct Size;
 
 class Texture {
     // 纹理类型
@@ -30,23 +31,23 @@ public:
     Texture(const std::vector<std::string> &_pathVec, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode);
     Texture(Size &_scrSize, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode, STORAGE_TYPE _type);
     ~Texture();
-    unsigned int getID() { return m_id; }
-    unsigned int getTextureUnit() { return m_textureUnit; }
+    [[nodiscard]] unsigned int getID() const { return m_id; }
+    [[nodiscard]] unsigned int getTextureUnit() const { return m_textureUnit; }
     void activate();
-    Size getSize() { return m_size; }
 
 private:
     void bind();
-    void setWrapAndFilter(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode);
-    void setWrapAndFilterForCubeMap(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode);
+    static void setWrapAndFilter(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode);
+    static void setWrapAndFilterForCubeMap(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode);
     void generateTexture(const std::string &_resPath);
     static void generateTextureForCubeMap(const std::vector<std::string> &_pathVec);
 
 private:
     unsigned int m_id = -1;
     TARGET_TYPE m_textureTarget = TARGET_TYPE::TEXTURE2D;
-    Size m_size;
     unsigned int m_textureUnit = -1;
+public:
+    std::string m_path;
 };
 
 #endif //OPENGL_PRIMARY_TEXTURE_H

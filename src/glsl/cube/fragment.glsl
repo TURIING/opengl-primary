@@ -5,6 +5,7 @@
 #define LIGHT_TYPE_BLINNPHONG 3
 #define MATERIAL_TYPE_PHONG 1
 #define MATERIAL_TYPE_REFLECT 2
+#define MATERIAL_TYPE_COMMON 3
 
 struct PointLight {
 	vec3 position;
@@ -58,8 +59,6 @@ struct Material {
 };
 
 uniform Material material;
-uniform sampler2D texture1;
-uniform sampler2D texture2;
 uniform vec4 outlineColor;
 uniform bool enableOutline;
 uniform bool enableTexture;
@@ -72,7 +71,7 @@ void main()
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(cameraPos - FragPos);
 
-	if(material.type == MATERIAL_TYPE_PHONG) {
+	if(material.type == MATERIAL_TYPE_PHONG || material.type == MATERIAL_TYPE_COMMON) {
 		vec3 result = vec3(0, 0, 0);
 		for(int i = 0; i < actualDirectionalLightNum; i++) {
 			result += CalcDirLight(directionalLight[i], norm, viewDir);
@@ -90,10 +89,9 @@ void main()
 	}
 	else {
 		FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+//		FragColor = texture(material.diffuse, TexCoord);
 	}
-
-
-};
+}
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {

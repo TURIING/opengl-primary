@@ -19,7 +19,7 @@ class IRenderer;
 
 class PropertyPanel: public IPanel {
 public:
-    PropertyPanel();
+    PropertyPanel() = default;
     void render() override;
 
 private:

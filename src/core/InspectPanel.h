@@ -11,6 +11,7 @@
 
 #include "IPanel.h"
 #include <memory>
+#include "../base/Mesh.h"
 
 class IPrimitive;
 class IMaterial;
@@ -23,13 +24,16 @@ public:
 
 private:
     void onPrimitiveSelected(EventParam &_param);
+    void onMeshSelected(EventParam &_param);
     void buildMaterialItem(std::shared_ptr<IMaterial> _material);
     void buildItemForPhongMaterial(std::shared_ptr<IMaterial> &_material);
+    void buildItemForCommonMaterial(std::shared_ptr<IMaterial> &_material);
     void buildItemForSkyboxMaterial(std::shared_ptr<IMaterial> &_material);
     std::shared_ptr<IMaterial> makeMaterialByType(MaterialType _type);
 
 private:
     std::shared_ptr<IPrimitive> m_currentPrimitive = nullptr;
+    std::shared_ptr<Mesh> m_currentMesh = nullptr;
 };
 
 

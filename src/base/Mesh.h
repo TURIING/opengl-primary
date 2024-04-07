@@ -1,84 +1,46 @@
-//
-// Created by TURIING on 2023/12/10.
-//
+/********************************************************************************
+* @author: TURIING
+* @email: turiing@163.com
+* @date: 2024/4/3 15:37
+* @version: 1.0
+* @description: 模型网格类
+********************************************************************************/
 
-#ifndef LEARN_OPENGL_Mesh_H
-#define LEARN_OPENGL_Mesh_H
+#ifndef OPENGL_PRIMARY_MESH_H
+#define OPENGL_PRIMARY_MESH_H
 
-#include <glad/glad.h>
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "ShaderProgram.h"
-#include "VertexArray.h"
-#include "Buffer.h"
-#include <string>
-#include <vector>
-#include <memory>
-#include "Texture.h"
-
-/* 顶点结构体 */
-struct MeshVertex {
-    glm::vec3 Position;                         // 顶点的位置向量
-    glm::vec3 Normal;                           // 法向量
-    glm::vec2 TexCoords;                        // 纹理坐标
-};
-
-struct MeshTexture {
-    std::shared_ptr<Texture> texture;           // 纹理对象
-    std::string type;                           // 纹理类型
-    std::string path;                           // 纹理路径
-};
+#include "../material/CommonMaterial.h"
+#include "../base/VertexArray.h"
+#include "../base/Buffer.h"
+#include "../base/IMaterial.h"
 
 class Mesh {
 public:
-    Mesh(std::shared_ptr<ShaderProgram> _shaderProgram, std::vector<MeshVertex> _vertices, std::vector<unsigned int> _indices, std::vector<MeshTexture> _textures)
-        : m_vertices(_vertices), m_indices(_indices), m_textures(_textures)
-    {
-        m_vao = std::make_shared<VertexArray>();
-        m_vbo = std::make_shared<Buffer<MeshVertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
-        m_ebo = std::make_shared<Buffer<unsigned int>>(BUFFER_TYPE::INDEX_BUFFER, m_indices);
+    struct Vertex {
+        glm::vec3 position;                         // 顶点的位置向量
+        glm::vec3 normal;                           // 法向量
+        glm::vec2 texCoord;                         // 纹理坐标
+    };
 
-        m_vao->setAttribute<MeshVertex, glm::vec3>(0, offsetof(MeshVertex, Position));
-        m_vao->setAttribute<MeshVertex, glm::vec3>(1, offsetof(MeshVertex, Normal));
-        m_vao->setAttribute<MeshVertex, glm::vec2>(2, offsetof(MeshVertex, TexCoords));
-    }
-
-    void paint(std::shared_ptr<ShaderProgram> _shaderProgram) {
-        unsigned int diffuseNr = 1;
-        unsigned int specularNr = 1;
-        unsigned int normalNr   = 1;
-        unsigned int heightNr   = 1;
-
-        for(unsigned int i = 0; i < m_textures.size(); i++) {
-            glActiveTexture(GL_TEXTURE0 + i);
-
-            std::string number;
-            std::string name = m_textures[i].type;
-            if(name == "texture_diffuse")
-                number = std::to_string(diffuseNr++);
-            else if(name == "texture_specular")
-                number = std::to_string(specularNr++);
-            else if(name == "texture_normal")
-                number = std::to_string(normalNr++);
-            else if(name == "texture_height")
-                number = std::to_string(heightNr++);
-
-            _shaderProgram->setInt((name + number).c_str(), i);
-            glBindTexture(GL_TEXTURE_2D, m_textures[i].texture->getID());
-        }
-        glActiveTexture(GL_TEXTURE0);
-        m_vao->bind();
-
-        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
-    }
+public:
+    Mesh(const std::string &_name, std::shared_ptr<ShaderProgram> _shaderProgram, std::vector<Vertex> &_vertices, std::vector<unsigned int> &_indices, std::shared_ptr<IMaterial> &_material);
+    void render();
+    std::string getMeshName() { return m_name; }
+    std::shared_ptr<IMaterial> getMaterial() { return m_material.lock(); }
 
 private:
-    std::vector<MeshVertex> m_vertices;
+    std::string m_name;
+    std::vector<Vertex> m_vertices;
     std::vector<unsigned int> m_indices;
-    std::vector<MeshTexture> m_textures;
-
+    std::weak_ptr<IMaterial> m_material;
     std::shared_ptr<VertexArray> m_vao;
-    std::shared_ptr<Buffer<MeshVertex>> m_vbo;
+    std::shared_ptr<Buffer<Vertex>> m_vbo;
     std::shared_ptr<Buffer<unsigned int>> m_ebo;
+    std::shared_ptr<ShaderProgram> m_shaderProgram;
 };
-#endif //LEARN_OPENGL_Mesh_H
+
+
+#endif //OPENGL_PRIMARY_MESH_H

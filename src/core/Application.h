@@ -32,7 +32,7 @@ public:
     std::shared_ptr<IScene> getCurrentScene() { return m_currentScene; }
 
 private:
-    Application();
+    Application() = default;
     void render();
     inline void onWindowResize(EventParam &_param);
     inline void onWindowClose(EventParam &_param);
@@ -42,7 +42,7 @@ private:
     inline void onSceneCreated();
     inline void onPrimitiveAdded(EventParam &_param);
     inline void onPrimitiveDeleted(EventParam &_param);
-    std::shared_ptr<IPrimitive> makePrimitiveByType(PrimitiveType _type, const std::string &_name);
+    std::shared_ptr<IPrimitive> makePrimitiveByType(PrimitiveType _type, const std::string &_name, const std::string &_modelPath);
 
 private:
     std::string m_appName;

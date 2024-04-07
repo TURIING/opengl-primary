@@ -10,10 +10,15 @@
 #define OPENGL_PRIMARY_UTILITY_H
 
 #include "BaseDefine.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
 namespace Utility {
+
     const char* transformPrimitiveTypeToStr(PrimitiveType _type);
     const char* transformLightTypeToStr(LightType _type);
     const char* transformMaterialTypeToStr(MaterialType _type);
+    aiTextureType transformTextureTypeToAssimp(TextureType _type);
 }
 #endif //OPENGL_PRIMARY_UTILITY_H

@@ -13,8 +13,7 @@
 #include "../primitive/Floor.h"
 #include "../primitive/Square.h"
 #include "../primitive/Skybox.h"
-
-Application::Application() { }
+#include "../primitive/Model.h"
 
 void Application::init() {
     const auto winSize = Size{ SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -51,6 +50,7 @@ void Application::dispatch(Event _event, EventParam _param) {
         case Event::MOUSE_WHEEL:                       this->onMouseWheelScroll(_param);                           break;
         case Event::KEY_PRESS:                         this->onKeyPress(_param);                                   break;
         case Event::PRIMITIVE_SELECTED:                m_inspectPanel->dispatch(_event, _param);          break;
+        case Event::MESH_SELECTED:                     m_inspectPanel->dispatch(_event, _param);          break;
         case Event::SCENE_CREATED:                     this->onSceneCreated();                                        break;
         case Event::PRIMITIVE_CREATED:                 this->onPrimitiveAdded(_param);                             break;
         case Event::PRIMITIVE_DELETED:                 this->onPrimitiveDeleted(_param);                           break;
@@ -110,14 +110,14 @@ void Application::onSceneCreated() {
 }
 
 void Application::onPrimitiveAdded(EventParam &_param) {
-    const auto [type, name] = std::get<PrimitiveInfo>(_param);
-    std::shared_ptr<IPrimitive> primitive = this->makePrimitiveByType(type, name);
+    const auto& [type, name, modelPath] = std::get<PrimitiveInfo>(_param);
+    std::shared_ptr<IPrimitive> primitive = this->makePrimitiveByType(type, name, modelPath);
     m_currentScene->addPrimitive(primitive);
     this->dispatch(Event::PRIMITIVE_SELECTED, primitive->getRenderID());
 }
 
 // 通过给定的类型生成对应的图元派生类
-std::shared_ptr<IPrimitive> Application::makePrimitiveByType(PrimitiveType _type, const std::string &_name) {
+std::shared_ptr<IPrimitive> Application::makePrimitiveByType(PrimitiveType _type, const std::string &_name, const std::string &_modelPath) {
     LOG_ASSERT(m_currentScene);
 
     switch (_type) {
@@ -125,6 +125,7 @@ std::shared_ptr<IPrimitive> Application::makePrimitiveByType(PrimitiveType _type
         case PrimitiveType::Floor:          return std::make_shared<Floor>(m_currentScene, _name);
         case PrimitiveType::Square:         return std::make_shared<Square>(m_currentScene, _name);
         case PrimitiveType::Skybox:         return std::make_shared<Skybox>(m_currentScene, _name);
+        case PrimitiveType::Model:          return std::make_shared<Model>(m_currentScene, _name, _modelPath);
         default:                            LOG(FATAL) << " Undefined conditional branch.";
     }
 }

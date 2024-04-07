@@ -14,6 +14,7 @@
 class IMaterial {
 public:
     MaterialType getMaterialType() { return m_materialType; }
+    virtual ~IMaterial() = default;
 
 protected:
     virtual void setMaterialType(MaterialType _type) { m_materialType = _type; }        // note: 此virtual待移除

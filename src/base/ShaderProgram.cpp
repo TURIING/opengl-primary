@@ -59,7 +59,7 @@ void ShaderProgram::checkLinkError(unsigned _id)
  * @param _attr 变量名
  * @return location
  */
-unsigned int ShaderProgram::getAttrLocation(std::string _attr) {
+unsigned int ShaderProgram::getAttrLocation(const std::string &_attr) {
     this->checkCurrentProgramBeUsed();
     LOG_ASSERT(m_id != -1);
 
@@ -75,6 +75,7 @@ int ShaderProgram::getUniformLocation(const std::string &_name) const {
 
     const auto value =  glGetUniformLocation(m_id, _name.c_str());
     LOG_IF(ERROR, value == -1) << "Failed to get location value" << "(" << _name << ")" << " corresponding to uniform.";
+    return value;
 }
 
 void ShaderProgram::setBool(const std::string &_name, bool _value) const {
@@ -120,5 +121,9 @@ void ShaderProgram::setVec4(const std::string &_name, const glm::vec4 &_value) c
 void ShaderProgram::setMat4(const std::string &_name, const GLfloat *_value) const {
     this->checkCurrentProgramBeUsed();
     glUniformMatrix4fv(getUniformLocation(_name), 1, GL_FALSE, _value);
+}
+
+bool ShaderProgram::isExistUniformVariable(const std::string &_name) const {
+    return glGetUniformLocation(m_id, _name.c_str()) != -1;
 }
 

@@ -63,6 +63,8 @@ public:
 
     std::shared_ptr<IPrimitive> getSkyboxPrimitive() { return m_skyboxPrimitive; }
 
+    void setShadow(bool _on) { m_isShadow = _on; }
+
 protected:
     virtual void onWindowResize(Size &_size);
     virtual void onKeyPress(KEYBOARD _key);
@@ -74,8 +76,6 @@ private:
     std::map<int, std::shared_ptr<IPrimitive>> m_primitiveList;                                     // 场景中的图元集合
     Color m_clearColor = { 0.2, 0.2, 0.2, 1 };					                                    // 清屏颜色
     std::shared_ptr<Camera> m_camera;
-
-private:
     std::unique_ptr<FrameBuffer> m_fbo;
     std::shared_ptr<RenderBuffer> m_rbo;
     std::shared_ptr<Texture> m_fboColorTexture;
@@ -86,6 +86,7 @@ private:
     std::unique_ptr<Buffer<CameraInfoBlock>> m_cameraUbo;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
     std::shared_ptr<IPrimitive> m_skyboxPrimitive;                                                  // 需要记录下来天空盒的图元
+    bool m_isShadow = false;
 };
 
 #endif //OPENGL_PRIMARY_ISCENE_H

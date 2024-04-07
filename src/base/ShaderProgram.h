@@ -15,10 +15,11 @@ public:
 	void use() const;
 
     // -----------------------------------------------------------------------------------------------
-    [[nodiscard]] unsigned int getAttrLocation(std::string _attr);
+    [[nodiscard]] unsigned int getAttrLocation(const std::string &_attr);
 
     [[nodiscard]] int getUniformLocation(const std::string &_name) const;
 
+    [[nodiscard]] bool isExistUniformVariable(const std::string &_name) const;
     // -----------------------------------------------------------------------------------------------
     void setBool(const std::string &_name, bool _value) const;
 

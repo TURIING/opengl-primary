@@ -8,6 +8,7 @@
 
 #include "Common.h"
 #include "../Utility.h"
+#include "ImGuiFileDialog/ImGuiFileDialog.h"
 
 // 绘制添加图元的模态窗口
 void Common::paintAddPrimitiveModal() {
@@ -27,6 +28,29 @@ void Common::paintAddPrimitiveModal() {
         static char primitiveName[128] = "";
         ImGui::InputTextWithHint("Primitive Name", "Please enter entity name.", primitiveName, IM_ARRAYSIZE(primitiveName));
 
+        // 模型路径
+        static char modelPath[128] = "";
+        if(primitiveTypeSelected == PrimitiveType::Model) {
+            const std::string key = "model_load";
+
+            ImGui::InputText("model_path", modelPath, IM_ARRAYSIZE(modelPath));
+
+            ImGui::SameLine();
+
+            if(ImGui::Button("Open file")) {
+                IGFD::FileDialogConfig config;
+                config.path = MODEL_PATH;
+                ImGuiFileDialog::Instance()->OpenDialog(key, "Choose File", ".obj", config);
+            }
+            if (ImGuiFileDialog::Instance()->Display(key)) {
+                if (ImGuiFileDialog::Instance()->IsOk()) {
+                    std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+                    strcpy(modelPath, filePathName.c_str());
+                }
+                ImGuiFileDialog::Instance()->Close();
+            }
+        }
+
         // 关闭按钮
         if(ImGui::Button("Close")) {
             ImGui::CloseCurrentPopup();
@@ -37,9 +61,10 @@ void Common::paintAddPrimitiveModal() {
         // 创建按钮
         ImGui::SameLine();
         if(ImGui::Button("Ok")) {
-            Application::instance()->dispatch(Event::PRIMITIVE_CREATED, PrimitiveInfo{ primitiveTypeSelected, std::string(primitiveName)});
+            Application::instance()->dispatch(Event::PRIMITIVE_CREATED, PrimitiveInfo{ primitiveTypeSelected, std::string(primitiveName), std::string(modelPath)});
             primitiveTypeSelected = PrimitiveType::Cube;
             memset(primitiveName, 0, sizeof(primitiveName));
+            memset(modelPath, 0, sizeof(modelPath));
             ImGui::CloseCurrentPopup();
         }
 

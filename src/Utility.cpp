@@ -16,6 +16,7 @@ const char *Utility::transformPrimitiveTypeToStr(PrimitiveType _type) {
         case PrimitiveType::Floor:                      return "Floor";
         case PrimitiveType::Square:                     return "Square";
         case PrimitiveType::Skybox:                     return "Skybox";
+        case PrimitiveType::Model:                      return "Model";
         default:                                        LOG(FATAL) << " Undefined conditional branch.";
     }
 }
@@ -39,6 +40,17 @@ const char *Utility::transformMaterialTypeToStr(MaterialType _type) {
         case MaterialType::Texture:                return "Texture";
         case MaterialType::SkyBox:                 return "SkyBox";
         case MaterialType::Reflect:                return "Reflect";
+        case MaterialType::Common:                 return "Common";
         default:                                   LOG(FATAL) << " Undefined conditional branch.";
+    }
+}
+
+aiTextureType Utility::transformTextureTypeToAssimp(TextureType _type) {
+    switch (_type) {
+        case TextureType::Diffuse:              return aiTextureType::aiTextureType_DIFFUSE;
+        case TextureType::Specular:             return aiTextureType::aiTextureType_SPECULAR;
+        case TextureType::Height:               return aiTextureType::aiTextureType_HEIGHT;
+        case TextureType::Normal:               return aiTextureType::aiTextureType_NORMALS;
+        default:                                LOG(FATAL) << " Undefined conditional branch.";
     }
 }

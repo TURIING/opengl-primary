@@ -35,7 +35,7 @@ void IScene::clear() {
 }
 
 void IScene::setWindowSize(std::tuple<int, int> &_windowSize) {
-    for(auto [id, render]: m_primitiveList) {
+    for(const auto& [id, render]: m_primitiveList) {
         render->setWindowSize(_windowSize);
     }
 
@@ -81,7 +81,7 @@ void IScene::preRender() {
 
     // 传递光源信息
     int pointLightIndex = 0, directionalLightIndex = 0;
-    for(const auto [id, child]: m_primitiveList) {
+    for(const auto& [id, child]: m_primitiveList) {
         if(child->getLightType() == LightType::PointLight) {
             const auto extraOffset = pointLightIndex * sizeof(PointLight);
             const auto light = child->getPointLight();
@@ -96,7 +96,7 @@ void IScene::preRender() {
         }
     }
 
-    for(const auto [id, child]: m_primitiveList) {
+    for(const auto& [id, child]: m_primitiveList) {
         if(child->getLightType() == LightType::DirectionalLight) {
             const auto extraOffset = directionalLightIndex * sizeof(DirectionalLight) + MAX_LIGHT_NUM * sizeof(PointLight);
             const auto light = child->getDirectionalLight();
@@ -164,7 +164,7 @@ void IScene::addPrimitive(std::shared_ptr<IPrimitive> &_render) {
 }
 
 void IScene::render() {
-    for(auto [id, primitive]: this->getAllPrimitive()) {
+    for(const auto& [id, primitive]: this->getAllPrimitive()) {
         primitive->preRender();
         primitive->render();
     }

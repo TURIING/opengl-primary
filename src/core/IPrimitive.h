@@ -20,12 +20,12 @@ public:
     explicit IPrimitive(std::shared_ptr<IScene> &_parent, const std::string &_name, std::shared_ptr<ShaderProgram> _shaderProgram = nullptr);
 
     // 摄像机
-    virtual void setCamera(std::shared_ptr<Camera> &_camera);
+    void setCamera(std::shared_ptr<Camera> &_camera);
     std::shared_ptr<Camera> getCamera();
 
     // 缩放
-    void scale(float _x, float _y, float _z) { m_scaling = { _x, _y, _z }; }
-    glm::vec3 *getScaling() { return &m_scaling; }
+    void scale(float _scaling) { m_scaling = _scaling; }
+    float *getScaling() { return &m_scaling; }
 
     // 平移
     void translate(float _x, float _y, float _z) { m_position = { _x, _y, _z }; }
@@ -69,7 +69,7 @@ private:
 
 private:
     glm::vec3 m_position = { -1.0f, -1.0f, -1.0f };                                         // 平移后的位置
-    glm::vec3 m_scaling = { 1.0f , 1.0f, 1.0f };
+    float m_scaling = 1.0f;
     glm::vec3 m_rotation = { 0.0f , 0.0f, 0.0f };
 
     bool m_enableOutline = false;                                                                   // 是否绘制轮廓

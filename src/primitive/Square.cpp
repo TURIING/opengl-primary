@@ -38,9 +38,10 @@ void Square::preRender() {
     IPrimitive::preRender();
 
     // 传递model矩阵
+    const auto scaling = *this->getScaling();
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, *this->getPosition());
-    model = glm::scale(model, *this->getScaling());
+    model = glm::scale(model, glm::vec3(scaling, scaling, scaling));
     model = glm::rotate(model, this->getRotation()->x, glm::vec3{ 1, 0, 0 });
     model = glm::rotate(model, this->getRotation()->y, glm::vec3{ 0, 1, 0 });
     model = glm::rotate(model, this->getRotation()->z, glm::vec3{ 0, 0, 1 });

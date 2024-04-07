@@ -7,16 +7,17 @@
 ********************************************************************************/
 
 #include "Texture.h"
+#include "../BaseDefine.h"
 
 // 用于构造生成来自图像文件的纹理
-Texture::Texture(std::string _path, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode): m_textureUnit(_unit) {
+Texture::Texture(std::string _path, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode): m_textureUnit(_unit), m_path(_path) {
     LOG_ASSERT(!_path.empty());
 
     glGenTextures(1, &m_id);
 
     this->bind();
 
-    this->setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
+    Texture::setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
 
     this->generateTexture(_path);
 }
@@ -30,8 +31,8 @@ Texture::Texture(const std::vector<std::string> &_pathVec, unsigned int _unit, G
     m_textureUnit = _unit;
 
     this->bind();
-    this->generateTextureForCubeMap(_pathVec);
-    this->setWrapAndFilterForCubeMap(_wrapModeS, _wrapModeT, _wrapModeR, _minFilterMode, _magFilterMode);
+    Texture::generateTextureForCubeMap(_pathVec);
+    Texture::setWrapAndFilterForCubeMap(_wrapModeS, _wrapModeT, _wrapModeR, _minFilterMode, _magFilterMode);
 }
 
 /**
@@ -46,10 +47,10 @@ Texture::Texture(Size &_scrSize, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _m
     glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
     this->bind();
 
-    this->setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
+    Texture::setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
     switch (_type) {
         case STORAGE_TYPE::IMAGE2D:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
             break;
         case STORAGE_TYPE::STORAGE2D:
             glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, width, height);
@@ -107,7 +108,7 @@ void Texture::generateTexture(const std::string &_resPath) {
 
     // 加载纹理图片
     int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
     GLenum format;
 
     unsigned char *data = stbi_load(_resPath.c_str(), &width, &height, &nrChannels, 0);
@@ -120,8 +121,6 @@ void Texture::generateTexture(const std::string &_resPath) {
         case 4:     format = GL_RGBA;   break;
         default:    LOG(FATAL) << "Wrong number of image channels.";
     }
-
-    m_size = { width, height };
 
     // 生成纹理
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -143,7 +142,6 @@ void Texture::generateTextureForCubeMap(const std::vector<std::string> &_pathVec
 
     // 加载纹理图片
     int width, height, nrChannels;
-    //stbi_set_flip_vertically_on_load(true);
     GLenum format;
 
     for(auto i = 0; i < _pathVec.size(); i++) {

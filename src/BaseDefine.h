@@ -9,6 +9,7 @@
 #ifndef OPENGL_PRIMARY_BASEDEFINE_H
 #define OPENGL_PRIMARY_BASEDEFINE_H
 
+#include <memory>
 #include <variant>
 #include <string>
 #include <glm/glm.hpp>
@@ -18,6 +19,9 @@ constexpr int SCREEN_WIDTH = 2250;                                  // 窗口宽
 constexpr int SCREEN_HEIGHT = 1340;                                 // 窗口高度
 constexpr const char *WINDOW_TITLE = "opengl_primary";              // 窗口标题
 
+constexpr int SHADOW_WIDTH = 1024;                                  // 阴影宽度
+constexpr int SHADOW_HEIGHT = 1024;                                 // 阴影高度
+
 constexpr int MAX_LIGHT_NUM = 10;
 
 #ifdef DEBUG
@@ -25,10 +29,12 @@ constexpr char *SHADER_CODE_PATH = "../src/glsl";
 constexpr char *TEXTURE_PATH = "../resources/texture";
 constexpr char *MODEL_PATH = "../resources/model";
 #else
-constexpr char *SHADER_CODE_PATH = "./src/glsl";
-constexpr char *TEXTURE_PATH = "./resources/texture";
-constexpr char *MODEL_PATH = "./resources/model";
+constexpr char *SHADER_CODE_PATH = "../src/glsl";
+constexpr char *TEXTURE_PATH = "../resources/texture";
+constexpr char *MODEL_PATH = "../resources/model";
 #endif
+
+class Mesh;
 
 const auto TEXTURE_DEFAULT_FILE = std::string(TEXTURE_PATH) + "/default_texture.png";
 
@@ -40,10 +46,13 @@ struct Size {
     float height;
 };
 
+enum class TextureType { Diffuse, Specular, Height, Normal };
+
 enum class MaterialType {
     None,
     Phong,                          // 冯氏光照贴图材质
     Reflect,                        // 反射
+    Common,
     Color,                          // 颜色材质
     Texture,                        // 纹理材质（包括多张纹理）
     SkyBox,                         // 天空盒纹理
@@ -85,6 +94,7 @@ enum class PrimitiveType {
     Floor,
     Square,
     Skybox,
+    Model,
     End
 };
 
@@ -144,14 +154,16 @@ enum class Event {
 
     PRIMITIVE_CREATED,              // 添加图元
     PRIMITIVE_DELETED,              // 删除图元
+
+    MESH_SELECTED,                  // Mesh被选择
 };
 
 enum class MOUSE_BUTTON { None, Left, Right, Middle };
 
 using MouseState = std::tuple<MOUSE_BUTTON, double, double>;                        // 鼠标按键的状态以及鼠标的位置
-using PrimitiveInfo = std::tuple<PrimitiveType, std::string>;
+using PrimitiveInfo = std::tuple<PrimitiveType, std::string, std::string>;
 
-using EventParam = std::variant<KEYBOARD, MouseState, Size, double, int, std::string, PrimitiveInfo>;
+using EventParam = std::variant<KEYBOARD, MouseState, Size, double, int, std::string, PrimitiveInfo, std::shared_ptr<Mesh>>;
 
 struct VPos {
     float x;
