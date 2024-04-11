@@ -40,7 +40,7 @@ void Common::paintAddPrimitiveModal() {
             if(ImGui::Button("Open file")) {
                 IGFD::FileDialogConfig config;
                 config.path = MODEL_PATH;
-                ImGuiFileDialog::Instance()->OpenDialog(key, "Choose File", ".obj", config);
+                ImGuiFileDialog::Instance()->OpenDialog(key, "Choose File", ".obj,.fbx", config);
             }
             if (ImGuiFileDialog::Instance()->Display(key)) {
                 if (ImGuiFileDialog::Instance()->IsOk()) {

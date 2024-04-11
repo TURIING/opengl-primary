@@ -29,10 +29,6 @@ public:
 
     virtual void render() = 0;
 
-    virtual void setWindowSize(std::tuple<int, int> &_windowSize);
-    int getWindowWidth() { return std::get<0>(m_windowSize); }
-    int getWindowHeight() { return std::get<1>(m_windowSize); }
-
     RenderType getRenderType();
     std::string getRenderName() { return m_renderName; }
     [[nodiscard]] int getRenderID() const { return m_renderID; }
@@ -45,7 +41,6 @@ protected:
     void setRenderType(RenderType _type);
 
 private:
-    std::tuple<int, int> m_windowSize = { 1600, 1200 };                                                              // 窗口尺寸
     RenderType m_renderType = RenderType::None;
     std::string m_renderName;
     int m_renderID = -1;

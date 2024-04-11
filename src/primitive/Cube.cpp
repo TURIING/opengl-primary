@@ -35,6 +35,8 @@ void Cube::paintNormally() {
         const auto& texture = material->getSkyboxTexture().lock();
         if(texture) texture->activate();
     }
+
+    //if(this->getLightType() == LightType::DirectionalLight) return;
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 

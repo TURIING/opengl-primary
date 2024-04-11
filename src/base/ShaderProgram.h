@@ -47,7 +47,7 @@ private:
 	static void checkLinkError(unsigned int _id);
 
     inline void checkCurrentProgramBeUsed() const {
-        LOG_ASSERT(m_currentUseProgramId = m_id);
+        LOG_ASSERT(m_currentUseProgramId == m_id);
     }
 
 private:

@@ -14,10 +14,6 @@ IRenderer::IRenderer() {
     m_renderID = UUID;
 }
 
-void IRenderer::setWindowSize(std::tuple<int, int> &_windowSize) {
-    m_windowSize = _windowSize;
-}
-
 // 渲染前处理
 void IRenderer::preRender() {
 

@@ -25,11 +25,11 @@ class Texture {
     enum class TARGET_TYPE { TEXTURE2D, CUBE_MAP};
 
 public:
-    enum STORAGE_TYPE { IMAGE2D, STORAGE2D };           // 纹理存储的类型
+    enum INTERNAL_FORMAT { RGB, DEPTH_COMPONENT };              // 内部格式
 
     Texture(std::string _path, GLenum _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode);
     Texture(const std::vector<std::string> &_pathVec, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode);
-    Texture(Size &_scrSize, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode, STORAGE_TYPE _type);
+    Texture(Size _scrSize, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode, INTERNAL_FORMAT _type);
     ~Texture();
     [[nodiscard]] unsigned int getID() const { return m_id; }
     [[nodiscard]] unsigned int getTextureUnit() const { return m_textureUnit; }

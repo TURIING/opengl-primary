@@ -26,8 +26,8 @@ class IScene: public IRenderer{
     };
 
     struct LightBlock {
-        PointLight pointLight[MAX_LIGHT_NUM];
-        DirectionalLight directionalLight[MAX_LIGHT_NUM];
+        PointLight pointLight[MAX_LIGHT_NUM]{};
+        DirectionalLight directionalLight[MAX_LIGHT_NUM]{};
         int actualPointLightNum = 0;
         int actualDirectionalLightNum = 0;
     };
@@ -51,7 +51,8 @@ public:
 
     void render() override;
 
-    void setWindowSize(std::tuple<int, int> &_windowSize) final;
+    [[nodiscard]] inline float getWindowWidth() const { return m_windowSize.width; }
+    [[nodiscard]] inline float getWindowHeight() const { return m_windowSize.height; }
 
     void dispatch(Event _event, EventParam _param);
 
@@ -63,7 +64,7 @@ public:
 
     std::shared_ptr<IPrimitive> getSkyboxPrimitive() { return m_skyboxPrimitive; }
 
-    void setShadow(bool _on) { m_isShadow = _on; }
+    void setShadow(bool _on);
 
 protected:
     virtual void onWindowResize(Size &_size);
@@ -73,20 +74,24 @@ private:
     void offScreenRender(Size &_size);
 
 private:
+    Size m_windowSize = { 1600, 1200 };                                                // 窗口尺寸
     std::map<int, std::shared_ptr<IPrimitive>> m_primitiveList;                                     // 场景中的图元集合
     Color m_clearColor = { 0.2, 0.2, 0.2, 1 };					                                    // 清屏颜色
     std::shared_ptr<Camera> m_camera;
     std::unique_ptr<FrameBuffer> m_fbo;
+    std::unique_ptr<FrameBuffer> m_shadowFbo;
     std::shared_ptr<RenderBuffer> m_rbo;
     std::shared_ptr<Texture> m_fboColorTexture;
     std::shared_ptr<Texture> m_fboDepthTexture;
     std::shared_ptr<Texture> m_screenTexture;
+    std::shared_ptr<Texture> m_shadowFboColorTexture;
     std::unique_ptr<Buffer<VPMatricesBlock>> m_vpMatricesUbo;
     std::unique_ptr<Buffer<LightBlock>> m_lightUbo;
     std::unique_ptr<Buffer<CameraInfoBlock>> m_cameraUbo;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
+    std::shared_ptr<ShaderProgram> m_shadowShaderProgram;                                           // 阴影着色器
     std::shared_ptr<IPrimitive> m_skyboxPrimitive;                                                  // 需要记录下来天空盒的图元
-    bool m_isShadow = false;
+    bool m_isShadow = false;                                                                        // 是否开启阴影
 };
 
 #endif //OPENGL_PRIMARY_ISCENE_H

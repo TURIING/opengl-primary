@@ -105,12 +105,13 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh *_mesh, const aiScene *_scene) {
 
     // Mesh名称
     const auto meshName = _mesh->mName.C_Str();
-
+    LOG(INFO) << "_mesh->mMaterialIndex: " << _mesh->mMaterialIndex;
     return std::make_shared<Mesh>(meshName, this->getShaderProgram(), vertices, indices, m_materials[_mesh->mMaterialIndex]);
 }
 
 void Model::processMaterial(const aiScene *_scene) {
-    for(auto i = 1; i < _scene->mNumMaterials; i++) {
+    LOG(INFO) << "_scene->mNumMaterials: " << _scene->mNumMaterials;
+    for(auto i = 0; i < _scene->mNumMaterials; i++) {
         const auto asMaterial = _scene->mMaterials[i];
         std::shared_ptr<IMaterial> material = std::make_shared<CommonMaterial>(this->getShaderProgram());
         this->loadTextureForMaterial(material, asMaterial, TextureType::Diffuse);
@@ -118,6 +119,7 @@ void Model::processMaterial(const aiScene *_scene) {
         this->loadTextureForMaterial(material, asMaterial, TextureType::Height);
         this->loadTextureForMaterial(material, asMaterial, TextureType::Normal);
         m_materials.insert({ i, material } );
+        LOG(INFO) << "i = " << i;
     }
 }
 

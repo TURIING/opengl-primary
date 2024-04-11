@@ -74,53 +74,71 @@ int ShaderProgram::getUniformLocation(const std::string &_name) const {
     LOG_ASSERT(m_id != -1);
 
     const auto value =  glGetUniformLocation(m_id, _name.c_str());
-    LOG_IF(ERROR, value == -1) << "Failed to get location value" << "(" << _name << ")" << " corresponding to uniform.";
+    LOG_IF(INFO, value == -1) << "Failed to get location value" << "(" << _name << ")" << " corresponding to uniform.";
     return value;
 }
 
 void ShaderProgram::setBool(const std::string &_name, bool _value) const {
     this->checkCurrentProgramBeUsed();
-    glUniform1i(getUniformLocation(_name), (int)_value);
+    if(const auto location = this->getUniformLocation(_name); location != -1) {
+        glUniform1i(location, (int)_value);
+    }
 }
 
 void ShaderProgram::setInt(const std::string &_name, int _value) const {
     this->checkCurrentProgramBeUsed();
-    glUniform1i(getUniformLocation(_name), _value);
+    if(const auto location = this->getUniformLocation(_name); location != -1) {
+        glUniform1i(location, _value);
+    }
 }
 
 void ShaderProgram::setFloat(const std::string &_name, float _value) const {
     this->checkCurrentProgramBeUsed();
-    glUniform1f(getUniformLocation(_name), _value);
+    if(const auto location = this->getUniformLocation(_name); location != -1) {
+        glUniform1f(location, _value);
+    }
 }
 
 void ShaderProgram::setFloat(const std::string &_name, float _v1, float _v2, float _v3) const {
     this->checkCurrentProgramBeUsed();
-    glUniform3f(getUniformLocation(_name), _v1, _v2, _v3);
+    if(const auto location = this->getUniformLocation(_name); location != -1) {
+        glUniform3f(location, _v1, _v2, _v3);
+    }
 }
 
 void ShaderProgram::setVec3(const std::string &_name, float _v1, float _v2, float _v3) const {
     this->checkCurrentProgramBeUsed();
-    glUniform3f(getUniformLocation(_name), _v1, _v2, _v3);
+    if(const auto location = this->getUniformLocation(_name); location != -1) {
+        glUniform3f(location, _v1, _v2, _v3);
+    }
 }
 
 void ShaderProgram::setVec3(const std::string &_name, const glm::vec3 &_value) const {
     this->checkCurrentProgramBeUsed();
-    glUniform3fv(getUniformLocation(_name), 1, &_value[0]);
+    if(const auto location = this->getUniformLocation(_name); location != -1) {
+        glUniform3fv(location, 1, &_value[0]);
+    }
 }
 
 void ShaderProgram::setVec4(const std::string &_name, float _v1, float _v2, float _v3, float _v4) const {
     this->checkCurrentProgramBeUsed();
-    glUniform4f(getUniformLocation(_name), _v1, _v2, _v3, _v4);
+    if(const auto location = this->getUniformLocation(_name); location != -1) {
+        glUniform4f(location, _v1, _v2, _v3, _v4);
+    }
 }
 
 void ShaderProgram::setVec4(const std::string &_name, const glm::vec4 &_value) const {
     this->checkCurrentProgramBeUsed();
-    glUniform4fv(getUniformLocation(_name), 1, &_value[0]);
+    if(const auto location = this->getUniformLocation(_name); location != -1) {
+        glUniform4fv(location, 1, &_value[0]);
+    }
 }
 
 void ShaderProgram::setMat4(const std::string &_name, const GLfloat *_value) const {
     this->checkCurrentProgramBeUsed();
-    glUniformMatrix4fv(getUniformLocation(_name), 1, GL_FALSE, _value);
+    if(const auto location = this->getUniformLocation(_name); location != -1) {
+        glUniformMatrix4fv(location, 1, GL_FALSE, _value);
+    }
 }
 
 bool ShaderProgram::isExistUniformVariable(const std::string &_name) const {

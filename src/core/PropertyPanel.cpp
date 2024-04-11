@@ -70,8 +70,9 @@ void PropertyPanel::render() {
 
         ImGui::SeparatorText("Shadow");
         static bool isShadow = false;
+        const auto tmpIsShadow = isShadow;
         ImGui::Checkbox("enable shadow", &isShadow);
-        currentScene->setShadow(isShadow);
+        if(tmpIsShadow != isShadow) currentScene->setShadow(isShadow);
     }
 
     ImGui::End();

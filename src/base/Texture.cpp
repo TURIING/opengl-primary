@@ -41,20 +41,23 @@ Texture::Texture(const std::vector<std::string> &_pathVec, unsigned int _unit, G
  * @param _scrHeight 屏幕高度
  * @param _type 纹理存储的类型
  */
-Texture::Texture(Size &_scrSize, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode, Texture::STORAGE_TYPE _type) {
+Texture::Texture(Size _scrSize, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode, Texture::INTERNAL_FORMAT _format) {
+    m_textureUnit = _unit;
     const auto [width, height] = _scrSize;
 
     glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
     this->bind();
 
     Texture::setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
-    switch (_type) {
-        case STORAGE_TYPE::IMAGE2D:
+    switch (_format) {
+        case INTERNAL_FORMAT::RGB: {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
             break;
-        case STORAGE_TYPE::STORAGE2D:
-            glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, width, height);
+        }
+        case INTERNAL_FORMAT::DEPTH_COMPONENT: {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
             break;
+        }
     }
 }
 
@@ -83,6 +86,11 @@ void Texture::bind() {
 void Texture::setWrapAndFilter(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _wrapModeS);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _wrapModeT);
+
+    if(_wrapModeS == GL_CLAMP_TO_BORDER || _wrapModeT == GL_CLAMP_TO_BORDER) {
+        GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    }
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _minFilterMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _magFilterMode);

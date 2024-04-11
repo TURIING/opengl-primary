@@ -11,6 +11,9 @@
 const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";
 const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/cube/fragment.glsl";
 
+const std::string SHADOW_VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/shadow/vertex.glsl";
+const std::string SHADOW_FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/shadow/fragment.glsl";
+
 IScene::IScene() {
     this->setDeepTest(true);
     m_camera = std::make_shared<Camera>();
@@ -34,14 +37,6 @@ void IScene::clear() {
     glClear(GL_COLOR_BUFFER_BIT);                                                          // 清空屏幕的颜色缓冲
 }
 
-void IScene::setWindowSize(std::tuple<int, int> &_windowSize) {
-    for(const auto& [id, render]: m_primitiveList) {
-        render->setWindowSize(_windowSize);
-    }
-
-    IRenderer::setWindowSize(_windowSize);
-}
-
 std::shared_ptr<Camera>& IScene::getCamera() {
     LOG_ASSERT(m_camera) << " Camera pointer not initialized.";
     return m_camera;
@@ -56,7 +51,7 @@ void IScene::offScreenRender(Size &_size) {
     }
 
     m_fbo = std::make_unique<FrameBuffer>();
-    m_screenTexture = std::make_shared<Texture>(_size, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR, Texture::IMAGE2D);
+    m_screenTexture = std::make_shared<Texture>(_size, 2, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR, Texture::RGB);
     m_fbo->attachTexture2D(FRAMEBUFFER_ATTACH_TYPE::COLOR, m_screenTexture);
 
     m_rbo = std::make_shared<RenderBuffer>();
@@ -70,8 +65,6 @@ void IScene::offScreenRender(Size &_size) {
 void IScene::preRender() {
     auto viewPortSize = ImGui::GetContentRegionAvail();
     this->getCamera()->setWindowSize({ viewPortSize.x, viewPortSize.y });
-
-    m_fbo->bind();
 
     this->setDeepTest(true);
 
@@ -115,6 +108,43 @@ void IScene::preRender() {
     // 传递摄像机信息
     m_cameraUbo->setData<glm::vec3>(offsetof(CameraInfoBlock, cameraPos), static_cast<const void *>(glm::value_ptr(this->getCamera()->getPosition())));
 
+    // 处理阴影
+    glm::mat4 shadowLightSpaceMatrix;
+    if(m_isShadow) {
+        for(const auto& [id, child]: m_primitiveList) {
+            if(child->getLightType() != LightType::DirectionalLight) continue;
+
+            constexpr float nearPlane = 1.0;
+            constexpr float farPlane = 7.5;
+            const auto lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, nearPlane, farPlane);
+            const auto lightView = glm::lookAt(*child->getPosition(), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+            shadowLightSpaceMatrix = lightProjection * lightView;
+
+            m_shadowShaderProgram->use();
+            m_shadowShaderProgram->setMat4("lightSpaceMatrix", glm::value_ptr(shadowLightSpaceMatrix));
+        }
+
+        //glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        m_shadowFbo->bind();
+        this->clear();
+        m_shadowFboColorTexture->activate();
+        for(const auto& [id, child]: m_primitiveList) {
+            child->setShaderProgram(m_shadowShaderProgram);
+        }
+        this->render();
+        m_shadowFbo->unbind();
+
+        //glViewport(0, 0, m_windowSize.width, m_windowSize.height);
+        for(const auto& [id, child]: m_primitiveList) {
+            child->setShaderProgram(m_shaderProgram);
+        }
+        m_shaderProgram->use();
+        m_shaderProgram->setMat4("lightSpaceMatrix", glm::value_ptr(shadowLightSpaceMatrix));
+        m_shaderProgram->setInt("shadowMap", m_shadowFboColorTexture->getTextureUnit());
+    }
+
+    m_fbo->bind();
+
     // 清屏
     this->clear();
 }
@@ -143,9 +173,9 @@ void IScene::dispatch(Event _event, EventParam _param) {
 
 // 窗口尺寸改变时触发的事件
 void IScene::onWindowResize(Size &_size) {
-    const auto [width, height] = _size;
+    m_windowSize = _size;
     // 告诉OpenGL渲染窗口的尺寸大小
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, static_cast<int>(this->getWindowWidth()), static_cast<int>(this->getWindowHeight()));
     this->offScreenRender(_size);
 }
 
@@ -172,4 +202,27 @@ void IScene::render() {
 
 void IScene::deletePrimitive(int _id) {
     m_primitiveList.erase(_id);
+}
+
+// 开启/关闭阴影
+void IScene::setShadow(bool _on) {
+    m_isShadow = _on;
+
+    if(_on) {
+        m_shadowShaderProgram = std::make_shared<ShaderProgram>(SHADOW_VERTEX_FILE, SHADOW_FRAGMENT_FILE);
+        m_shadowFbo = std::make_unique<FrameBuffer>();
+        m_shadowFboColorTexture = std::make_shared<Texture>(m_windowSize, 7, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST, Texture::DEPTH_COMPONENT);
+        m_shadowFbo->attachTexture2D(FRAMEBUFFER_ATTACH_TYPE::DEPTH, m_shadowFboColorTexture);
+        glDrawBuffer(GL_NONE);
+        glDrawBuffer(GL_NONE);
+        m_shadowFbo->unbind();
+    }
+    else {
+        m_shadowShaderProgram.reset();
+        m_shadowFbo.reset();
+        m_shadowFboColorTexture.reset();
+    }
+
+    m_shaderProgram->use();
+    m_shaderProgram->setBool("enableShadow", _on);
 }
