@@ -19,11 +19,12 @@
 class Quadrangle: public IPrimitive {
     // 顶点属性结构体定义
     struct Vertex {
-        glm::vec2 pos;
+        glm::vec3 pos;
         glm::vec2 tex;
     };
+
 public:
-    explicit Quadrangle(std::shared_ptr<IScene> &_parent, const std::string &_name);
+    explicit Quadrangle(std::shared_ptr<IScene> _parent, const std::string &_name, std::shared_ptr<ShaderProgram> &_shaderProgram);
     void render() override;
 
 private:
@@ -35,13 +36,10 @@ private:
 
     std::vector<Vertex> m_vertices = {
         // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
-        Vertex{ glm::vec2 ( -1.0f,  1.0f ), glm::vec2 ( 0.0f, 1.0f ) },
-        Vertex{ glm::vec2 ( -1.0f, -1.0f ), glm::vec2 ( 0.0f, 0.0f ) },
-        Vertex{ glm::vec2 ( 1.0f,  -1.0f ), glm::vec2 ( 1.0f, 0.0f ) },
-
-        Vertex{ glm::vec2 ( -1.0f,  1.0f ), glm::vec2 ( 0.0f, 1.0f ) },
-        Vertex{ glm::vec2 ( 1.0f,  -1.0f ), glm::vec2 ( 1.0f, 0.0f ) },
-        Vertex{ glm::vec2 ( 1.0f,   1.0f ), glm::vec2 ( 1.0f, 1.0f ) }
+        Vertex{ glm::vec3 ( -1.0f,  1.0f, 0.0f ), glm::vec2 ( 0.0f, 1.0f ) },
+        Vertex{ glm::vec3 ( -1.0f, -1.0f, 0.0f ), glm::vec2 ( 0.0f, 0.0f ) },
+        Vertex{ glm::vec3 ( 1.0f,   1.0f, 0.0f ), glm::vec2 ( 1.0f, 1.0f ) },
+        Vertex{ glm::vec3 ( 1.0f,  -1.0f, 0.0f ), glm::vec2 ( 1.0f, 0.0f ) },
     };
 };
 

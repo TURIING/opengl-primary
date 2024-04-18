@@ -8,19 +8,18 @@
 
 #include "Quadrangle.h"
 
-Quadrangle::Quadrangle(std::shared_ptr<IScene> &_parent, const std::string &_name) : IPrimitive(_parent, _name) {
+Quadrangle::Quadrangle(std::shared_ptr<IScene> _parent, const std::string &_name, std::shared_ptr<ShaderProgram> &_shaderProgram) : IPrimitive(_parent, _name, _shaderProgram) {
     m_vao = std::make_unique<VertexArray>();
 
     m_vbo = std::make_unique<Buffer<Vertex>>(BUFFER_TYPE::VERTEX_BUFFER, m_vertices);
 
-    m_vao->setAttribute<Vertex, glm::vec2>(this->getShaderProgram()->getAttrLocation("aPos"), offsetof(Vertex, pos));
-    m_vao->setAttribute<Vertex, glm::vec2>(this->getShaderProgram()->getAttrLocation("aTexCoords"), offsetof(Vertex, tex));
+    m_vao->setAttribute<Vertex, decltype(Vertex::pos)>(this->getShaderProgram()->getAttrLocation("aPos"), offsetof(Vertex, pos));
+    m_vao->setAttribute<Vertex, decltype(Vertex::tex)>(this->getShaderProgram()->getAttrLocation("aTexCoords"), offsetof(Vertex, tex));
 }
 
 void Quadrangle::render() {
     this->getShaderProgram()->use();
     m_vao->bind();
-    this->getTexture(0)->activate();
 
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }

@@ -18,7 +18,7 @@ FrameBufferTexture::FrameBufferTexture(Size _scrSize, unsigned int _unit, GLuint
     FrameBufferTexture::setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
     switch (_format) {
         case INTERNAL_FORMAT::RGB: {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
             break;
         }
         case INTERNAL_FORMAT::DEPTH_COMPONENT: {

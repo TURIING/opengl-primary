@@ -68,17 +68,32 @@ void PropertyPanel::render() {
             }
         }
 
-        ImGui::SeparatorText("Shadow");
-        static bool isParallelShadow = false;
-        bool tmpIsShadow = false;
-        tmpIsShadow = isParallelShadow;
-        ImGui::Checkbox("enable parallel shadow", &isParallelShadow);
-        if(tmpIsShadow != isParallelShadow) currentScene->setParallelShadow(isParallelShadow);
+        // 阴影
+        {
+            ImGui::SeparatorText("Shadow");
+            static bool isParallelShadow = false;
+            bool tmpIsShadow = false;
+            tmpIsShadow = isParallelShadow;
+            ImGui::Checkbox("enable parallel shadow", &isParallelShadow);
+            if(tmpIsShadow != isParallelShadow) currentScene->setParallelShadow(isParallelShadow);
 
-        static bool isPointShadow = false;
-        tmpIsShadow = isPointShadow;
-        ImGui::Checkbox("enable point shadow", &isPointShadow);
-        if(tmpIsShadow != isPointShadow) currentScene->setPointShadow(isPointShadow);
+            static bool isPointShadow = false;
+            tmpIsShadow = isPointShadow;
+            ImGui::Checkbox("enable point shadow", &isPointShadow);
+            if(tmpIsShadow != isPointShadow) currentScene->setPointShadow(isPointShadow);
+        }
+
+        // HDR
+        {
+            ImGui::SeparatorText("HDR");
+            static bool isHdr = false;
+            bool tmpIsHdr = false;
+            tmpIsHdr = isHdr;
+            ImGui::Checkbox("enable HDR", &isHdr);
+            if(tmpIsHdr != isHdr) currentScene->setHdr(isHdr);
+
+            ImGui::DragFloat("Exposure", currentScene->getHdrExposure(), 0.01f, 0.0f, 10.0f, "%.2f");
+        }
     }
 
     ImGui::End();

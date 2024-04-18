@@ -7,7 +7,6 @@
 ********************************************************************************/
 
 #include "Application.h"
-#include "../BaseDefine.h"
 #include "InspectPanel.h"
 #include "../primitive/Cube.h"
 #include "../primitive/Floor.h"

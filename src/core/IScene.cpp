@@ -7,6 +7,9 @@
 ********************************************************************************/
 
 #include "IScene.h"
+#include "IPrimitive.h"
+#include "../primitive/Quadrangle.h"
+#include "Application.h"
 
 const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";
 const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/cube/fragment.glsl";
@@ -17,6 +20,9 @@ const std::string PARALLEL_SHADOW_FRAGMENT_FILE = std::string(SHADER_CODE_PATH) 
 const std::string POINT_SHADOW_VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/point_shadow/vertex.glsl";
 const std::string POINT_SHADOW_FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/point_shadow/fragment.glsl";
 const std::string POINT_SHADOW_GEOMETRY_FILE = std::string(SHADER_CODE_PATH) + "/point_shadow/geometry.glsl";
+
+const std::string HDR_VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/hdr/vertex.glsl";
+const std::string HDR_FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/hdr/fragment.glsl";
 
 IScene::IScene() {
     this->setDeepTest(true);
@@ -64,6 +70,17 @@ void IScene::offScreenRender(Size &_size) {
 
     m_fbo->check();
     m_fbo->unbind();
+
+    if(m_isHdr) {
+        m_hdrFbo = std::make_unique<FrameBuffer>();
+        m_hdrScreenTexture = std::make_shared<FrameBufferTexture>(_size, 3, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR, FrameBufferTexture::RGB);
+        m_hdrFbo->attachTexture2D(FRAMEBUFFER_ATTACH_TYPE::COLOR, m_hdrScreenTexture);
+        m_hdrRbo = std::make_shared<RenderBuffer>();
+        m_hdrRbo->storage(RENDER_BUFFER_FORMAT::DEPTH24_STENCIL8, _size);
+        m_hdrFbo->attachRenderBuffer(FRAMEBUFFER_ATTACH_TYPE::DEPTH_STENCIL, m_hdrRbo);
+        m_hdrFbo->check();
+        m_hdrFbo->unbind();
+    }
 }
 
 void IScene::preRender() {
@@ -207,9 +224,29 @@ void IScene::postRender() {
     m_fbo->unbind();
     this->clear();
 
+    if(m_isHdr) {
+        m_hdrScreenTexture->activate();
+        m_hdrFbo->bind();
+        this->clear();
+
+        m_hdrShaderProgram->use();
+        m_hdrShaderProgram->setFloat("exposure", m_hdrExposure);
+        m_screenTexture->activate();
+        m_hdrQuad->preRender();
+        m_hdrQuad->render();
+
+        m_hdrFbo->unbind();
+        m_shaderProgram->use();
+    }
+
     ImGui::Begin("Scene");
     const auto viewPortSize = ImGui::GetContentRegionAvail();
-    ImGui::Image(reinterpret_cast<void*>(m_screenTexture->getTextureID()), viewPortSize, ImVec2 { 0, 1 }, ImVec2 { 1, 0 });
+    if(m_isHdr) {
+        ImGui::Image(reinterpret_cast<void*>(m_hdrScreenTexture->getTextureID()), viewPortSize, ImVec2 { 0, 1 }, ImVec2 { 1, 0 });
+    }
+    else {
+        ImGui::Image(reinterpret_cast<void*>(m_screenTexture->getTextureID()), viewPortSize, ImVec2 { 0, 1 }, ImVec2 { 1, 0 });
+    }
     ImGui::End();
 }
 
@@ -302,4 +339,31 @@ void IScene::setPointShadow(bool _on) {
 
     m_shaderProgram->use();
     m_shaderProgram->setBool("enablePointShadow", _on);
+}
+
+// 开启/关闭HDR
+void IScene::setHdr(bool _on) {
+    m_isHdr = _on;
+
+    if(_on) {
+        m_hdrShaderProgram = std::make_shared<ShaderProgram>(HDR_VERTEX_FILE, HDR_FRAGMENT_FILE);
+        m_hdrShaderProgram->setInt("hdrBuffer", m_screenTexture->getTextureUnit());
+        m_hdrQuad = std::make_unique<Quadrangle>(Application::instance()->getCurrentScene(), "HdrQuad", m_hdrShaderProgram);
+
+        m_hdrFbo = std::make_unique<FrameBuffer>();
+        m_hdrScreenTexture = std::make_shared<FrameBufferTexture>(m_windowSize, 3, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR, FrameBufferTexture::RGB);
+        m_hdrFbo->attachTexture2D(FRAMEBUFFER_ATTACH_TYPE::COLOR, m_hdrScreenTexture);
+        m_hdrRbo = std::make_shared<RenderBuffer>();
+        m_hdrRbo->storage(RENDER_BUFFER_FORMAT::DEPTH24_STENCIL8, m_windowSize);
+        m_hdrFbo->attachRenderBuffer(FRAMEBUFFER_ATTACH_TYPE::DEPTH_STENCIL, m_hdrRbo);
+        m_hdrFbo->check();
+        m_hdrFbo->unbind();
+    }
+    else {
+        m_hdrShaderProgram.reset();
+        m_hdrScreenTexture.reset();
+        m_hdrFbo.reset();
+        m_hdrRbo.reset();
+        m_hdrQuad.reset();
+    }
 }

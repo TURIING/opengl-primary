@@ -15,9 +15,12 @@
 #include "../BaseDefine.h"
 #include "../base/RenderBuffer.h"
 #include "IRenderer.h"
-#include "../primitive/Quadrangle.h"
+#include "../base/Buffer.h"
 
 #define MAX_LIGHT_NUM 10
+
+class ShaderProgram;
+class IPrimitive;
 
 class IScene: public IRenderer{
     struct VPMatricesBlock {
@@ -67,6 +70,9 @@ public:
     void setPointShadow(bool _on);
     void setParallelShadow(bool _on);
 
+    void setHdr(bool _on);
+    float *getHdrExposure() { return &m_hdrExposure; }
+
 protected:
     virtual void onWindowResize(Size &_size);
     virtual void onKeyPress(KEYBOARD _key);
@@ -80,23 +86,30 @@ private:
     Color m_clearColor = { 0.2, 0.2, 0.2, 1 };					                                    // 清屏颜色
     std::shared_ptr<Camera> m_camera;
     std::unique_ptr<FrameBuffer> m_fbo;
+    std::unique_ptr<FrameBuffer> m_hdrFbo;
     std::unique_ptr<FrameBuffer> m_parallelShadowFbo;
     std::unique_ptr<FrameBuffer> m_pointShadowFbo;
     std::shared_ptr<RenderBuffer> m_rbo;
+    std::shared_ptr<RenderBuffer> m_hdrRbo;
     std::shared_ptr<FrameBufferTexture> m_fboColorTexture;
     std::shared_ptr<FrameBufferTexture> m_fboDepthTexture;
     std::shared_ptr<FrameBufferTexture> m_screenTexture;
+    std::shared_ptr<FrameBufferTexture> m_hdrScreenTexture;
     std::shared_ptr<FrameBufferTexture> m_parallelShadowFboColorTexture;
     std::shared_ptr<FrameBufferTexture> m_pointShadowFboColorTexture;
     std::unique_ptr<Buffer<VPMatricesBlock>> m_vpMatricesUbo;
     std::unique_ptr<Buffer<LightBlock>> m_lightUbo;
     std::unique_ptr<Buffer<CameraInfoBlock>> m_cameraUbo;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
+    std::shared_ptr<ShaderProgram> m_hdrShaderProgram;
     std::shared_ptr<ShaderProgram> m_parallelShadowShaderProgram;                                   // 平行光阴影着色器
     std::shared_ptr<ShaderProgram> m_pointShadowShaderProgram;                                      // 点光阴影着色器
     std::shared_ptr<IPrimitive> m_skyboxPrimitive;                                                  // 需要记录下来天空盒的图元
+    std::unique_ptr<IPrimitive> m_hdrQuad;
     bool m_isParallelShadow = false;                                                                // 是否开启平行光阴影
     bool m_isPointShadow = false;                                                                   // 是否开启点光阴影
+    bool m_isHdr = false;                                                                           // 是否开启HDR
+    float m_hdrExposure = 1.0f;                                                                     // HDR曝光系数
 };
 
 #endif //OPENGL_PRIMARY_ISCENE_H
