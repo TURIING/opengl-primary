@@ -9,7 +9,7 @@
 #include "ReflectMaterial.h"
 #include "glog/logging.h"
 
-ReflectMaterial::ReflectMaterial(std::shared_ptr<Texture> _skyboxTexture) {
+ReflectMaterial::ReflectMaterial(std::shared_ptr<ImageTexture> _skyboxTexture) {
     LOG_ASSERT(_skyboxTexture);
     this->setMaterialType(MaterialType::Reflect);
     m_skyboxTexture = _skyboxTexture;

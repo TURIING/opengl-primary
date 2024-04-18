@@ -31,7 +31,7 @@ void IPrimitive::setOutline(int _width, Color _color) {
 }
 
 // 添加纹理
-void IPrimitive::addTexture(std::shared_ptr<Texture> _texture) {
+void IPrimitive::addTexture(std::shared_ptr<ImageTexture> _texture) {
     m_textures.push_back(_texture);
 
     const auto name = std::string("texture") + std::to_string(m_textures.size());
@@ -39,7 +39,7 @@ void IPrimitive::addTexture(std::shared_ptr<Texture> _texture) {
 }
 
 // 重置纹理
-void IPrimitive::resetTexture(unsigned int _index, Texture* _texture) {
+void IPrimitive::resetTexture(unsigned int _index, ImageTexture* _texture) {
     LOG_ASSERT(_texture != nullptr);
 
     m_textures[_index].reset(_texture);
@@ -47,7 +47,7 @@ void IPrimitive::resetTexture(unsigned int _index, Texture* _texture) {
     this->getShaderProgram()->setInt(name, _index);
 }
 
-std::shared_ptr<Texture> IPrimitive::getTexture(int _index) {
+std::shared_ptr<ImageTexture> IPrimitive::getTexture(int _index) {
     LOG_ASSERT(_index >= 0 && _index < m_textures.size());
     return m_textures.at(_index);
 }

@@ -26,14 +26,16 @@ public:
     void postRender() override;
     void registerKeyBoard(KEYBOARD _key);
     void detectEvent();
+
 private:
     void registerEvent();
     static void frameBufferSizeCallback(GLFWwindow* _window, int _width, int _height);
     static void windowCloseCallback(GLFWwindow* _window);
-    static void mouseMoveCallback(GLFWwindow *_window, double _xPosIn, double _yPosIn);
+    //static void mouseMoveCallback(GLFWwindow *_window, double _xPosIn, double _yPosIn);
     void dealMouseWheelEvent(GLFWwindow* _window, double _xOffset, double _yOffset) const;
-
     static MOUSE_BUTTON detectMouseButton(GLFWwindow *_window);
+    static void checkGLError();
+
 private:
     Size m_winSize;                                      // 窗口尺寸
     GLFWwindow *m_window = nullptr;

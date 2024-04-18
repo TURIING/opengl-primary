@@ -11,15 +11,15 @@
 
 #include <memory>
 #include "../base/IMaterial.h"
-#include "../base/Texture.h"
+#include "../base/ImageTexture.h"
 
 class ReflectMaterial: public IMaterial {
 public:
-    explicit ReflectMaterial(std::shared_ptr<Texture> _skyboxTexture);
-    std::weak_ptr<Texture> getSkyboxTexture() { return m_skyboxTexture; }
+    explicit ReflectMaterial(std::shared_ptr<ImageTexture> _skyboxTexture);
+    std::weak_ptr<ImageTexture> getSkyboxTexture() { return m_skyboxTexture; }
 
 private:
-    std::weak_ptr<Texture> m_skyboxTexture;
+    std::weak_ptr<ImageTexture> m_skyboxTexture;
 };
 
 #endif //OPENGL_PRIMARY_REFLECTMATERIAL_H

@@ -13,7 +13,7 @@
 #include "../base/VertexArray.h"
 #include "../base/Buffer.h"
 #include "../base/ShaderProgram.h"
-#include "../base/Texture.h"
+#include "../base/ImageTexture.h"
 #include "../BaseDefine.h"
 
 class Quadrangle: public IPrimitive {

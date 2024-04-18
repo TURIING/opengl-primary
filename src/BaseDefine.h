@@ -19,8 +19,8 @@ constexpr int SCREEN_WIDTH = 2250;                                  // 窗口宽
 constexpr int SCREEN_HEIGHT = 1340;                                 // 窗口高度
 constexpr const char *WINDOW_TITLE = "opengl_primary";              // 窗口标题
 
-constexpr int SHADOW_WIDTH = 1024;                                  // 阴影宽度
-constexpr int SHADOW_HEIGHT = 1024;                                 // 阴影高度
+constexpr float SHADOW_WIDTH = 1024;                                  // 阴影宽度
+constexpr float SHADOW_HEIGHT = 1024;                                 // 阴影高度
 
 constexpr int MAX_LIGHT_NUM = 10;
 

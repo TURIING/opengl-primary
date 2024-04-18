@@ -1,23 +1,30 @@
 #include "glad/glad.h"
 
-#include "ShaderProgram.h"
-#include "glog/logging.h"
+#include <string>
 #include <iostream>
+#include <glog/logging.h>
+#include "ShaderProgram.h"
 #include "Shader.h"
 
 unsigned int ShaderProgram::m_currentUseProgramId = -1;
 
-ShaderProgram::ShaderProgram(const std::string& _vertexPath, const std::string& _fragmentPath)
+ShaderProgram::ShaderProgram(const std::string& _vertexPath, const std::string& _fragmentPath, const std::string &_geometryPath)
 {
     LOG_ASSERT(!_vertexPath.empty());
     LOG_ASSERT(!_fragmentPath.empty());
 
-	const Shader vertexShader(_vertexPath, SHADER_TYPE::VERTEX);
-	const Shader fragmentShader(_fragmentPath, SHADER_TYPE::FRAGMENT);
+    m_id = glCreateProgram();
+    const Shader vertexShader(_vertexPath, SHADER_TYPE::VERTEX);
+    glAttachShader(m_id, vertexShader.getShaderId());
 
-	m_id = glCreateProgram();
-	glAttachShader(m_id, vertexShader.getShaderId());
-	glAttachShader(m_id, fragmentShader.getShaderId());
+    const Shader fragmentShader(_fragmentPath, SHADER_TYPE::FRAGMENT);
+    glAttachShader(m_id, fragmentShader.getShaderId());
+
+    if(!_geometryPath.empty()) {
+        const Shader geometryShader(_geometryPath, SHADER_TYPE::GEOMETRY);
+        glAttachShader(m_id, geometryShader.getShaderId());
+    }
+
 	glLinkProgram(m_id);
 
     this->use();
@@ -143,5 +150,9 @@ void ShaderProgram::setMat4(const std::string &_name, const GLfloat *_value) con
 
 bool ShaderProgram::isExistUniformVariable(const std::string &_name) const {
     return glGetUniformLocation(m_id, _name.c_str()) != -1;
+}
+
+void ShaderProgram::checkCurrentProgramBeUsed() const {
+    LOG_ASSERT(m_currentUseProgramId == m_id);
 }
 

@@ -37,7 +37,7 @@ private:
     std::string m_directory;
     std::vector<std::shared_ptr<Mesh>> m_meshes;
     std::map<int, std::shared_ptr<IMaterial>> m_materials;
-    std::map<std::string, std::weak_ptr<Texture>> m_textureLoaded;                         // 用于去除重复纹理
+    std::map<std::string, std::weak_ptr<ImageTexture>> m_textureLoaded;                         // 用于去除重复纹理
 };
 
 

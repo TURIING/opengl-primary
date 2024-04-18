@@ -12,19 +12,19 @@
 #include <memory>
 #include "../base/IMaterial.h"
 
-class Texture;
+class ImageTexture;
 class ShaderProgram;
 
 class PhongMaterial: public IMaterial{
 public:
     PhongMaterial(std::shared_ptr<ShaderProgram> &_shaderProgram, const std::string &_diffuse, const std::string &_specular, float _shininess = 32);
 
-    std::shared_ptr<Texture> &getDiffuse();
-    std::shared_ptr<Texture> &getSpecular();
+    std::shared_ptr<ImageTexture> &getDiffuse();
+    std::shared_ptr<ImageTexture> &getSpecular();
     float *getShininess();
 
-    void setDiffuse(std::shared_ptr<Texture> diffuse);
-    void setSpecular(std::shared_ptr<Texture> specular);
+    void setDiffuse(std::shared_ptr<ImageTexture> diffuse);
+    void setSpecular(std::shared_ptr<ImageTexture> specular);
     void setShininess(float shininess);
 
     void resetDiffuse(const std::string &_path);
@@ -32,8 +32,8 @@ public:
 
 private:
     // 移除了环境光材质颜色向量，是因为环境光颜色在几乎所有情况下都等于漫反射颜色
-    std::shared_ptr<Texture> m_diffuse;
-    std::shared_ptr<Texture> m_specular;
+    std::shared_ptr<ImageTexture> m_diffuse;
+    std::shared_ptr<ImageTexture> m_specular;
     float m_shininess = 32.0f;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 };

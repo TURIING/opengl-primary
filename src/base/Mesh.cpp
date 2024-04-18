@@ -8,7 +8,7 @@
 
 #include "Mesh.h"
 #include "ShaderProgram.h"
-#include "Texture.h"
+#include "ImageTexture.h"
 
 Mesh::Mesh(const std::string &_name, std::shared_ptr<ShaderProgram> _shaderProgram, std::vector<Vertex> &_vertices, std::vector<unsigned int> &_indices, std::shared_ptr<IMaterial> &_material)
     :m_material(_material), m_name(_name), m_vertices(_vertices), m_indices(_indices), m_shaderProgram(std::move(_shaderProgram))

@@ -119,11 +119,11 @@ void InspectPanel::buildItemForPhongMaterial(std::shared_ptr<IMaterial> &_materi
 
     const auto diffuseTitle = "Diffuse";
     const auto diffuseTexture = material->getDiffuse();
-    const auto diffuseKey = diffuseTitle + std::to_string(diffuseTexture->getID());
+    const auto diffuseKey = diffuseTitle + std::to_string(diffuseTexture->getTextureID());
     ImGui::PushID(diffuseTitle);
     ImGui::Separator();
     ImGui::Text(diffuseTitle);
-    ImGui::Image((void*)diffuseTexture->getID(), ImVec2{ 100, 100 }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), tintCol, borderCol);
+    ImGui::Image((void*)diffuseTexture->getTextureID(), ImVec2{ 100, 100 }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), tintCol, borderCol);
     ImGui::SameLine();
     if(ImGui::Button("Open file")) {
         IGFD::FileDialogConfig config;
@@ -145,11 +145,11 @@ void InspectPanel::buildItemForPhongMaterial(std::shared_ptr<IMaterial> &_materi
 
     const auto specularTitle = "Specular";
     const auto specularTexture = material->getSpecular();
-    const auto specularKey = specularTitle + std::to_string(specularTexture->getID());
+    const auto specularKey = specularTitle + std::to_string(specularTexture->getTextureID());
     ImGui::PushID(specularTitle);
     ImGui::Separator();
     ImGui::Text(specularTitle);
-    ImGui::Image((void*)specularTexture->getID(), ImVec2{ 100, 100 }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), tintCol, borderCol);
+    ImGui::Image((void*)specularTexture->getTextureID(), ImVec2{ 100, 100 }, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), tintCol, borderCol);
     ImGui::SameLine();
     if(ImGui::Button("Open file")) {
         IGFD::FileDialogConfig config;
@@ -223,11 +223,11 @@ void InspectPanel::buildItemForCommonMaterial(std::shared_ptr<IMaterial> &_mater
     {
         const auto diffuseTitle = "Diffuse";
         const auto diffuseTexture = material->getDiffuseMap();
-        const auto diffuseKey = diffuseTitle + std::to_string(diffuseTexture->getID());
+        const auto diffuseKey = diffuseTitle + std::to_string(diffuseTexture->getTextureID());
         ImGui::PushID(diffuseTitle);
         ImGui::Separator();
         ImGui::Text(diffuseTitle);
-        ImGui::Image((void *) diffuseTexture->getID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
+        ImGui::Image((void *) diffuseTexture->getTextureID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
                      tintCol, borderCol);
         ImGui::SameLine();
         if (ImGui::Button("Open file")) {
@@ -254,11 +254,11 @@ void InspectPanel::buildItemForCommonMaterial(std::shared_ptr<IMaterial> &_mater
         const auto specularTitle = "Specular";
         const auto specularTexture = material->getSpecularMap();
         if(specularTexture) {
-            const auto specularKey = specularTitle + std::to_string(specularTexture->getID());
+            const auto specularKey = specularTitle + std::to_string(specularTexture->getTextureID());
             ImGui::PushID(specularTitle);
             ImGui::Separator();
             ImGui::Text(specularTitle);
-            ImGui::Image((void *) specularTexture->getID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
+            ImGui::Image((void *) specularTexture->getTextureID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
                          tintCol, borderCol);
             ImGui::SameLine();
             if (ImGui::Button("Open file")) {
@@ -285,11 +285,11 @@ void InspectPanel::buildItemForCommonMaterial(std::shared_ptr<IMaterial> &_mater
         const auto normalTitle = "Normal";
         const auto normalTexture = material->getNormalMap();
         if(normalTexture) {
-            const auto normalKey = normalTitle + std::to_string(normalTexture->getID());
+            const auto normalKey = normalTitle + std::to_string(normalTexture->getTextureID());
             ImGui::PushID(normalTitle);
             ImGui::Separator();
             ImGui::Text(normalTitle);
-            ImGui::Image((void *) normalTexture->getID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
+            ImGui::Image((void *) normalTexture->getTextureID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
                          tintCol, borderCol);
             ImGui::SameLine();
             if (ImGui::Button("Open file")) {
@@ -317,11 +317,11 @@ void InspectPanel::buildItemForCommonMaterial(std::shared_ptr<IMaterial> &_mater
         const auto heightTitle = "Height";
         const auto heightTexture = material->getHeightMap();
         if(heightTexture) {
-            const auto heightKey = heightTitle + std::to_string(heightTexture->getID());
+            const auto heightKey = heightTitle + std::to_string(heightTexture->getTextureID());
             ImGui::PushID(heightTitle);
             ImGui::Separator();
             ImGui::Text(heightTitle);
-            ImGui::Image((void *) heightTexture->getID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
+            ImGui::Image((void *) heightTexture->getTextureID(), ImVec2{100, 100}, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
                          tintCol, borderCol);
             ImGui::SameLine();
             if (ImGui::Button("Open file")) {

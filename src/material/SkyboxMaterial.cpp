@@ -11,6 +11,6 @@
 SkyboxMaterial::SkyboxMaterial(std::shared_ptr<ShaderProgram> _shaderProgram, const std::vector<std::string> &_pathVec) {
     this->setMaterialType(MaterialType::SkyBox);
 
-    m_texture = std::make_shared<Texture>(_pathVec, 6, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR);
+    m_texture = std::make_shared<ImageTexture>(_pathVec, 6, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR);
     _shaderProgram->setInt("material.skybox", m_texture->getTextureUnit());
 }

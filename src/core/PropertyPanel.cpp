@@ -69,10 +69,16 @@ void PropertyPanel::render() {
         }
 
         ImGui::SeparatorText("Shadow");
-        static bool isShadow = false;
-        const auto tmpIsShadow = isShadow;
-        ImGui::Checkbox("enable shadow", &isShadow);
-        if(tmpIsShadow != isShadow) currentScene->setShadow(isShadow);
+        static bool isParallelShadow = false;
+        bool tmpIsShadow = false;
+        tmpIsShadow = isParallelShadow;
+        ImGui::Checkbox("enable parallel shadow", &isParallelShadow);
+        if(tmpIsShadow != isParallelShadow) currentScene->setParallelShadow(isParallelShadow);
+
+        static bool isPointShadow = false;
+        tmpIsShadow = isPointShadow;
+        ImGui::Checkbox("enable point shadow", &isPointShadow);
+        if(tmpIsShadow != isPointShadow) currentScene->setPointShadow(isPointShadow);
     }
 
     ImGui::End();

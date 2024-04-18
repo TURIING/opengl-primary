@@ -11,8 +11,12 @@
 const std::string VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/cube/vertex.glsl";
 const std::string FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/cube/fragment.glsl";
 
-const std::string SHADOW_VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/shadow/vertex.glsl";
-const std::string SHADOW_FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/shadow/fragment.glsl";
+const std::string PARALLEL_SHADOW_VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/parallel_shadow/vertex.glsl";
+const std::string PARALLEL_SHADOW_FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/parallel_shadow/fragment.glsl";
+
+const std::string POINT_SHADOW_VERTEX_FILE = std::string(SHADER_CODE_PATH) + "/point_shadow/vertex.glsl";
+const std::string POINT_SHADOW_FRAGMENT_FILE = std::string(SHADER_CODE_PATH) + "/point_shadow/fragment.glsl";
+const std::string POINT_SHADOW_GEOMETRY_FILE = std::string(SHADER_CODE_PATH) + "/point_shadow/geometry.glsl";
 
 IScene::IScene() {
     this->setDeepTest(true);
@@ -51,7 +55,7 @@ void IScene::offScreenRender(Size &_size) {
     }
 
     m_fbo = std::make_unique<FrameBuffer>();
-    m_screenTexture = std::make_shared<Texture>(_size, 2, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR, Texture::RGB);
+    m_screenTexture = std::make_shared<FrameBufferTexture>(_size, 2, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR, FrameBufferTexture::RGB);
     m_fbo->attachTexture2D(FRAMEBUFFER_ATTACH_TYPE::COLOR, m_screenTexture);
 
     m_rbo = std::make_shared<RenderBuffer>();
@@ -109,8 +113,9 @@ void IScene::preRender() {
     m_cameraUbo->setData<glm::vec3>(offsetof(CameraInfoBlock, cameraPos), static_cast<const void *>(glm::value_ptr(this->getCamera()->getPosition())));
 
     // 处理阴影
-    glm::mat4 shadowLightSpaceMatrix;
-    if(m_isShadow) {
+    if(m_isParallelShadow) {
+        glm::mat4 shadowLightSpaceMatrix;
+
         for(const auto& [id, child]: m_primitiveList) {
             if(child->getLightType() != LightType::DirectionalLight) continue;
 
@@ -120,27 +125,76 @@ void IScene::preRender() {
             const auto lightView = glm::lookAt(*child->getPosition(), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
             shadowLightSpaceMatrix = lightProjection * lightView;
 
-            m_shadowShaderProgram->use();
-            m_shadowShaderProgram->setMat4("lightSpaceMatrix", glm::value_ptr(shadowLightSpaceMatrix));
+            m_parallelShadowShaderProgram->use();
+            m_parallelShadowShaderProgram->setMat4("lightSpaceMatrix", glm::value_ptr(shadowLightSpaceMatrix));
         }
 
+        // 先渲染深度贴图
         //glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        m_shadowFbo->bind();
+        m_parallelShadowFbo->bind();
         this->clear();
-        m_shadowFboColorTexture->activate();
+        m_parallelShadowFboColorTexture->activate();
         for(const auto& [id, child]: m_primitiveList) {
-            child->setShaderProgram(m_shadowShaderProgram);
+            child->setShaderProgram(m_parallelShadowShaderProgram);
         }
         this->render();
-        m_shadowFbo->unbind();
+        m_parallelShadowFbo->unbind();
 
+        // 再正常渲染
         //glViewport(0, 0, m_windowSize.width, m_windowSize.height);
         for(const auto& [id, child]: m_primitiveList) {
             child->setShaderProgram(m_shaderProgram);
         }
         m_shaderProgram->use();
         m_shaderProgram->setMat4("lightSpaceMatrix", glm::value_ptr(shadowLightSpaceMatrix));
-        m_shaderProgram->setInt("shadowMap", m_shadowFboColorTexture->getTextureUnit());
+        m_shaderProgram->setInt("parallelShadowMap", m_parallelShadowFboColorTexture->getTextureUnit());
+    }
+
+    if(m_isPointShadow) {
+        constexpr float nearPlane = 1.0;
+        constexpr float farPlane = 25.0;
+
+        for(const auto& [id, child]: m_primitiveList) {
+            if(child->getLightType() != LightType::PointLight) continue;
+
+            const auto lightProjection = glm::perspective(90.0f, SHADOW_WIDTH / SHADOW_HEIGHT, nearPlane, farPlane);
+            const auto& lightPosition = *child->getPosition();
+
+            std::vector<glm::mat4> shadowMatrices;
+            shadowMatrices.push_back(lightProjection * glm::lookAt(lightPosition, lightPosition + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+            shadowMatrices.push_back(lightProjection * glm::lookAt(lightPosition, lightPosition + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+            shadowMatrices.push_back(lightProjection * glm::lookAt(lightPosition, lightPosition + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+            shadowMatrices.push_back(lightProjection * glm::lookAt(lightPosition, lightPosition + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+            shadowMatrices.push_back(lightProjection * glm::lookAt(lightPosition, lightPosition + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0)));
+            shadowMatrices.push_back(lightProjection * glm::lookAt(lightPosition, lightPosition + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0)));
+
+            m_pointShadowShaderProgram->use();
+            for(auto i = 0; i < 6; i++) {
+                m_pointShadowShaderProgram->setMat4("shadowMatrices[" + std::to_string(i) + ']', glm::value_ptr(shadowMatrices[i]));
+            }
+            m_pointShadowShaderProgram->setFloat("far_plane", farPlane);
+            m_pointShadowShaderProgram->setVec3("lightPos", lightPosition);
+        }
+
+        // 先渲染深度贴图
+        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        m_pointShadowFbo->bind();
+        this->clear();
+        m_pointShadowFboColorTexture->activate();
+        for(const auto& [id, child]: m_primitiveList) {
+            child->setShaderProgram(m_pointShadowShaderProgram);
+        }
+        this->render();
+        m_pointShadowFbo->unbind();
+
+        // 再正常渲染
+        glViewport(0, 0, m_windowSize.width, m_windowSize.height);
+        for(const auto& [id, child]: m_primitiveList) {
+            child->setShaderProgram(m_shaderProgram);
+        }
+        m_shaderProgram->use();
+        m_shaderProgram->setFloat("far_plane", farPlane);
+        m_shaderProgram->setInt("pointShadowMap", m_pointShadowFboColorTexture->getTextureUnit());
     }
 
     m_fbo->bind();
@@ -155,7 +209,7 @@ void IScene::postRender() {
 
     ImGui::Begin("Scene");
     const auto viewPortSize = ImGui::GetContentRegionAvail();
-    ImGui::Image(reinterpret_cast<void*>(m_screenTexture->getID()), viewPortSize, ImVec2 { 0, 1 }, ImVec2 { 1, 0 });
+    ImGui::Image(reinterpret_cast<void*>(m_screenTexture->getTextureID()), viewPortSize, ImVec2 { 0, 1 }, ImVec2 { 1, 0 });
     ImGui::End();
 }
 
@@ -204,25 +258,48 @@ void IScene::deletePrimitive(int _id) {
     m_primitiveList.erase(_id);
 }
 
-// 开启/关闭阴影
-void IScene::setShadow(bool _on) {
-    m_isShadow = _on;
+// 开启/关闭平行光阴影
+void IScene::setParallelShadow(bool _on) {
+    m_isParallelShadow = _on;
 
     if(_on) {
-        m_shadowShaderProgram = std::make_shared<ShaderProgram>(SHADOW_VERTEX_FILE, SHADOW_FRAGMENT_FILE);
-        m_shadowFbo = std::make_unique<FrameBuffer>();
-        m_shadowFboColorTexture = std::make_shared<Texture>(m_windowSize, 7, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST, Texture::DEPTH_COMPONENT);
-        m_shadowFbo->attachTexture2D(FRAMEBUFFER_ATTACH_TYPE::DEPTH, m_shadowFboColorTexture);
+        m_parallelShadowShaderProgram = std::make_shared<ShaderProgram>(PARALLEL_SHADOW_VERTEX_FILE, PARALLEL_SHADOW_FRAGMENT_FILE);
+        m_parallelShadowFbo = std::make_unique<FrameBuffer>();
+        m_parallelShadowFboColorTexture = std::make_shared<FrameBufferTexture>(m_windowSize, 7, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST, FrameBufferTexture::DEPTH_COMPONENT);
+        m_parallelShadowFbo->attachTexture2D(FRAMEBUFFER_ATTACH_TYPE::DEPTH, m_parallelShadowFboColorTexture);
         glDrawBuffer(GL_NONE);
         glDrawBuffer(GL_NONE);
-        m_shadowFbo->unbind();
+        m_parallelShadowFbo->unbind();
     }
     else {
-        m_shadowShaderProgram.reset();
-        m_shadowFbo.reset();
-        m_shadowFboColorTexture.reset();
+        m_parallelShadowShaderProgram.reset();
+        m_parallelShadowFbo.reset();
+        m_parallelShadowFboColorTexture.reset();
     }
 
     m_shaderProgram->use();
-    m_shaderProgram->setBool("enableShadow", _on);
+    m_shaderProgram->setBool("enableParallelShadow", _on);
+}
+
+// 开启/关闭点光阴影
+void IScene::setPointShadow(bool _on) {
+    m_isPointShadow = _on;
+
+    if(_on) {
+        m_pointShadowShaderProgram = std::make_shared<ShaderProgram>(POINT_SHADOW_VERTEX_FILE, POINT_SHADOW_FRAGMENT_FILE, POINT_SHADOW_GEOMETRY_FILE);
+        m_pointShadowFbo = std::make_unique<FrameBuffer>();
+        m_pointShadowFboColorTexture = std::make_shared<FrameBufferTexture>(Size {SHADOW_WIDTH, SHADOW_HEIGHT}, 7, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST);
+        m_pointShadowFbo->attachTexture(FRAMEBUFFER_ATTACH_TYPE::DEPTH, m_pointShadowFboColorTexture);
+        glDrawBuffer(GL_NONE);
+        glDrawBuffer(GL_NONE);
+        m_pointShadowFbo->unbind();
+    }
+    else {
+        m_pointShadowShaderProgram.reset();
+        m_pointShadowFbo.reset();
+        m_pointShadowFboColorTexture.reset();
+    }
+
+    m_shaderProgram->use();
+    m_shaderProgram->setBool("enablePointShadow", _on);
 }

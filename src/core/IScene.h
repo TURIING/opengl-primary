@@ -64,7 +64,8 @@ public:
 
     std::shared_ptr<IPrimitive> getSkyboxPrimitive() { return m_skyboxPrimitive; }
 
-    void setShadow(bool _on);
+    void setPointShadow(bool _on);
+    void setParallelShadow(bool _on);
 
 protected:
     virtual void onWindowResize(Size &_size);
@@ -79,19 +80,23 @@ private:
     Color m_clearColor = { 0.2, 0.2, 0.2, 1 };					                                    // 清屏颜色
     std::shared_ptr<Camera> m_camera;
     std::unique_ptr<FrameBuffer> m_fbo;
-    std::unique_ptr<FrameBuffer> m_shadowFbo;
+    std::unique_ptr<FrameBuffer> m_parallelShadowFbo;
+    std::unique_ptr<FrameBuffer> m_pointShadowFbo;
     std::shared_ptr<RenderBuffer> m_rbo;
-    std::shared_ptr<Texture> m_fboColorTexture;
-    std::shared_ptr<Texture> m_fboDepthTexture;
-    std::shared_ptr<Texture> m_screenTexture;
-    std::shared_ptr<Texture> m_shadowFboColorTexture;
+    std::shared_ptr<FrameBufferTexture> m_fboColorTexture;
+    std::shared_ptr<FrameBufferTexture> m_fboDepthTexture;
+    std::shared_ptr<FrameBufferTexture> m_screenTexture;
+    std::shared_ptr<FrameBufferTexture> m_parallelShadowFboColorTexture;
+    std::shared_ptr<FrameBufferTexture> m_pointShadowFboColorTexture;
     std::unique_ptr<Buffer<VPMatricesBlock>> m_vpMatricesUbo;
     std::unique_ptr<Buffer<LightBlock>> m_lightUbo;
     std::unique_ptr<Buffer<CameraInfoBlock>> m_cameraUbo;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
-    std::shared_ptr<ShaderProgram> m_shadowShaderProgram;                                           // 阴影着色器
+    std::shared_ptr<ShaderProgram> m_parallelShadowShaderProgram;                                   // 平行光阴影着色器
+    std::shared_ptr<ShaderProgram> m_pointShadowShaderProgram;                                      // 点光阴影着色器
     std::shared_ptr<IPrimitive> m_skyboxPrimitive;                                                  // 需要记录下来天空盒的图元
-    bool m_isShadow = false;                                                                        // 是否开启阴影
+    bool m_isParallelShadow = false;                                                                // 是否开启平行光阴影
+    bool m_isPointShadow = false;                                                                   // 是否开启点光阴影
 };
 
 #endif //OPENGL_PRIMARY_ISCENE_H

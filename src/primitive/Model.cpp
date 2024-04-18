@@ -147,25 +147,25 @@ void Model::loadTextureForMaterial(std::shared_ptr<IMaterial> &_material, const 
     // 纹理尚未被加载
     else {
         const auto &texPath = std::format("{}\\{}", m_directory, tmpFilename);
-        std::shared_ptr<Texture> texture;
+        std::shared_ptr<ImageTexture> texture;
         switch (_type) {
             case TextureType::Diffuse: {
-                texture = std::make_shared<Texture>(texPath, 0, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
+                texture = std::make_shared<ImageTexture>(texPath, 0, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
                 material->setDiffuseMap(texture);
                 break;
             }
             case TextureType::Specular: {
-                texture = std::make_shared<Texture>(texPath, 1, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
+                texture = std::make_shared<ImageTexture>(texPath, 1, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
                 material->setSpecularMap(texture);
                 break;
             }
             case TextureType::Height: {
-                texture = std::make_shared<Texture>(texPath, 2, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
+                texture = std::make_shared<ImageTexture>(texPath, 2, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
                 material->setHeightMap(texture);
                 break;
             }
             case TextureType::Normal: {
-                texture = std::make_shared<Texture>(texPath, 3, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
+                texture = std::make_shared<ImageTexture>(texPath, 3, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR);
                 material->setNormalMap(texture);
                 break;
             }

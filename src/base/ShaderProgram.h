@@ -1,15 +1,13 @@
 #pragma once
 
-#include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <glog/logging.h>
 
 class ShaderProgram
 {
 public:
-	ShaderProgram(const std::string& _vertexPath, const std::string& _fragmentPath);
+	ShaderProgram(const std::string& _vertexPath, const std::string& _fragmentPath, const std::string &_geometryPath = "");
 	~ShaderProgram();
 
 	void use() const;
@@ -45,10 +43,7 @@ public:
 
 private:
 	static void checkLinkError(unsigned int _id);
-
-    inline void checkCurrentProgramBeUsed() const {
-        LOG_ASSERT(m_currentUseProgramId == m_id);
-    }
+    inline void checkCurrentProgramBeUsed() const;
 
 private:
 	unsigned int m_id = -1;

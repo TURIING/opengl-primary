@@ -6,84 +6,34 @@
 * @description: 
 ********************************************************************************/
 
-#include "Texture.h"
-#include "../BaseDefine.h"
+#include "ImageTexture.h"
 
 // 用于构造生成来自图像文件的纹理
-Texture::Texture(std::string _path, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode): m_textureUnit(_unit), m_path(_path) {
+ImageTexture::ImageTexture(std::string _path, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode): ITexture(_unit), m_path(_path) {
     LOG_ASSERT(!_path.empty());
 
-    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_2D, this->getTextureID());
 
-    this->bind();
-
-    Texture::setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
+    ImageTexture::setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
 
     this->generateTexture(_path);
 }
 
+
 // 用于生成立方体贴图的纹理
-Texture::Texture(const std::vector<std::string> &_pathVec, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode) {
+ImageTexture::ImageTexture(const std::vector<std::string> &_pathVec, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode): ITexture(_unit) {
     LOG_ASSERT(!_pathVec.empty());
 
-    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->getTextureID());
+
     m_textureTarget = TARGET_TYPE::CUBE_MAP;
-    m_textureUnit = _unit;
 
-    this->bind();
-    Texture::generateTextureForCubeMap(_pathVec);
-    Texture::setWrapAndFilterForCubeMap(_wrapModeS, _wrapModeT, _wrapModeR, _minFilterMode, _magFilterMode);
-}
-
-/**
- * 用于构造生成frame buffer的纹理
- * @param _scrWidth 屏幕宽度
- * @param _scrHeight 屏幕高度
- * @param _type 纹理存储的类型
- */
-Texture::Texture(Size _scrSize, unsigned int _unit, GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode, Texture::INTERNAL_FORMAT _format) {
-    m_textureUnit = _unit;
-    const auto [width, height] = _scrSize;
-
-    glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
-    this->bind();
-
-    Texture::setWrapAndFilter(_wrapModeS, _wrapModeT, _minFilterMode, _magFilterMode);
-    switch (_format) {
-        case INTERNAL_FORMAT::RGB: {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-            break;
-        }
-        case INTERNAL_FORMAT::DEPTH_COMPONENT: {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-            break;
-        }
-    }
-}
-
-Texture::~Texture() {
-    LOG_ASSERT(m_id != -1);
-    glDeleteTextures(1, &m_id);
-}
-
-void Texture::activate() {
-    LOG_ASSERT(m_textureUnit != -1);
-
-    glActiveTexture(GL_TEXTURE0 + m_textureUnit);
-    this->bind();
-}
-
-void Texture::bind() {
-    LOG_ASSERT(m_id != -1);
-    switch (m_textureTarget) {
-        case TARGET_TYPE::TEXTURE2D:    glBindTexture(GL_TEXTURE_2D, m_id);             break;
-        case TARGET_TYPE::CUBE_MAP:     glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);       break;
-        default:                        LOG(FATAL) << " Undefined conditional branch.";
-    }
+    ImageTexture::generateTextureForCubeMap(_pathVec);
+    ImageTexture::setWrapAndFilterForCubeMap(_wrapModeS, _wrapModeT, _wrapModeR, _minFilterMode, _magFilterMode);
 }
 
 // 设置环绕方式、过滤方式
-void Texture::setWrapAndFilter(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode) {
+void ImageTexture::setWrapAndFilter(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _minFilterMode, GLuint _magFilterMode) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _wrapModeS);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _wrapModeT);
 
@@ -97,7 +47,7 @@ void Texture::setWrapAndFilter(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _min
 }
 
 // 设置立方体贴图的环绕方式、过滤方式
-void Texture::setWrapAndFilterForCubeMap(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode) {
+void ImageTexture::setWrapAndFilterForCubeMap(GLuint _wrapModeS, GLuint _wrapModeT, GLuint _wrapModeR, GLuint _minFilterMode, GLuint _magFilterMode) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, _wrapModeS);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, _wrapModeT);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, _wrapModeR);
@@ -111,7 +61,7 @@ void Texture::setWrapAndFilterForCubeMap(GLuint _wrapModeS, GLuint _wrapModeT, G
  * @param _resPath 图片资源路径
  * @param _target 纹理目标
  */
-void Texture::generateTexture(const std::string &_resPath) {
+void ImageTexture::generateTexture(const std::string &_resPath) {
     LOG_ASSERT(!_resPath.empty());
 
     // 加载纹理图片
@@ -145,7 +95,7 @@ void Texture::generateTexture(const std::string &_resPath) {
  * @param _resPath 图片资源路径
  * @param _target 纹理目标
  */
-void Texture::generateTextureForCubeMap(const std::vector<std::string> &_pathVec) {
+void ImageTexture::generateTextureForCubeMap(const std::vector<std::string> &_pathVec) {
     LOG_ASSERT(!_pathVec.empty());
 
     // 加载纹理图片
@@ -169,5 +119,15 @@ void Texture::generateTextureForCubeMap(const std::vector<std::string> &_pathVec
 
         // 释放图像
         stbi_image_free(data);
+    }
+}
+
+void ImageTexture::bind() {
+    LOG_ASSERT(this->getTextureID() != -1);
+
+    switch (m_textureTarget) {
+        case TARGET_TYPE::TEXTURE2D: glBindTexture(GL_TEXTURE_2D, this->getTextureID());        break;
+        case TARGET_TYPE::CUBE_MAP:  glBindTexture(GL_TEXTURE_CUBE_MAP, this->getTextureID());  break;
+        default:                     LOG(FATAL) << " Undefined conditional branch.";
     }
 }

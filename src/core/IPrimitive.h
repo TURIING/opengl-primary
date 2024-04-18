@@ -9,7 +9,7 @@
 #ifndef OPENGL_PRIMARY_IPRIMITIVE_H
 #define OPENGL_PRIMARY_IPRIMITIVE_H
 
-#include "../base/Texture.h"
+#include "../base/ImageTexture.h"
 #include "../base/ShaderProgram.h"
 #include "IRenderer.h"
 class IScene;
@@ -42,10 +42,10 @@ public:
     int getOutlineWidth() const { return m_outlineWidth; }
 
     // 纹理
-    void addTexture(std::shared_ptr<Texture> _texture);
-    void resetTexture(unsigned int _index, Texture* _texture);
-    std::shared_ptr<Texture> getTexture(int _index);
-    [[nodiscard]] std::vector<std::shared_ptr<Texture>> getTextureList() { return m_textures; }
+    void addTexture(std::shared_ptr<ImageTexture> _texture);
+    void resetTexture(unsigned int _index, ImageTexture* _texture);
+    std::shared_ptr<ImageTexture> getTexture(int _index);
+    [[nodiscard]] std::vector<std::shared_ptr<ImageTexture>> getTextureList() { return m_textures; }
 
     // 材质
     void setMaterial(std::shared_ptr<IMaterial> _material);
@@ -76,7 +76,7 @@ private:
     Color m_outlineColor = { 0, 0, 0, 1};                                                           // 轮廓颜色
     int m_outlineWidth = 0;                                                                         // 轮廓宽度
 
-    std::vector<std::shared_ptr<Texture>> m_textures;
+    std::vector<std::shared_ptr<ImageTexture>> m_textures;
     std::shared_ptr<ShaderProgram> m_shaderProgram;
 
     std::shared_ptr<Camera> m_camera;

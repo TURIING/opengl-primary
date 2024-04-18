@@ -14,15 +14,15 @@
 #include <memory>
 #include "../base/IMaterial.h"
 #include "../base/ShaderProgram.h"
-#include "../base/Texture.h"
+#include "../base/ImageTexture.h"
 
 class SkyboxMaterial: public IMaterial {
 public:
     SkyboxMaterial(std::shared_ptr<ShaderProgram> _shaderProgram, const std::vector<std::string> &_pathVec);
+    std::shared_ptr<ImageTexture> getTexture() { return m_texture; }
 
-    std::shared_ptr<Texture> getTexture() { return m_texture; }
 private:
-    std::shared_ptr<Texture> m_texture;
+    std::shared_ptr<ImageTexture> m_texture;
 };
 
 

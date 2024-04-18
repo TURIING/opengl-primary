@@ -14,7 +14,7 @@
 #include "../base/VertexArray.h"
 #include "../base/Buffer.h"
 #include "../base/ShaderProgram.h"
-#include "../base/Texture.h"
+#include "../base/ImageTexture.h"
 #include "../BaseDefine.h"
 
 class Square: public IPrimitive{
@@ -33,7 +33,7 @@ public:
 private:
     std::unique_ptr<VertexArray> m_vao;
     std::unique_ptr<Buffer<Vertex>> m_vbo;
-    std::unique_ptr<Texture> m_texture;
+    std::unique_ptr<ImageTexture> m_texture;
 
     const std::string TEXTURE_FILE = std::string(TEXTURE_PATH) + "/window.png";
 
